@@ -27,54 +27,39 @@ Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dib
 ## Project Structure
 
 ```text
-app/
-  Http/
-    Controllers/
-      Auth/                 # Controller auth dari Breeze
-      Public/               # Rencana Phase 2: controller halaman publik
-      Admin/                # Rencana Phase 2: controller CMS
-      ProfileController.php
-    Middleware/
-      Role.php              # Cek role super_admin / admin
-  Models/
-    User.php
-    Category.php
-    Location.php
-    Developer.php
-    Listing.php
-    ListingImage.php
-    BlogPost.php
-    PageContent.php
-    KprSetting.php
-bootstrap/
-  app.php                   # Registrasi middleware dan alias 'role'
-config/
-database/
-  migrations/               # Schema users, listing, blog, halaman, KPR
-  seeders/
-    DatabaseSeeder.php
-  factories/
-resources/
-  css/app.css               # Tailwind directives
-  js/app.js                 # Alpine.js bootstrap
-  views/
-    layouts/                # public.blade.php, admin.blade.php, app.blade.php, guest.blade.php
-    public/                 # Halaman publik (home, katalog, blog)
-    admin/                  # Halaman CMS
-    components/             # Komponen Blade reusable
-    auth/                   # Login, reset password, verifikasi email
-    profile/                # Halaman profil admin
-routes/
-  web.php                   # Route publik dan admin
-  auth.php                  # Route autentikasi
-  console.php
-tests/
-  Feature/                  # Feature test (auth, role, profil)
-  Unit/
-tasks/
-  plan.md                   # Rencana implementasi
-  todo.md                   # Task list dan checkpoint
-.scratch/                   # Catatan lokal (gitignored)
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/               # Controller auth dari Breeze
+│   │   │   ├── Public/             # Rencana Phase 2: controller halaman publik
+│   │   │   └── Admin/              # Rencana Phase 2: controller CMS
+│   │   └── Middleware/             # Role.php: cek role super_admin / admin
+│   └── Models/
+├── bootstrap/
+│   └── app.php                     # Registrasi middleware dan alias 'role'
+├── config/
+├── database/
+│   ├── migrations/                 # Schema users, listing, blog, halaman, KPR
+│   ├── seeders/
+│   └── factories/
+├── resources/
+│   ├── css/                        # Tailwind directives
+│   ├── js/                         # Alpine.js bootstrap
+│   └── views/
+│       ├── layouts/                # Layout publik, admin, app, guest
+│       ├── public/                 # Halaman publik (home, katalog, blog)
+│       ├── admin/                  # Halaman CMS
+│       ├── components/             # Komponen Blade reusable
+│       ├── auth/                   # Login, reset password, verifikasi email
+│       └── profile/                # Halaman profil admin
+├── routes/
+│   ├── web.php                     # Route publik dan admin
+│   └── auth.php                    # Route autentikasi
+├── tests/
+│   ├── Feature/                    # Feature test (auth, role, profil)
+│   └── Unit/
+├── tasks/                          # plan.md (rencana implementasi) dan todo.md (task list)
+└── .scratch/                       # Catatan lokal (gitignored)
 ```
 
 ## Dependency Checklist
@@ -116,12 +101,31 @@ Jalankan `composer install` dan `npm install` untuk memasang semua package.
 
 ### Windows (XAMPP)
 
-Bila `php` dan `composer` tidak ada di PATH:
+`php artisan serve` memakai PHP CLI dan SQLite. Tidak perlu menjalankan XAMPP Control Panel, Apache, atau MySQL.
+
+**Opsi 1: tambahkan PHP ke PATH (sekali saja)**
+
+1. Buka **Edit environment variables for your account**.
+2. Pilih variabel **Path**, lalu **Edit → New**. Isi `C:\xampp\php` dan klik **OK** di semua dialog.
+
+   Jangan membuat variabel baru bernama `C:\xampp\php`. Direktori itu harus menjadi salah satu entri di dalam **Path**.
+
+3. Tutup semua terminal dan IDE, lalu buka terminal baru. Perubahan PATH hanya berlaku untuk proses baru.
+4. Verifikasi:
+
+   ```powershell
+   where.exe php
+   php -v
+   ```
+
+**Opsi 2: pakai path lengkap (tanpa mengubah PATH)**
 
 ```powershell
-C:\xampp\php\php.exe C:\xampp\php\composer.phar install
 C:\xampp\php\php.exe artisan serve
+C:\xampp\php\php.exe C:\xampp\php\composer.phar install
 ```
+
+XAMPP hanya menyertakan `composer.phar`, bukan `composer.bat`. Tanpa wrapper, jalankan Composer lewat `php` seperti contoh di atas.
 
 ## Setup Environment
 
@@ -213,6 +217,8 @@ Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commi
    ```bash
    php artisan migrate
    ```
+
+   Jika `php` tidak dikenali di Windows, lihat bagian **Windows (XAMPP)**.
 
 4. Jalankan server development. Pilih salah satu:
 
