@@ -16,4 +16,9 @@ class ExampleTest extends TestCase
 
         $response->assertStatus(200);
     }
+
+    public function test_design_system_page_renders(): void
+    {
+        $this->get('/design-system')->assertOk();
+    }
 }
