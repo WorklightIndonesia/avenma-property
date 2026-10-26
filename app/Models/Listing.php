@@ -28,6 +28,7 @@ class Listing extends Model
         'price',
         'bedrooms',
         'bathrooms',
+        'carport',
         'land_area',
         'building_area',
         'address',
