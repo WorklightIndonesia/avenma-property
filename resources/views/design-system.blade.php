@@ -99,7 +99,7 @@
             <div class="mt-6 grid gap-6 border border-line p-6 sm:grid-cols-2 lg:grid-cols-3">
                 <article class="border border-line bg-white transition-colors duration-150 hover:border-ink-950">
                     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
-                        <img src="{{ asset('images/brand/avenma-logo-wordmark.png') }}" alt="" class="w-32">
+                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                         <span class="absolute right-3 top-3 rounded bg-ink-950 px-2 py-0.5 text-xs font-semibold text-paper">Dijual</span>
                     </div>
                     <div class="space-y-3 p-4">
@@ -112,7 +112,7 @@
 
                 <article class="border border-line bg-white">
                     <div class="flex aspect-[4/3] items-center justify-center bg-sand">
-                        <img src="{{ asset('images/brand/avenma-wordmark-ink.png') }}" alt="Avenma Properti" class="w-28">
+                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                     </div>
                     <div class="space-y-3 p-4">
                         <h3 class="text-lg font-semibold leading-snug">Apartemen Sudirman Park</h3>

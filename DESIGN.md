@@ -33,6 +33,7 @@ Aturan:
 - Lockup penuh hanya di atas `paper`, `sand`, atau foto terang. Jangan di atas `ink`.
 - Di latar `ink`, pakai varian `-paper` (satu warna) atau tile `paper`.
 - Header, footer, dan sidebar memakai mark + nama bertipe Plus Jakarta Sans, bukan wordmark PNG, agar tetap tajam di 18 px.
+- Wordmark PNG hanya untuk lebar ≥ 240 px (tinggi ≥ 32 px). Di bawah itu detail atap menyatu dengan huruf dan terbaca tebal atau kabur; pakai mark + teks.
 - Lebar minimum lockup penuh 160 px; mark minimum 32 px; wordmark minimum 120 px.
 - Ruang kosong di sekeliling logo minimal setinggi x-height wordmark.
 - Jangan memotong, memutar, memberi bayangan, atau mengubah warna logo.
