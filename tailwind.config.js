@@ -11,8 +11,43 @@ export default {
 
     theme: {
         extend: {
+            colors: {
+                ink: {
+                    500: '#6B635A',
+                    600: '#4A443C',
+                    700: '#3A342D',
+                    900: '#1B1815',
+                    950: '#14110E',
+                },
+                gold: {
+                    300: '#F0D06B',
+                    500: '#DFA73A',
+                    700: '#8A6A1F',
+                    900: '#6B5117',
+                },
+                paper: '#FAFAF9',
+                sand: '#F2F0EC',
+                line: '#E4E1DB',
+                success: '#2E6B4F',
+                danger: {
+                    DEFAULT: '#A33B2A',
+                    700: '#8F3224',
+                },
+            },
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
+            },
+            borderRadius: {
+                DEFAULT: '2px',
+                sm: '1px',
+                md: '2px',
+                lg: '2px',
+                xl: '3px',
+                '2xl': '4px',
+                '3xl': '4px',
+            },
+            boxShadow: {
+                float: '0 12px 32px -8px rgba(20, 17, 14, 0.18)',
             },
         },
     },

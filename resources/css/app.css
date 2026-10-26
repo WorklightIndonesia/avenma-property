@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    [x-cloak] {
+        display: none !important;
+    }
+
+    ::selection {
+        @apply bg-gold-300 text-ink-950;
+    }
+
+    :focus-visible {
+        outline: 2px solid #8A6A1F;
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+}
