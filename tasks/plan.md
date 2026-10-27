@@ -10,6 +10,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 ## Architecture Decisions
 
 - Custom `role` column di `users`, bukan Spatie — hanya 2 role, hemat dependency di shared hosting.
+- Role `admin` dan `agen`: agen mengelola listing miliknya sendiri, artikel blog, serta kategori/lokasi/developer. Halaman, pengaturan situs, dan akun hanya untuk `admin`. Default kolom `agen`.
 - Intervention Image untuk WebP conversion (max 1920 px, upload max 5 MB).
 - Google Maps embed iframe tanpa API key.
 - wa.me deep link tanpa API.
@@ -34,7 +35,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 - [ ] Task 6: Public listing index + filter + pagination
 - [ ] Task 7: Public listing detail (info, galeri, map, WhatsApp CTA)
 - [ ] Task 8: Admin listing CRUD + upload foto
-- [ ] Task 9: Admin CRUD categories, locations, developers
+- [ ] Task 9: Admin CRUD kategori, lokasi, developer, akun, dan pengaturan situs
 
 ### Checkpoint: Core Features
 - [ ] Filter listing berfungsi
@@ -81,7 +82,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 
 ## Open Questions
 
-1. Nomor WhatsApp tujuan CTA.
+1. Nomor WhatsApp tujuan CTA — sementara placeholder `087736786969` di `site_settings`, ganti lewat panel pengaturan sebelum hosting.
 2. Daftar developer yang akan dimasukkan.
 3. Ketersediaan 10 artikel blog.
 4. Domain final untuk `APP_URL` dan sitemap.

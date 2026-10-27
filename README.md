@@ -5,8 +5,8 @@ Website company profile dan katalog properti untuk Avenma Property. Website mena
 ## Overview
 
 - **Pengunjung:** melihat katalog properti, memfilter berdasarkan kategori, lokasi, developer, tipe, harga, kamar, dan status; membaca detail properti dan artikel blog; menghubungi tim lewat tautan WhatsApp.
-- **Admin:** mengelola listing, kategori, lokasi, developer, blog, dan konten halaman lewat CMS.
-- **Super Admin:** semua akses Admin, ditambah pengelolaan akun admin.
+- **Admin:** semua akses Agen, ditambah pengelolaan akun, konten halaman, dan pengaturan situs.
+- **Agen:** mengelola listing miliknya sendiri, artikel blog, serta kategori, lokasi, dan developer.
 
 Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dibangun bertahap. Lihat `tasks/todo.md` untuk daftar task dan `tasks/plan.md` untuk rencana implementasi.
 
@@ -17,7 +17,7 @@ Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dib
 | Backend | Laravel 12.70, PHP >= 8.2 | Production Hostinger memakai PHP 8.3 |
 | Frontend | Blade, TailwindCSS 3, Alpine.js 3 | Tanpa React/Vue |
 | Build tool | Vite 7 | `npm run dev` / `npm run build` |
-| Auth | Laravel Breeze 2.4 | Role `super_admin` dan `admin` via middleware |
+| Auth | Laravel Breeze 2.4 | Role `admin` dan `agen` via middleware |
 | Database | SQLite (lokal), MariaDB 10.5 (production) | Eloquent ORM |
 | Testing | PHPUnit 11 | `php artisan test` |
 | Code style | Laravel Pint | `./vendor/bin/pint` |
@@ -33,7 +33,7 @@ Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dib
 │   │   │   ├── Auth/               # Controller auth dari Breeze
 │   │   │   ├── Public/             # Rencana Phase 2: controller halaman publik
 │   │   │   └── Admin/              # Rencana Phase 2: controller CMS
-│   │   └── Middleware/             # Role.php: cek role super_admin / admin
+│   │   └── Middleware/             # Role.php: cek role admin / agen
 │   └── Models/
 ├── bootstrap/
 │   └── app.php                     # Registrasi middleware dan alias 'role'
@@ -199,7 +199,7 @@ Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commi
    php artisan db:seed
    ```
 
-   Seeder bawaan membuat akun `test@example.com` dengan password `password` dan role `admin`. Registrasi publik dimatikan, jadi akun admin dibuat lewat seeder atau langsung di database.
+   Seeder membuat dua akun: `fellixwl@gmail.com` (role `admin`) dan `agenbudi@gmail.com` (role `agen`). Password dibaca dari `ADMIN_PASSWORD` dan `AGEN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar, angka, simbol). Registrasi publik dimatikan, jadi akun baru dibuat lewat panel admin.
 
 ## Menjalankan Proyek Secara Lokal
 

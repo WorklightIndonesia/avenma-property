@@ -11,7 +11,7 @@ Detail plan: `tasks/plan.md`
   - Scope: Medium
 
 - [x] **Task 2: Custom role middleware + redirect per role**
-  - Acceptance: kolom `role` di `users`; user `super_admin` dan `admin` diarahkan ke `/admin/dashboard`; user biasa tidak bisa akses admin.
+  - Acceptance: kolom `role` di `users` (`admin`, `agen`, default `agen`); kedua role diarahkan ke `/admin/dashboard`; role lain tidak bisa akses admin.
   - Verification: feature test login per role; manual login dua akun.
   - Files: `database/migrations/*_add_role_to_users.php`, `app/Http/Middleware/Role.php`, `app/Providers/AppServiceProvider.php`, `routes/web.php`
   - Depends: Task 1
@@ -38,9 +38,9 @@ Detail plan: `tasks/plan.md`
 
 ## Phase 2: Property Catalog
 
-- [ ] **Task 5: Seeder master data + sample listings**
-  - Acceptance: seeder membuat 1 super admin, 1 admin, kategori, lokasi, developer, dan 5–10 listing contoh.
-  - Verification: `php artisan migrate:fresh --seed`; cek data di database.
+- [x] **Task 5: Seeder master data + sample listings**
+  - Acceptance: seeder membuat akun `admin` (Fellix) dan `agen` (Budi, nomor `089630999996`), kategori, lokasi, developer, satu baris `site_settings`, dan 6 listing contoh tanpa foto. Password dibaca dari `ADMIN_PASSWORD` / `AGEN_PASSWORD` di `.env`; seeder gagal bila kosong atau tidak memenuhi aturan password.
+  - Verification: `php artisan migrate:fresh --seed`; cek dua akun, 6 listing, dan `site_settings` di database.
   - Files: `database/seeders/*`
   - Depends: Task 4
   - Scope: Small
@@ -60,16 +60,16 @@ Detail plan: `tasks/plan.md`
   - Scope: Medium
 
 - [ ] **Task 8: Admin listing CRUD + upload foto**
-  - Acceptance: admin bisa create/edit/delete listing; foto ter-upload ke `public/uploads`; validasi input.
-  - Verification: feature test CRUD; manual upload foto.
+  - Acceptance: `admin` dan `agen` bisa create listing (foto menyusul di Task 14), edit/delete; `agen` hanya listing miliknya sendiri, `admin` semua. `contact_phone` opsional dan otomatis terisi nomor agen pembuat. Validasi input.
+  - Verification: feature test CRUD; test `agen` tidak bisa mengubah listing milik agen lain.
   - Files: `app/Http/Controllers/Admin/ListingController.php`, `app/Http/Requests/*`, `resources/views/admin/listings/*`
   - Depends: Task 5
   - Scope: Medium
 
-- [ ] **Task 9: Admin CRUD master data**
-  - Acceptance: CRUD categories, locations, developers berfungsi.
-  - Verification: feature test tiap CRUD; manual cek.
-  - Files: `app/Http/Controllers/Admin/CategoryController.php`, `LocationController.php`, `DeveloperController.php`, views
+- [ ] **Task 9: Admin CRUD master data, akun, dan pengaturan situs**
+  - Acceptance: CRUD kategori, lokasi, developer (kedua role, delete ditolak selama masih dipakai listing). CRUD akun (`admin` saja): nama, email, telepon wajib untuk role `agen`, role, password sesuai aturan. Halaman pengaturan situs (`admin` saja) untuk nomor WhatsApp kantor.
+  - Verification: feature test tiap CRUD; test `agen` ditolak di `/admin/users` dan `/admin/settings`; manual cek.
+  - Files: `app/Http/Controllers/Admin/CategoryController.php`, `LocationController.php`, `DeveloperController.php`, `UserController.php`, `SiteSettingController.php`, views
   - Depends: Task 5
   - Scope: Medium
 
@@ -82,8 +82,8 @@ Detail plan: `tasks/plan.md`
 ## Phase 3: Content Features
 
 - [ ] **Task 10: Blog public + admin CRUD**
-  - Acceptance: `/blog` dan `/blog/{slug}` tampil; admin CRUD artikel; 10 artikel placeholder ter-seed.
-  - Verification: feature test route dan CRUD.
+  - Acceptance: `/blog` dan `/blog/{slug}` tampil; `admin` dan `agen` CRUD artikel; `agen` hanya artikel miliknya sendiri; 10 artikel placeholder ter-seed.
+  - Verification: feature test route dan CRUD; test `agen` tidak bisa mengubah artikel agen lain.
   - Files: `app/Http/Controllers/Public/BlogController.php`, `app/Http/Controllers/Admin/BlogPostController.php`, views, `database/seeders/BlogPostSeeder.php`
   - Depends: Task 4
   - Scope: Medium
