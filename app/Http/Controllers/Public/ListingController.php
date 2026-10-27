@@ -22,12 +22,15 @@ class ListingController extends Controller
         $sort = (string) $request->query('urut', 'terbaru');
         $sort = array_key_exists($sort, Listing::SORTS) ? $sort : 'terbaru';
 
+        $perPage = (int) $request->query('per', (string) Listing::PER_PAGE_OPTIONS[0]);
+        $perPage = in_array($perPage, Listing::PER_PAGE_OPTIONS, true) ? $perPage : Listing::PER_PAGE_OPTIONS[0];
+
         $listings = Listing::query()
             ->published()
             ->filter($filters)
             ->sorted($sort)
             ->with(['location', 'developer'])
-            ->paginate(6)
+            ->paginate($perPage)
             ->withQueryString();
 
         $locationNames = Location::orderBy('name')->pluck('name', 'slug');
@@ -39,6 +42,7 @@ class ListingController extends Controller
             'statusOptions' => Listing::statusOptions(),
             'filters' => $filters,
             'sort' => $sort,
+            'perPage' => $perPage,
             'chips' => $this->chips($filters, $sort, $locationNames->all()),
         ]);
     }

@@ -29,6 +29,8 @@ class Listing extends Model
         'termahal' => 'Harga tertinggi',
     ];
 
+    public const PER_PAGE_OPTIONS = [6, 12, 24];
+
     protected $fillable = [
         'category_id',
         'location_id',

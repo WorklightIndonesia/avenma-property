@@ -47,7 +47,7 @@
             <span class="hidden text-xs font-medium text-ink-500 group-open:inline">Tutup</span>
         </summary>
 
-        <form method="GET" action="{{ $action }}" class="grid gap-4 border-t border-line px-4 py-5 sm:grid-cols-2 lg:grid-cols-5">
+        <form method="GET" action="{{ $action }}" class="grid gap-4 border-t border-line px-4 py-5 sm:grid-cols-2 lg:grid-cols-6">
             <div>
                 <label for="{{ $prefix }}filter-lokasi" class="block text-xs font-medium text-ink-500">Lokasi</label>
                 <select id="{{ $prefix }}filter-lokasi" name="lokasi" class="{{ $selectClass }}">
@@ -88,11 +88,20 @@
                 </select>
             </div>
 
+            <div>
+                <label for="{{ $prefix }}filter-per" class="block text-xs font-medium text-ink-500">Per halaman</label>
+                <select id="{{ $prefix }}filter-per" name="per" class="{{ $selectClass }}">
+                    @foreach (App\Models\Listing::PER_PAGE_OPTIONS as $option)
+                        <option value="{{ $option }}" @selected($perPage === $option)>{{ $option }} properti</option>
+                    @endforeach
+                </select>
+            </div>
+
             <fieldset id="{{ $prefix }}filter-urut" tabindex="-1" class="scroll-mt-24 sm:col-span-2 lg:col-span-1">
                 <legend class="text-xs font-medium text-ink-500">Urutkan</legend>
-                <div class="mt-1 space-y-1.5">
+                <div class="mt-1 space-y-0.5">
                     @foreach (App\Models\Listing::SORTS as $value => $label)
-                        <label class="flex items-center gap-2 text-sm text-ink-700">
+                        <label class="flex min-h-11 cursor-pointer items-center gap-2 text-sm text-ink-700">
                             <input type="radio" name="urut" value="{{ $value }}" @checked($sort === $value) class="border-line text-gold-700 focus:ring-gold-500/30">
                             {{ $label }}
                         </label>
@@ -100,7 +109,7 @@
                 </div>
             </fieldset>
 
-            <div class="flex items-center gap-3 sm:col-span-2 lg:col-span-5">
+            <div class="flex items-center gap-3 sm:col-span-2 lg:col-span-6">
                 <x-primary-button>Terapkan</x-primary-button>
                 <a href="{{ $isPreview ? '#' : route('public.listings.index') }}" class="inline-flex items-center rounded px-3 py-3 text-sm font-semibold text-ink-600 hover:text-ink-950">Batal</a>
                 <span class="text-xs text-ink-500">Perubahan berlaku setelah Terapkan.</span>

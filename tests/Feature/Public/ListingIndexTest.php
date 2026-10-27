@@ -82,6 +82,21 @@ class ListingIndexTest extends TestCase
         $response->assertDontSee('Apartemen Lain');
     }
 
+    public function test_per_page_can_be_chosen_and_falls_back_when_invalid(): void
+    {
+        foreach (range(1, 8) as $index) {
+            $this->listing(['title' => 'Rumah '.$index]);
+        }
+
+        $this->get('/properti?per=12')
+            ->assertOk()
+            ->assertSee('Menampilkan 1–8 dari 8');
+
+        $this->get('/properti?per=999')
+            ->assertOk()
+            ->assertSee('Menampilkan 1–6 dari 8');
+    }
+
     public function test_chip_link_removes_only_its_own_filter(): void
     {
         $listing = $this->listing(['location_id' => $this->location('Bintaro', 'bintaro')->id]);

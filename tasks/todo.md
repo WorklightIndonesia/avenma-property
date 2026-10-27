@@ -46,7 +46,7 @@ Detail plan: `tasks/plan.md`
   - Scope: Small
 
 - [x] **Task 6: Public listing index + filter**
-  - Acceptance: `/properti` menampilkan listing terbit; filter lokasi, tipe, harga (bucket), dan status; urutan Terbaru, Harga terendah, Harga tertinggi; 6 per halaman. Panel filter tertutup sampai diklik; perubahan hanya berlaku setelah Terapkan; filter aktif tampil sebagai chip, tombol hapus chip langsung berlaku.
+  - Acceptance: `/properti` menampilkan listing terbit; filter lokasi, tipe, harga (bucket), dan status; urutan Terbaru, Harga terendah, Harga tertinggi; jumlah per halaman 6, 12, atau 24 (default 6). Panel filter tertutup sampai diklik; perubahan hanya berlaku setelah Terapkan; filter aktif tampil sebagai chip, tombol hapus chip langsung berlaku.
   - Verification: feature test tiap filter, kombinasi, sort, chip, dan pagination; manual cek di 390 px dan 1440 px.
   - Files: `app/Http/Controllers/Public/ListingController.php`, `app/Models/Listing.php`, `resources/views/public/listings/index.blade.php`, `_filters.blade.php`, `resources/views/components/property-card.blade.php`, `routes/web.php`
   - Depends: Task 5

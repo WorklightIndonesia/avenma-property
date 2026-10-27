@@ -147,7 +147,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Judul 18 px bobot 600, lokasi 14 px `ink-500`.
 - Harga 18 px bobot 600 `.tabular`.
 - Spesifikasi: ikon garis 16 px + angka, satu baris, `ink-600`.
-- Hover: border `ink-950`, tanpa lift dan tanpa bayangan.
+- Hover: border `ink-950` dan kartu naik 4 px (`-translate-y-1`, 150 ms). Tanpa bayangan.
 - Tanpa foto: blok `sand` dengan wordmark `-ink` di tengah, bukan placeholder abu-abu.
 
 **Detail properti**
