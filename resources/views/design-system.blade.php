@@ -254,6 +254,50 @@
             </div>
         </section>
 
+        <section aria-labelledby="filter-panel">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 id="filter-panel" class="text-xl font-semibold">Panel filter</h2>
+                <p class="text-sm text-ink-500">Tertutup saat belum ada filter. Terbuka dan menampilkan chip saat filter aktif.</p>
+            </div>
+
+            <div class="mt-6 space-y-8">
+                <div>
+                    <p class="text-xs font-semibold text-ink-500">Keadaan 1: belum ada filter</p>
+                    <div class="mt-2 border border-line px-4 py-4">
+                        @include('public.listings._filters', [
+                            'idPrefix' => 'preview-a-',
+                            'action' => '#',
+                            'filters' => ['lokasi' => '', 'tipe' => '', 'harga' => '', 'status' => ''],
+                            'sort' => 'terbaru',
+                            'locations' => ['bintaro' => 'Bintaro', 'cipete' => 'Cipete'],
+                            'typeOptions' => ['rumah' => 'Rumah', 'apartemen' => 'Apartemen'],
+                            'statusOptions' => ['dijual' => 'Dijual', 'baru' => 'Baru'],
+                            'chips' => [],
+                        ])
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-xs font-semibold text-ink-500">Keadaan 2: dua filter aktif, panel terbuka</p>
+                    <div class="mt-2 border border-line px-4 py-4">
+                        @include('public.listings._filters', [
+                            'idPrefix' => 'preview-b-',
+                            'action' => '#',
+                            'filters' => ['lokasi' => 'bintaro', 'tipe' => '', 'harga' => '1000-2000', 'status' => ''],
+                            'sort' => 'terbaru',
+                            'locations' => ['bintaro' => 'Bintaro', 'cipete' => 'Cipete'],
+                            'typeOptions' => ['rumah' => 'Rumah', 'apartemen' => 'Apartemen'],
+                            'statusOptions' => ['dijual' => 'Dijual', 'baru' => 'Baru'],
+                            'chips' => [
+                                ['key' => 'lokasi', 'label' => 'Bintaro'],
+                                ['key' => 'harga', 'label' => 'Rp 1 – 2 miliar'],
+                            ],
+                        ])
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section aria-labelledby="detail">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 id="detail" class="text-xl font-semibold">Detail properti</h2>
