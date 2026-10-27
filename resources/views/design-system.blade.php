@@ -298,9 +298,9 @@
 
                 <div>
                     <p class="text-xs font-semibold text-ink-500">Keadaan 3: pilihan kontrol urutan</p>
-                    <p class="mt-1 text-sm text-ink-600">Dua bentuk untuk kolom "Urutkan". Yang dipakai sekarang adalah radio bertumpuk di dalam panel.</p>
+                    <p class="mt-1 text-sm text-ink-600">Empat bentuk untuk kolom "Urutkan". Yang dipakai sekarang adalah radio bertumpuk di dalam panel.</p>
 
-                    <div class="mt-3 grid gap-4 lg:grid-cols-2">
+                    <div class="mt-3 grid gap-4 lg:grid-cols-3">
                         <div class="border border-line px-4 py-4">
                             <p class="text-xs font-semibold text-ink-500">Pilihan A: dropdown, sejajar dengan filter lain</p>
                             <div class="mt-3 max-w-xs">
@@ -328,6 +328,41 @@
                                 </div>
                             </fieldset>
                             <p class="mt-3 text-xs text-ink-500">Lebih mudah dipindai, tetapi memakan satu baris penuh di layar sempit.</p>
+                        </div>
+
+                        <div class="border border-line px-4 py-4">
+                            <p class="text-xs font-semibold text-ink-500">Pilihan C: radio asli dengan warna brand</p>
+                            <fieldset class="mt-3">
+                                <legend class="block text-xs font-medium text-ink-500">Urutkan</legend>
+                                <div class="mt-1 space-y-2">
+                                    @foreach (['Terbaru', 'Harga terendah', 'Harga tertinggi'] as $index => $label)
+                                        <label class="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-ink-700">
+                                            <input type="radio" name="preview-sort-native" value="{{ $label }}" @checked($index === 0) class="h-4 w-4 accent-ink-950 focus:ring-gold-500/30">
+                                            {{ $label }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </fieldset>
+                            <p class="mt-3 text-xs text-ink-500">Dua baris CSS. Kontrol tetap digambar browser.</p>
+                        </div>
+
+                        <div class="border border-line px-4 py-4">
+                            <p class="text-xs font-semibold text-ink-500">Pilihan D: radio digambar sendiri</p>
+                            <fieldset class="mt-3">
+                                <legend class="block text-xs font-medium text-ink-500">Urutkan</legend>
+                                <div class="mt-1 space-y-1">
+                                    @foreach (['Terbaru', 'Harga terendah', 'Harga tertinggi'] as $index => $label)
+                                        <label class="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-ink-700">
+                                            <input type="radio" name="preview-sort-drawn" value="{{ $label }}" @checked($index === 0) class="peer sr-only">
+                                            <span class="grid h-5 w-5 shrink-0 place-items-center rounded-full border border-line bg-white peer-checked:border-ink-950 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-700 peer-checked:[&>span]:opacity-100">
+                                                <span class="h-2.5 w-2.5 rounded-full bg-ink-950 opacity-0 transition-opacity duration-150"></span>
+                                            </span>
+                                            {{ $label }}
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </fieldset>
+                            <p class="mt-3 text-xs text-ink-500">Lingkaran 20 px, titik 10 px, fokus gold. Target sentuh 44 px.</p>
                         </div>
                     </div>
                 </div>
