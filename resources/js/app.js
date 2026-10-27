@@ -16,7 +16,14 @@ document.addEventListener('click', (event) => {
 
     const field = document.querySelector(link.dataset.focus);
 
-    if (field) {
-        field.focus({ preventScroll: true });
+    if (!field) {
+        return;
     }
+
+    event.preventDefault();
+
+    // The panel may be collapsed, and an anchor cannot scroll to a hidden field.
+    field.closest('details')?.setAttribute('open', '');
+    field.focus({ preventScroll: true });
+    field.scrollIntoView({ block: 'center' });
 });

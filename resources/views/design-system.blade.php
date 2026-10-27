@@ -295,6 +295,42 @@
                         ])
                     </div>
                 </div>
+
+                <div>
+                    <p class="text-xs font-semibold text-ink-500">Keadaan 3: pilihan kontrol urutan</p>
+                    <p class="mt-1 text-sm text-ink-600">Dua bentuk untuk kolom "Urutkan". Yang dipakai sekarang adalah radio bertumpuk di dalam panel.</p>
+
+                    <div class="mt-3 grid gap-4 lg:grid-cols-2">
+                        <div class="border border-line px-4 py-4">
+                            <p class="text-xs font-semibold text-ink-500">Pilihan A: dropdown, sejajar dengan filter lain</p>
+                            <div class="mt-3 max-w-xs">
+                                <label for="preview-sort-select" class="block text-xs font-medium text-ink-500">Urutkan</label>
+                                <select id="preview-sort-select" class="mt-1 block w-full rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30">
+                                    <option>Terbaru</option>
+                                    <option>Harga terendah</option>
+                                    <option>Harga tertinggi</option>
+                                </select>
+                            </div>
+                            <p class="mt-3 text-xs text-ink-500">Satu baris, tidak menambah tinggi panel.</p>
+                        </div>
+
+                        <div class="border border-line px-4 py-4">
+                            <p class="text-xs font-semibold text-ink-500">Pilihan B: tombol berjajar, pilihan aktif berisi warna</p>
+                            <fieldset class="mt-3">
+                                <legend class="block text-xs font-medium text-ink-500">Urutkan</legend>
+                                <div class="mt-1 flex flex-wrap gap-2">
+                                    @foreach (['Terbaru', 'Harga terendah', 'Harga tertinggi'] as $index => $label)
+                                        <label class="cursor-pointer">
+                                            <input type="radio" name="preview-sort" value="{{ $label }}" @checked($index === 0) class="peer sr-only">
+                                            <span class="inline-flex items-center rounded border border-line px-3 py-2 text-sm font-medium text-ink-600 hover:border-ink-950 peer-checked:border-ink-950 peer-checked:bg-ink-950 peer-checked:text-paper peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-700">{{ $label }}</span>
+                                        </label>
+                                    @endforeach
+                                </div>
+                            </fieldset>
+                            <p class="mt-3 text-xs text-ink-500">Lebih mudah dipindai, tetapi memakan satu baris penuh di layar sempit.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

@@ -7,7 +7,7 @@
         ? '#'
         : route('public.listings.index', Arr::except($query, [$key, 'page']));
 
-    $selectClass = 'mt-1 block w-full rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
+    $selectClass = 'mt-1 block w-full scroll-mt-24 rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
 @endphp
 
 <div id="katalog" class="mt-6 border border-line bg-paper">
@@ -88,7 +88,7 @@
                 </select>
             </div>
 
-            <fieldset id="{{ $prefix }}filter-urut" tabindex="-1" class="sm:col-span-2 lg:col-span-1">
+            <fieldset id="{{ $prefix }}filter-urut" tabindex="-1" class="scroll-mt-24 sm:col-span-2 lg:col-span-1">
                 <legend class="text-xs font-medium text-ink-500">Urutkan</legend>
                 <div class="mt-1 space-y-1.5">
                     @foreach (App\Models\Listing::SORTS as $value => $label)
