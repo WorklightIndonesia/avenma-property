@@ -21,4 +21,38 @@
     .tabular {
         font-variant-numeric: tabular-nums;
     }
+
+    .range {
+        appearance: none;
+        height: 40px;
+        background: transparent;
+    }
+
+    .range::-webkit-slider-runnable-track {
+        height: 2px;
+        background: #e4e1db;
+    }
+
+    .range::-moz-range-track {
+        height: 2px;
+        background: #e4e1db;
+    }
+
+    .range::-webkit-slider-thumb {
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        margin-top: -8px;
+        border: 0;
+        border-radius: 2px;
+        background: #dfa73a;
+    }
+
+    .range::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border: 0;
+        border-radius: 2px;
+        background: #dfa73a;
+    }
 }

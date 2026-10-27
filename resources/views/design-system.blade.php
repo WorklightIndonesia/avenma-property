@@ -2,38 +2,6 @@
 
 @section('title', 'Design System — Avenma Properti')
 
-@push('head')
-    <link href="https://fonts.bunny.net/css?family=cormorant-garamond:600&display=swap" rel="stylesheet" />
-    <style>
-        .proto-cormorant .proto-article-title,
-        .proto-cormorant .proto-article-sub,
-        .proto-cormorant .proto-quote {
-            font-family: "Cormorant Garamond", Georgia, serif;
-            letter-spacing: 0;
-        }
-
-        .proto-cormorant .proto-article-title { font-size: 2.6rem; line-height: 1.02; }
-        .proto-cormorant .proto-article-sub { font-size: 1.45rem; line-height: 1.1; }
-        .proto-cormorant .proto-quote { font-size: 1.3rem; line-height: 1.35; }
-
-        .proto-range { -webkit-appearance: none; appearance: none; height: 40px; background: transparent; }
-        .proto-range::-webkit-slider-runnable-track { height: 2px; background: #e4e1db; }
-        .proto-range::-moz-range-track { height: 2px; background: #e4e1db; }
-        .proto-range::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 18px; height: 18px; margin-top: -8px;
-            border: 0; border-radius: 2px; background: #dfa73a;
-        }
-        .proto-range::-moz-range-thumb {
-            width: 18px; height: 18px; border: 0; border-radius: 2px; background: #dfa73a;
-        }
-        .proto-range:focus-visible { outline: 2px solid #8a6a1f; outline-offset: 4px; }
-
-        @media (min-width: 1024px) {
-            .proto-cormorant .proto-article-title { font-size: 3.45rem; }
-        }
-    </style>
-@endpush
-
 @php
     $swatches = [
         ['ink-950', '#14110E', 'bg-ink-950', '18.8:1 di paper'],
@@ -126,57 +94,32 @@
         <section aria-labelledby="prototipe">
             <div class="border border-line bg-ink-950 px-6 py-10 text-paper sm:px-10">
                 <p class="text-sm text-paper/60">Untuk persetujuan klien</p>
-                <h2 id="prototipe" class="mt-2 max-w-2xl text-3xl font-semibold leading-tight tracking-tight">Empat layar, dua pilihan.</h2>
+                <h2 id="prototipe" class="mt-2 max-w-2xl text-3xl font-semibold leading-tight tracking-tight">Lima layar, satu keputusan tersisa.</h2>
                 <p class="mt-4 max-w-2xl text-paper/70">
-                    Prototipe di bawah memakai token dan komponen yang sama dengan situs nanti. Dua hal kami minta Anda pilih: nada beranda dan huruf untuk artikel. Sisanya, termasuk simulasi KPR, diturunkan dari logo dan kebutuhan pembeli.
+                    Prototipe di bawah memakai token dan komponen yang sama dengan situs nanti. Nada hero dan huruf sudah diputuskan. Yang masih kami minta Anda pilih hanya sudut komponen.
                 </p>
                 <div class="mt-6 grid gap-3 sm:grid-cols-2">
                     <p class="border border-paper/20 px-4 py-3 text-sm">
-                        <span class="font-semibold">Pilihan 1.</span> Nada beranda — <a href="#beranda" class="underline underline-offset-4 hover:text-white">Opsi A atau B</a>.
+                        <span class="font-semibold">Sudah diputuskan.</span> Tema terang, hero dengan foto, satu keluarga huruf.
                     </p>
                     <p class="border border-paper/20 px-4 py-3 text-sm">
-                        <span class="font-semibold">Pilihan 2.</span> Huruf artikel — <a href="#artikel" class="underline underline-offset-4 hover:text-white">Opsi A atau B</a>.
+                        <span class="font-semibold">Tersisa.</span> Seberapa bulat sudut tombol dan input — <a href="#radius" class="underline underline-offset-4 hover:text-white">Opsi A, B, atau C</a>.
                     </p>
                 </div>
-                <p class="mt-4 text-xs text-paper/50">Tautan dan formulir belum aktif, kecuali simulasi KPR yang bisa dicoba. Tulis pilihan Anda saat rapat, misalnya 1A dan 2B.</p>
+                <p class="mt-4 text-xs text-paper/50">Tautan dan formulir belum aktif, kecuali simulasi KPR yang bisa dicoba. Cukup sebut satu huruf saat rapat, misalnya B.</p>
             </div>
         </section>
 
         <section aria-labelledby="beranda">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 id="beranda" class="scroll-mt-24 text-xl font-semibold">Beranda</h2>
-                <p class="text-sm text-ink-500">Pilihan 1 — nada halaman pertama.</p>
+                <p class="text-sm text-ink-500">Hero terang dengan foto — sudah diputuskan.</p>
             </div>
 
             <div class="mt-6 space-y-4">
                 <div class="border border-line">
                     <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
-                        <p class="text-xs font-semibold">Opsi A · Hero gelap <span class="ml-2 border border-ink-950 px-1.5 py-0.5 text-[11px]">Disarankan</span></p>
-                        <p class="text-xs text-ink-500">Beranda — bagian atas</p>
-                    </div>
-                    <div class="bg-ink-950 px-6 py-14 text-paper sm:px-10 lg:px-12 lg:py-20">
-                        <p class="text-sm text-paper/60">Properti primer dan sekunder</p>
-                        <p class="mt-4 max-w-2xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
-                            Temukan properti yang tepat untuk Anda.
-                        </p>
-                        <p class="mt-5 max-w-xl text-lg leading-relaxed text-paper/70">
-                            Katalog properti pilihan di Jabodetabek, lengkap dengan informasi lokasi dan simulasi KPR.
-                        </p>
-                        <div class="mt-8 flex flex-wrap gap-3">
-                            <span class="inline-flex items-center rounded bg-gold-500 px-5 py-3 text-sm font-semibold text-ink-950">Lihat Properti</span>
-                            <span class="inline-flex items-center rounded border border-paper/25 px-5 py-3 text-sm font-semibold text-paper">Konsultasi KPR</span>
-                        </div>
-                        <div class="mt-10 flex flex-wrap gap-x-6 gap-y-2 border-t border-paper/15 pt-6 text-sm text-paper/60">
-                            <span>Kurasi manual</span>
-                            <span>Data developer terverifikasi</span>
-                            <span>Pendampingan KPR</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="border border-line">
-                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
-                        <p class="text-xs font-semibold">Opsi B · Hero terang dengan foto</p>
+                        <p class="text-xs font-semibold">Hero <span class="ml-2 border border-ink-950 px-1.5 py-0.5 text-[11px]">Diputuskan</span></p>
                         <p class="text-xs text-ink-500">Beranda — bagian atas</p>
                     </div>
                     <div class="bg-paper px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
@@ -184,10 +127,10 @@
                             <div>
                                 <p class="text-sm text-ink-500">Properti primer dan sekunder</p>
                                 <p class="mt-4 max-w-xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">
-                                    Rumah yang tepat, tanpa pencarian yang melelahkan.
+                                    Temukan properti yang tepat untuk Anda.
                                 </p>
                                 <p class="mt-5 max-w-lg text-lg leading-relaxed text-ink-600">
-                                    Kami menyaring properti primer dan sekunder, lalu menjelaskan angkanya apa adanya.
+                                    Katalog properti pilihan di Jabodetabek, lengkap dengan informasi lokasi dan simulasi KPR.
                                 </p>
                                 <div class="mt-8 flex flex-wrap gap-3">
                                     <span class="inline-flex items-center rounded bg-gold-500 px-5 py-3 text-sm font-semibold text-ink-950">Lihat Properti</span>
@@ -205,7 +148,7 @@
                 <div class="border border-line">
                     <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
                         <p class="text-xs font-semibold">Properti pilihan</p>
-                        <p class="text-xs text-ink-500">Blok yang sama untuk Opsi A dan B</p>
+                        <p class="text-xs text-ink-500">Blok di bawah hero</p>
                     </div>
                     <div class="bg-paper px-6 py-10 sm:px-10">
                         <div class="flex flex-wrap items-end justify-between gap-4">
@@ -480,7 +423,7 @@
                                     <label for="kpr-dp" class="text-sm font-semibold">Uang muka (DP)</label>
                                     <p class="tabular text-sm font-semibold"><span x-text="dp">20</span>% · <span x-text="rp(dpAmount)">Rp 250.000.000</span></p>
                                 </div>
-                                <input id="kpr-dp" type="range" min="20" max="70" step="5" class="proto-range mt-2 w-full" x-model.number="dp" aria-describedby="kpr-dp-help">
+                                <input id="kpr-dp" type="range" min="20" max="70" step="5" class="range mt-2 w-full" x-model.number="dp" aria-describedby="kpr-dp-help">
                                 <p id="kpr-dp-help" class="mt-1 text-xs text-ink-500">Minimum 20%. Maksimum 70%.</p>
                             </div>
 
@@ -504,7 +447,7 @@
                                     <label for="kpr-rate" class="text-sm font-semibold">Suku bunga</label>
                                     <p class="tabular text-sm font-semibold"><span x-text="rateLabel">7,5</span>% per tahun</p>
                                 </div>
-                                <input id="kpr-rate" type="range" min="3" max="15" step="0.25" class="proto-range mt-2 w-full" x-model.number="rate" aria-describedby="kpr-rate-help">
+                                <input id="kpr-rate" type="range" min="3" max="15" step="0.25" class="range mt-2 w-full" x-model.number="rate" aria-describedby="kpr-rate-help">
                                 <div class="mt-2 flex flex-wrap gap-2" role="group" aria-label="Tipe suku bunga">
                                     <button
                                         type="button"
@@ -563,18 +506,18 @@
         <section aria-labelledby="artikel">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 id="artikel" class="scroll-mt-24 text-xl font-semibold">Artikel blog</h2>
-                <p class="text-sm text-ink-500">Pilihan 2 — huruf untuk halaman baca.</p>
+                <p class="text-sm text-ink-500">Satu keluarga huruf — sudah diputuskan.</p>
             </div>
 
-            <div class="mt-6 grid gap-4 lg:grid-cols-2">
-                <div class="border border-line">
-                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
-                        <p class="text-xs font-semibold">Opsi A · Plus Jakarta Sans</p>
-                        <p class="text-xs text-ink-500">Artikel</p>
-                    </div>
-                    <div class="bg-paper px-5 py-8 sm:px-8">
+            <div class="mt-6 border border-line">
+                <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
+                    <p class="text-xs font-semibold">Artikel</p>
+                    <p class="text-xs text-ink-500">/blog/membeli-rumah-pertama</p>
+                </div>
+                <div class="bg-paper px-5 py-10 sm:px-8">
+                    <div class="max-w-2xl">
                         <p class="text-xs font-semibold text-gold-700">Panduan</p>
-                        <p class="proto-article-title mt-3 text-4xl font-semibold leading-[1.05] tracking-tight lg:text-5xl">
+                        <p class="mt-3 text-4xl font-semibold leading-[1.05] tracking-tight lg:text-5xl">
                             Membeli rumah pertama: lima biaya yang sering terlewat
                         </p>
                         <p class="mt-3 text-sm text-ink-500">26 Oktober 2026 · 6 menit baca</p>
@@ -584,37 +527,10 @@
                         <p class="mt-3 text-base leading-relaxed text-ink-600">
                             Sebelum akad, minta rincian tertulis dari developer atau agen. Angka yang tidak masuk brosur tetap harus masuk hitungan Anda.
                         </p>
-                        <p class="proto-quote mt-6 border-l border-line pl-4 text-lg leading-snug">
+                        <p class="mt-6 border-l border-line pl-4 text-lg leading-snug">
                             “Rumah yang tepat bukan yang termurah, tetapi yang biayanya bisa Anda jelaskan sampai rupiah terakhir.”
                         </p>
-                        <p class="proto-article-sub mt-6 text-xl font-semibold">Biaya yang tidak masuk brosur</p>
-                        <p class="mt-2 text-base leading-relaxed text-ink-600">
-                            Pajak pembeli, biaya notaris, dan provisi KPR biasanya tiga pos terbesar. Sisihkan anggaran terpisah di luar DP.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="border border-line">
-                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
-                        <p class="text-xs font-semibold">Opsi B · Cormorant Garamond <span class="ml-2 border border-ink-950 px-1.5 py-0.5 text-[11px]">Disarankan</span></p>
-                        <p class="text-xs text-ink-500">Artikel</p>
-                    </div>
-                    <div class="proto-cormorant bg-paper px-5 py-8 sm:px-8">
-                        <p class="text-xs font-semibold text-gold-700">Panduan</p>
-                        <p class="proto-article-title mt-3 font-semibold tracking-tight">
-                            Membeli rumah pertama: lima biaya yang sering terlewat
-                        </p>
-                        <p class="mt-3 text-sm text-ink-500">26 Oktober 2026 · 6 menit baca</p>
-                        <p class="mt-5 text-base leading-relaxed text-ink-600">
-                            DP bukan satu-satunya angka di depan. Biaya akta, pajak pembeli, dan provisi bank sering baru muncul setelah harga disepakati.
-                        </p>
-                        <p class="mt-3 text-base leading-relaxed text-ink-600">
-                            Sebelum akad, minta rincian tertulis dari developer atau agen. Angka yang tidak masuk brosur tetap harus masuk hitungan Anda.
-                        </p>
-                        <p class="proto-quote mt-6 border-l border-line pl-4 font-semibold leading-snug">
-                            “Rumah yang tepat bukan yang termurah, tetapi yang biayanya bisa Anda jelaskan sampai rupiah terakhir.”
-                        </p>
-                        <p class="proto-article-sub mt-6 font-semibold">Biaya yang tidak masuk brosur</p>
+                        <p class="mt-6 text-xl font-semibold">Biaya yang tidak masuk brosur</p>
                         <p class="mt-2 text-base leading-relaxed text-ink-600">
                             Pajak pembeli, biaya notaris, dan provisi KPR biasanya tiga pos terbesar. Sisihkan anggaran terpisah di luar DP.
                         </p>
@@ -622,31 +538,105 @@
                 </div>
             </div>
 
-            <p class="mt-4 text-sm text-ink-500">Huruf isi tetap Plus Jakarta Sans di kedua opsi. Cormorant hanya untuk judul dan kutipan, tidak untuk harga atau angka.</p>
+            <p class="mt-4 text-sm text-ink-500">Tidak ada huruf kedua di web. Judul, isi, harga, dan label semuanya Plus Jakarta Sans.</p>
+        </section>
+
+        <section aria-labelledby="radius">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <h2 id="radius" class="scroll-mt-24 text-xl font-semibold">Sudut komponen</h2>
+                <p class="text-sm text-ink-500">Satu keputusan tersisa — seberapa bulat kontrolnya.</p>
+            </div>
+
+            <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ([['A', '2 px', 'Sekarang', '', 'rounded-[2px]'], ['B', '6 px', 'Disarankan', 'border-ink-950', 'rounded-[6px]'], ['C', '10 px', 'Lebih lunak', '', 'rounded-[10px]']] as [$label, $size, $note, $frame, $radius])
+                    <div class="border {{ $frame ?: 'border-line' }}">
+                        <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
+                            <p class="text-xs font-semibold">Opsi {{ $label }} · {{ $size }}</p>
+                            <p class="text-xs text-ink-500">{{ $note }}</p>
+                        </div>
+                        <div class="space-y-3 bg-paper p-5">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <span class="{{ $radius }} bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                <span class="{{ $radius }} border border-ink-950 bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Dijual</span>
+                            </div>
+                            <span class="flex items-center justify-center {{ $radius }} bg-gold-500 px-4 py-2.5 text-sm font-semibold text-ink-950">Lihat detail</span>
+                            <span class="flex items-center justify-center {{ $radius }} border border-line px-4 py-2.5 text-sm font-semibold text-ink-950">Simpan properti</span>
+                            <div class="{{ $radius }} border border-line bg-white px-3 py-2">
+                                <p class="text-[11px] text-ink-500">Judul properti</p>
+                                <p class="mt-0.5 text-sm">Rumah Cluster Bintaro</p>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
+            <p class="mt-4 text-sm text-ink-500">Pembulatan hanya untuk kontrol yang disentuh: tombol, input, badge. Kartu, panel, dan bingkai foto tetap siku di ketiga opsi, supaya grid tidak melembut dan emas tetap satu-satunya elemen hangat.</p>
+
+            <div class="mt-8 grid gap-4 sm:grid-cols-2">
+                <div class="border border-line">
+                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
+                        <p class="text-xs font-semibold">Kartu siku</p>
+                        <p class="text-xs text-ink-500">Dipakai</p>
+                    </div>
+                    <div class="flex justify-center bg-paper p-5">
+                        <article class="w-full max-w-xs border border-line bg-white">
+                            <div class="flex aspect-[4/3] items-center justify-center bg-sand">
+                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                            </div>
+                            <div class="space-y-1 p-3">
+                                <p class="text-lg font-semibold leading-snug">Rumah Cluster Bintaro</p>
+                                <p class="tabular text-sm font-semibold">Rp 1.250.000.000</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+
+                <div class="border border-line">
+                    <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
+                        <p class="text-xs font-semibold">Kartu bulat 10 px</p>
+                        <p class="text-xs text-ink-500">Tidak disarankan</p>
+                    </div>
+                    <div class="flex justify-center bg-paper p-5">
+                        <article class="w-full max-w-xs overflow-hidden rounded-[10px] border border-line bg-white">
+                            <div class="flex aspect-[4/3] items-center justify-center bg-sand">
+                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                            </div>
+                            <div class="space-y-1 p-3">
+                                <p class="text-lg font-semibold leading-snug">Rumah Cluster Bintaro</p>
+                                <p class="tabular text-sm font-semibold">Rp 1.250.000.000</p>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+                </div>
+            </div>
 
             <div class="mt-8 overflow-x-auto border border-line">
                 <table class="w-full text-left text-sm">
-                    <caption class="sr-only">Ringkasan pilihan untuk klien</caption>
+                    <caption class="sr-only">Keputusan desain</caption>
                     <thead class="bg-sand text-xs font-semibold text-ink-600">
                         <tr>
                             <th class="px-4 py-3">Keputusan</th>
-                            <th class="px-4 py-3">Opsi A</th>
-                            <th class="px-4 py-3">Opsi B</th>
-                            <th class="px-4 py-3">Rekomendasi</th>
+                            <th class="px-4 py-3">Hasil</th>
+                            <th class="px-4 py-3">Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr class="border-t border-line">
                             <td class="px-4 py-3 font-semibold">Nada beranda</td>
-                            <td class="px-4 py-3">Hero gelap</td>
-                            <td class="px-4 py-3">Hero terang dengan foto</td>
-                            <td class="px-4 py-3 font-semibold">A</td>
+                            <td class="px-4 py-3">Hero terang dengan foto, tema terang di seluruh situs</td>
+                            <td class="px-4 py-3">Diputuskan</td>
                         </tr>
                         <tr class="border-t border-line">
-                            <td class="px-4 py-3 font-semibold">Huruf artikel</td>
-                            <td class="px-4 py-3">Plus Jakarta Sans</td>
-                            <td class="px-4 py-3">Cormorant untuk judul dan kutipan</td>
-                            <td class="px-4 py-3 font-semibold">B</td>
+                            <td class="px-4 py-3 font-semibold">Huruf</td>
+                            <td class="px-4 py-3">Satu keluarga: Plus Jakarta Sans</td>
+                            <td class="px-4 py-3">Diputuskan</td>
+                        </tr>
+                        <tr class="border-t border-line">
+                            <td class="px-4 py-3 font-semibold">Sudut komponen</td>
+                            <td class="px-4 py-3">Opsi A, B, atau C di atas</td>
+                            <td class="px-4 py-3 font-semibold">Menunggu</td>
                         </tr>
                     </tbody>
                 </table>

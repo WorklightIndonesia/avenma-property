@@ -10,7 +10,7 @@ Tiga atribut yang diturunkan dari logo: **mapan, hangat, presisi**.
 
 - **Mapan** — properti primer dan sekunder untuk pembeli serius. Tata letak tenang, tanpa gimmick.
 - **Hangat** — emas dan foto properti memberi kehangatan; sisanya netral.
-- **Presisi** — sudut tajam, garis tipis, angka rata. Tidak ada bentuk lunak.
+- **Presisi** — garis tipis, angka rata, geometri yang sama di setiap komponen. Tidak ada bentuk acak.
 
 Konsekuensi: emas adalah satu-satunya elemen hangat di halaman. Bila sebuah layar terasa "ramai", biasanya karena emas dipakai di lebih dari tiga tempat.
 
@@ -82,18 +82,26 @@ Satu keluarga: **Plus Jakarta Sans**, bobot 400, 500, 600. Dimuat dari `fonts.bu
 - Angka harga memakai kelas `.tabular` dan format `Rp 1.250.000.000`; beri `whitespace-nowrap` agar harga tidak pecah baris.
 - Maksimal dua ukuran menonjol per layar. Hirarki dari ukuran, bukan dari warna.
 
-**Terbuka:** huruf untuk judul artikel blog dan kutipan. Default tetap Plus Jakarta Sans. Alternatifnya Cormorant Garamond 600 hanya untuk judul dan kutipan, minimal 56 px, di atas `paper`; harga, angka, label, dan seluruh UI tetap Plus Jakarta Sans. Perbandingan dan status keputusan ada di `/design-system#artikel`.
+Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Jakarta Sans; klien menolak penambahan serif untuk halaman baca.
 
 ## 5. Ruang dan layout
 
 - Skala kelipatan 4 px. Jarak yang dipakai: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
 - Container `max-w-7xl` (1280 px) dengan gutter 16 / 24 / 32 px.
 - Jarak antar-section 96 px (mobile) dan 128 px (desktop) — selalu lebih besar dari jarak di dalam section.
-- Radius: `2px` default, `1px` untuk elemen kecil, maksimum `4px`. Tidak ada `rounded-full` kecuali untuk avatar.
+- Radius masih terbuka. Nilai yang berjalan sekarang: `2px` default, `1px` untuk elemen kecil, maksimum `4px`. Tiga opsi yang ditinjau: 2, 6, atau 10 px untuk kontrol (tombol, input, badge). Kartu, panel, dan bingkai foto tetap siku di ketiga opsi. Perbandingan di `/design-system#radius`; setelah diputuskan, ubah `borderRadius` di `tailwind.config.js` dan hanya itu.
+- Tidak ada `rounded-full` kecuali untuk avatar.
 - Pemisah memakai `border-line` 1 px atau langkah warna `paper` → `sand`. Bukan bayangan.
 - Satu-satunya bayangan: `shadow-float` untuk elemen yang benar-benar mengapung (dropdown, dialog).
 
 ## 6. Komponen
+
+**Hero beranda**
+
+- Tema terang: latar `paper`, teks `ink-950`, tanpa blok gelap. Footer tetap `ink-950`.
+- Dua kolom pada `lg`: teks di kiri, foto 4:3 di kanan; menumpuk di bawah `lg` dengan foto setelah teks pada rasio 16:9 agar tidak mendominasi layar.
+- Isi: label kecil `ink-500`, h1 36–48 px, satu paragraf 18 px `ink-600`, lalu `Lihat Properti` (gold) dan `Hubungi Kami` (outline).
+- Tanpa deretan klaim di bawah CTA. Bila foto belum ada, blok `sand` dengan mark dan label "Foto properti utama".
 
 **Button**
 

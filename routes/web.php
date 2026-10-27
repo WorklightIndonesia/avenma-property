@@ -9,7 +9,6 @@ Route::get('/', function () {
 
 if (! app()->environment('production')) {
     Route::view('/design-system', 'design-system')->name('design-system');
-    Route::view('/type-compare', 'type-compare')->name('type-compare');
 }
 
 Route::middleware(['auth', 'role:'.App\Models\User::ROLE_SUPER_ADMIN.','.App\Models\User::ROLE_ADMIN])->group(function () {
