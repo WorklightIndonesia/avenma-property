@@ -337,7 +337,7 @@
                                 <div class="mt-1 space-y-2">
                                     @foreach (['Terbaru', 'Harga terendah', 'Harga tertinggi'] as $index => $label)
                                         <label class="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-ink-700">
-                                            <input type="radio" name="preview-sort-native" value="{{ $label }}" @checked($index === 0) class="h-4 w-4 accent-ink-950 focus:ring-gold-500/30">
+                                            <input type="radio" name="preview-sort-native" value="{{ $label }}" @checked($index === 0) class="h-4 w-4 border-line text-ink-950 focus:ring-gold-500/30">
                                             {{ $label }}
                                         </label>
                                     @endforeach
