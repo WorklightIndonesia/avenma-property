@@ -94,19 +94,19 @@
         <section aria-labelledby="prototipe">
             <div class="border border-line bg-ink-950 px-6 py-10 text-paper sm:px-10">
                 <p class="text-sm text-paper/60">Untuk persetujuan klien</p>
-                <h2 id="prototipe" class="mt-2 max-w-2xl text-3xl font-semibold leading-tight tracking-tight">Lima layar, satu keputusan tersisa.</h2>
+                <h2 id="prototipe" class="mt-2 max-w-2xl text-3xl font-semibold leading-tight tracking-tight">Lima layar, keputusan lengkap.</h2>
                 <p class="mt-4 max-w-2xl text-paper/70">
-                    Prototipe di bawah memakai token dan komponen yang sama dengan situs nanti. Nada hero dan huruf sudah diputuskan. Yang masih kami minta Anda pilih hanya sudut komponen.
+                    Prototipe di bawah memakai token dan komponen yang sama dengan situs nanti. Nada hero, huruf, dan sudut komponen sudah diputuskan; halaman ini menjadi acuan saat katalog dibangun.
                 </p>
                 <div class="mt-6 grid gap-3 sm:grid-cols-2">
                     <p class="border border-paper/20 px-4 py-3 text-sm">
-                        <span class="font-semibold">Sudah diputuskan.</span> Tema terang, hero dengan foto, satu keluarga huruf.
+                        <span class="font-semibold">Diputuskan.</span> Tema terang, hero dengan foto, satu keluarga huruf, kontrol bersudut 6 px.
                     </p>
                     <p class="border border-paper/20 px-4 py-3 text-sm">
-                        <span class="font-semibold">Tersisa.</span> Seberapa bulat sudut tombol dan input — <a href="#radius" class="underline underline-offset-4 hover:text-white">Opsi A, B, atau C</a>.
+                        <span class="font-semibold">Menunggu klien.</span> Foto properti dan file vektor logo.
                     </p>
                 </div>
-                <p class="mt-4 text-xs text-paper/50">Tautan dan formulir belum aktif, kecuali simulasi KPR yang bisa dicoba. Cukup sebut satu huruf saat rapat, misalnya B.</p>
+                <p class="mt-4 text-xs text-paper/50">Tautan dan formulir belum aktif, kecuali simulasi KPR yang bisa dicoba.</p>
             </div>
         </section>
 
@@ -544,11 +544,11 @@
         <section aria-labelledby="radius">
             <div class="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 id="radius" class="scroll-mt-24 text-xl font-semibold">Sudut komponen</h2>
-                <p class="text-sm text-ink-500">Satu keputusan tersisa — seberapa bulat kontrolnya.</p>
+                <p class="text-sm text-ink-500">Opsi B dipilih: kontrol 6 px, kartu tetap siku.</p>
             </div>
 
             <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                @foreach ([['A', '2 px', 'Sekarang', '', 'rounded-[2px]'], ['B', '6 px', 'Disarankan', 'border-ink-950', 'rounded-[6px]'], ['C', '10 px', 'Lebih lunak', '', 'rounded-[10px]']] as [$label, $size, $note, $frame, $radius])
+                @foreach ([['A', '2 px', 'Ditolak', '', 'rounded-[2px]'], ['B', '6 px', 'Diputuskan', 'border-ink-950', 'rounded-[6px]'], ['C', '10 px', 'Ditolak', '', 'rounded-[10px]']] as [$label, $size, $note, $frame, $radius])
                     <div class="border {{ $frame ?: 'border-line' }}">
                         <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-line bg-sand px-4 py-2.5">
                             <p class="text-xs font-semibold">Opsi {{ $label }} · {{ $size }}</p>
@@ -635,8 +635,8 @@
                         </tr>
                         <tr class="border-t border-line">
                             <td class="px-4 py-3 font-semibold">Sudut komponen</td>
-                            <td class="px-4 py-3">Opsi A, B, atau C di atas</td>
-                            <td class="px-4 py-3 font-semibold">Menunggu</td>
+                            <td class="px-4 py-3">Kontrol 6 px pada tombol, input, dan badge; kartu, panel, dan foto tetap siku; thumb slider bulat penuh</td>
+                            <td class="px-4 py-3">Diputuskan</td>
                         </tr>
                     </tbody>
                 </table>

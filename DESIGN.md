@@ -89,8 +89,10 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Skala kelipatan 4 px. Jarak yang dipakai: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
 - Container `max-w-7xl` (1280 px) dengan gutter 16 / 24 / 32 px.
 - Jarak antar-section 96 px (mobile) dan 128 px (desktop) — selalu lebih besar dari jarak di dalam section.
-- Radius masih terbuka. Nilai yang berjalan sekarang: `2px` default, `1px` untuk elemen kecil, maksimum `4px`. Tiga opsi yang ditinjau: 2, 6, atau 10 px untuk kontrol (tombol, input, badge). Kartu, panel, dan bingkai foto tetap siku di ketiga opsi. Perbandingan di `/design-system#radius`; setelah diputuskan, ubah `borderRadius` di `tailwind.config.js` dan hanya itu.
-- Tidak ada `rounded-full` kecuali untuk avatar.
+- Radius kontrol: `6px` default untuk tombol, input, pilihan, dan badge. `4px` untuk elemen sangat kecil. Maksimum `12px`, hanya untuk panel besar.
+- Kartu, panel, dan bingkai foto tetap siku: tanpa `rounded`. Ini yang membuat katalog tetap terbaca sebagai grid, dan menghindari sudut foto yang ikut membulat.
+- Satu-satunya bentuk bulat penuh: thumb slider rentang (18 px) dan avatar. Thumb bulat karena ia pegangan, bukan bidang.
+- Tidak ada `rounded-full` untuk tombol; CTA tetap persegi panjang bersudut 6 px.
 - Pemisah memakai `border-line` 1 px atau langkah warna `paper` → `sand`. Bukan bayangan.
 - Satu-satunya bayangan: `shadow-float` untuk elemen yang benar-benar mengapung (dropdown, dialog).
 
@@ -105,7 +107,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Button**
 
-- Primer: `bg-gold-500 text-ink-950 hover:bg-gold-700 hover:text-white`, padding `px-5 py-2.5`, radius 2 px, teks 14 px bobot 600.
+- Primer: `bg-gold-500 text-ink-950 hover:bg-gold-700 hover:text-white`, padding `px-5 py-2.5`, radius 6 px, teks 14 px bobot 600.
 - Sekunder: border `line`, teks `ink-950`, latar transparan, hover latar `sand`.
 - Ghost: teks `ink-600`, hover teks `ink-950`.
 - Destruktif: teks putih di atas `danger`.
@@ -114,7 +116,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Input**
 
-- Border `line`, latar putih, radius 2 px, padding `px-3 py-2`.
+- Border `line`, latar putih, radius 6 px, padding `px-3 py-2`.
 - Fokus: border `gold-700` + ring `gold-500/30`.
 - Error: border `danger`, pesan error 14 px `danger` di bawah field, dihubungkan lewat `aria-describedby`. Tambahkan `border-danger focus:border-danger focus:ring-danger/30` pada input yang error.
 - Label selalu terlihat; placeholder bukan pengganti label.
@@ -128,14 +130,14 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Angsuran memakai anuitas `P·r / (1 − (1+r)^−n)`, `r` = bunga tahunan ÷ 12, `n` = tenor × 12. Nilai awal bunga dan DP minimum dibaca dari `kpr_settings`, jangan ditulis ulang di view.
 - Panel hasil berlatar `ink-950`: label 14 px `paper/60`, angsuran 36 px bobot 600 `paper` `.tabular`, rincian 14 px dengan garis `paper/15`, CTA emas penuh di dalam panel.
 - Setiap tampilan angka wajib disertai catatan "perkiraan, bukan penawaran bank" dan penyebutan biaya yang tidak dihitung (provisi, asuransi, pajak).
-- Slider memakai thumb 18×18 px radius 2 px `gold-500` di atas track 2 px `line`; fokus outline 2 px `gold-700`.
+- Slider memakai thumb 18×18 px bulat penuh `gold-500` di atas track 2 px `line`; fokus outline 2 px `gold-700`.
 
 **Badge status**
 
 - `Dijual` — border `ink-950`, latar `paper`, teks `ink-950`.
 - `Disewa` — latar `gold-700`, teks putih.
 - `Baru` — latar `gold-300`, teks `ink-950`.
-- Radius 2 px, teks 12 px bobot 600, padding `px-2 py-0.5`.
+- Radius 6 px, teks 12 px bobot 600, padding `px-2 py-0.5`.
 
 **Kartu properti**
 
@@ -232,7 +234,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 | `paper` | `bg-paper` | `#FAFAF9` |
 | `sand` | `bg-sand` | `#F2F0EC` |
 | `line` | `border-line` | `#E4E1DB` |
-| radius default | `rounded` | `2px` |
+| radius kontrol | `rounded` | `6px` |
 | bayangan | `shadow-float` | `0 12px 32px -8px rgba(20,17,14,.18)` |
 | font | `font-sans` | Plus Jakarta Sans |
 
