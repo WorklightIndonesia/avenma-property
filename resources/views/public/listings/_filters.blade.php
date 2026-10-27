@@ -88,13 +88,13 @@
                 </select>
             </div>
 
-            <fieldset id="{{ $prefix }}filter-urut" tabindex="-1" class="scroll-mt-24 sm:col-span-2 lg:col-span-5">
+            <fieldset id="{{ $prefix }}filter-urut" tabindex="-1" class="scroll-mt-24 sm:col-span-2 lg:col-span-1">
                 <legend class="text-xs font-medium text-ink-500">Urutkan</legend>
-                <div class="mt-1 flex flex-wrap gap-2">
+                <div class="mt-1 space-y-1.5">
                     @foreach (App\Models\Listing::SORTS as $value => $label)
-                        <label class="cursor-pointer">
-                            <input type="radio" name="urut" value="{{ $value }}" @checked($sort === $value) class="peer sr-only">
-                            <span class="inline-flex min-h-11 items-center rounded border border-line px-4 text-sm font-medium text-ink-600 hover:border-ink-950 peer-checked:border-ink-950 peer-checked:bg-ink-950 peer-checked:text-paper peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-gold-700">{{ $label }}</span>
+                        <label class="flex items-center gap-2 text-sm text-ink-700">
+                            <input type="radio" name="urut" value="{{ $value }}" @checked($sort === $value) class="border-line text-gold-700 focus:ring-gold-500/30">
+                            {{ $label }}
                         </label>
                     @endforeach
                 </div>
