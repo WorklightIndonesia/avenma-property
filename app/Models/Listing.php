@@ -32,6 +32,7 @@ class Listing extends Model
         'land_area',
         'building_area',
         'address',
+        'contact_phone',
         'map_embed',
         'is_featured',
         'is_published',
