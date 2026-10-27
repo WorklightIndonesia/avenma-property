@@ -298,7 +298,7 @@
 
                 <div>
                     <p class="text-xs font-semibold text-ink-500">Keadaan 3: pilihan kontrol urutan</p>
-                    <p class="mt-1 text-sm text-ink-600">Empat bentuk untuk kolom "Urutkan". Yang dipakai sekarang adalah radio bertumpuk di dalam panel.</p>
+                    <p class="mt-1 text-sm text-ink-600">Empat bentuk untuk kolom "Urutkan". Pilihan B yang dipakai: radio tersembunyi, label tampil sebagai tombol.</p>
 
                     <div class="mt-3 grid gap-4 lg:grid-cols-3">
                         <div class="border border-line px-4 py-4">
