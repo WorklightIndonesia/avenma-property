@@ -109,9 +109,20 @@ Satu keluarga: **Plus Jakarta Sans**, bobot 400, 500, 600. Dimuat dari `fonts.bu
 - Error: border `danger`, pesan error 14 px `danger` di bawah field, dihubungkan lewat `aria-describedby`. Tambahkan `border-danger focus:border-danger focus:ring-danger/30` pada input yang error.
 - Label selalu terlihat; placeholder bukan pengganti label.
 
+**Simulasi KPR**
+
+- Harga properti terisi dari listing tetapi bisa diedit; DP, tenor, dan suku bunga diubah pembeli.
+- Field harga memakai teks dengan pemisah ribuan saat mengetik (`1.250.000.000`), bukan `<input type="number">`, dan dibatasi 999.999.999.999.
+- Suku bunga punya dua tipe, `Tetap` dan `Mengambang`, dengan satu angka yang dipakai sama untuk perhitungan. Tipe `Mengambang` wajib disertai kalimat bahwa angsuran bisa berubah.
+- DP: slider 20–70%, langkah 5%. Tenor: 5, 10, 15, 20 tahun, dibatasi `max_tenor_years` di `kpr_settings`. Bunga: slider 3–15%, langkah 0,25.
+- Angsuran memakai anuitas `P·r / (1 − (1+r)^−n)`, `r` = bunga tahunan ÷ 12, `n` = tenor × 12. Nilai awal bunga dan DP minimum dibaca dari `kpr_settings`, jangan ditulis ulang di view.
+- Panel hasil berlatar `ink-950`: label 14 px `paper/60`, angsuran 36 px bobot 600 `paper` `.tabular`, rincian 14 px dengan garis `paper/15`, CTA emas penuh di dalam panel.
+- Setiap tampilan angka wajib disertai catatan "perkiraan, bukan penawaran bank" dan penyebutan biaya yang tidak dihitung (provisi, asuransi, pajak).
+- Slider memakai thumb 18×18 px radius 2 px `gold-500` di atas track 2 px `line`; fokus outline 2 px `gold-700`.
+
 **Badge status**
 
-- `Dijual` — latar `ink-950`, teks `paper`.
+- `Dijual` — border `ink-950`, latar `paper`, teks `ink-950`.
 - `Disewa` — latar `gold-700`, teks putih.
 - `Baru` — latar `gold-300`, teks `ink-950`.
 - Radius 2 px, teks 12 px bobot 600, padding `px-2 py-0.5`.
@@ -120,11 +131,19 @@ Satu keluarga: **Plus Jakarta Sans**, bobot 400, 500, 600. Dimuat dari `fonts.bu
 
 - Foto rasio 4:3, sudut tajam, `object-cover`.
 - Badge di atas foto, kanan atas.
+- Baris meta di atas judul: tipe `Primer`/`Sekunder` (12 px, `ink-950`, bobot 600) dan nama developer (`ink-500`). Developer kosong: tampilkan tipe saja.
 - Judul 18 px bobot 600, lokasi 14 px `ink-500`.
 - Harga 18 px bobot 600 `.tabular`.
 - Spesifikasi: ikon garis 16 px + angka, satu baris, `ink-600`.
 - Hover: border `ink-950`, tanpa lift dan tanpa bayangan.
 - Tanpa foto: blok `sand` dengan wordmark `-ink` di tengah, bukan placeholder abu-abu.
+
+**Detail properti**
+
+- Urutan header: meta `Primer/Sekunder · jenis · developer` (12 px), judul 24 px, alamat lengkap (jalan + lokasi) 14 px `ink-500`, lalu harga 24 px `.tabular`.
+- Spesifikasi lima kolom: kamar tidur, kamar mandi, carport, luas tanah, luas bangunan. Di layar sempit dua kolom.
+- Sidebar: harga, dua aksi (WhatsApp, simpan), tautan simulasi KPR, lalu developer dan agen penjual.
+- Tanggal "Diperbarui" 12 px `ink-500` sebaris dengan breadcrumb.
 
 **Tabel (admin)**
 
@@ -170,7 +189,9 @@ Satu keluarga: **Plus Jakarta Sans**, bobot 400, 500, 600. Dimuat dari `fonts.bu
 
 - Bahasa Indonesia baku, sapaan "Anda" untuk halaman publik, "kamu" tidak dipakai.
 - Harga: `Rp 1.250.000.000` (titik sebagai pemisah ribuan, tanpa desimal).
+- Persentase: `7,5%` (koma sebagai pemisah desimal).
 - Label status: `Dijual`, `Disewa`, `Baru`.
+- Label tipe properti: `Primer`, `Sekunder`.
 - Tombol menyebut aksinya: `Lihat detail`, `Hubungi via WhatsApp`, `Simpan properti`.
 - Empty state menjelaskan langkah berikutnya, bukan meminta maaf.
 - Tanggal: `26 Oktober 2026`.
