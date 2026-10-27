@@ -82,6 +82,8 @@ Satu keluarga: **Plus Jakarta Sans**, bobot 400, 500, 600. Dimuat dari `fonts.bu
 - Angka harga memakai kelas `.tabular` dan format `Rp 1.250.000.000`; beri `whitespace-nowrap` agar harga tidak pecah baris.
 - Maksimal dua ukuran menonjol per layar. Hirarki dari ukuran, bukan dari warna.
 
+**Terbuka:** huruf untuk judul artikel blog dan kutipan. Default tetap Plus Jakarta Sans. Alternatifnya Cormorant Garamond 600 hanya untuk judul dan kutipan, minimal 56 px, di atas `paper`; harga, angka, label, dan seluruh UI tetap Plus Jakarta Sans. Perbandingan dan status keputusan ada di `/design-system#artikel`.
+
 ## 5. Ruang dan layout
 
 - Skala kelipatan 4 px. Jarak yang dipakai: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
