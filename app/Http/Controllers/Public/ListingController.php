@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\KprSetting;
 use App\Models\Listing;
 use App\Models\Location;
 use App\Models\SiteSetting;
+use App\Support\KprCalculator;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -30,7 +32,7 @@ class ListingController extends Controller
             ->published()
             ->filter($filters)
             ->sorted($sort)
-            ->with(['location', 'developer'])
+            ->with(['location', 'developer', 'images'])
             ->paginate($perPage)
             ->withQueryString();
 
@@ -48,7 +50,7 @@ class ListingController extends Controller
         ]);
     }
 
-    public function show(Listing $listing): View
+    public function show(Request $request, Listing $listing): View
     {
         abort_unless($listing->is_published, 404);
 
@@ -61,7 +63,49 @@ class ListingController extends Controller
             'listing' => $listing,
             'whatsappUrl' => $this->whatsappUrl($phone, $listing),
             'contactLabel' => $listing->contact_phone ? 'Hubungi Agen' : 'Hubungi Avenma',
+            'kpr' => $this->kpr($request, $listing),
         ]);
+    }
+
+    /**
+     * Loan simulation state, seeded from the listing price and the KPR settings.
+     * Bad query values fall back instead of failing the page.
+     *
+     * @return array<string, mixed>
+     */
+    private function kpr(Request $request, Listing $listing): array
+    {
+        $settings = KprSetting::query()->first();
+        $number = fn (string $key, float $default) => is_numeric($request->query($key))
+            ? (float) $request->query($key)
+            : $default;
+
+        $price = max(1, min((int) $number('harga', $listing->price), 100_000_000_000));
+        $dpPercent = min(90, max(0, $number('dp', (float) ($settings?->min_dp_percent ?? 20))));
+        $rate = min(100, max(0, $number('bunga', (float) ($settings?->interest_rate ?? 7.5))));
+
+        $tenorOptions = range(5, max(5, (int) ($settings?->max_tenor_years ?? 20)), 5);
+        $tenor = (int) $number('tenor', (float) max($tenorOptions));
+        $tenor = in_array($tenor, $tenorOptions, true) ? $tenor : max($tenorOptions);
+
+        $dpAmount = (int) round($price * $dpPercent / 100);
+        $principal = $price - $dpAmount;
+        $months = $tenor * 12;
+        $monthly = KprCalculator::monthly($principal, $rate, $months);
+
+        return [
+            'price' => $price,
+            'dpPercent' => $dpPercent,
+            'dpAmount' => $dpAmount,
+            'principal' => $principal,
+            'tenor' => $tenor,
+            'tenorOptions' => $tenorOptions,
+            'rate' => $rate,
+            'months' => $months,
+            'monthly' => $monthly,
+            'total' => $dpAmount + $monthly * $months,
+            'submitted' => $request->query('hitung') === '1',
+        ];
     }
 
     private function whatsappUrl(?string $phone, Listing $listing): ?string

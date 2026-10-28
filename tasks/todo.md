@@ -88,7 +88,7 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 4
   - Scope: Medium
 
-- [ ] **Task 11: KPR simulation**
+- [x] **Task 11: KPR simulation**
   - Acceptance: form harga, DP, tenor, bunga; hasil cicilan per bulan benar (unit test).
   - Verification: unit test rumus anuitas; manual cek di halaman detail.
   - Files: `app/Support/KprCalculator.php`, view section di listing detail

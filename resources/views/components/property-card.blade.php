@@ -18,9 +18,14 @@
 @endphp
 
 <article class="relative border border-line bg-white transition duration-150 hover:-translate-y-1 hover:border-ink-950 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
-    {{-- shortcut: foto properti belum ada, ganti blok sand dengan gambar listing saat file tersedia (Task 14) --}}
+    {{-- shortcut: sample photos stand in until the client sends real ones; listings without photos keep the mark block --}}
     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
-        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+        @if ($cover = $listing->images->first())
+            <img src="{{ asset($cover->path) }}" alt="{{ $cover->alt ?: $listing->title }}" class="h-full w-full object-cover" loading="lazy">
+        @else
+            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+        @endif
+
         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ ucfirst($listing->status) }}</span>
     </div>
 

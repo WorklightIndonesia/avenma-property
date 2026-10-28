@@ -93,15 +93,47 @@ class ListingShowTest extends TestCase
         $listing = $this->listing(['slug' => 'rumah-foto']);
 
         $listing->images()->create([
-            'path' => 'listings/foto-1.webp',
+            'path' => 'images/properties/foto-1.webp',
             'alt' => 'Tampak depan rumah',
             'sort_order' => 0,
         ]);
 
         $this->get('/properti/rumah-foto')
             ->assertOk()
-            ->assertSee('/storage/listings/foto-1.webp', false)
+            ->assertSee('/images/properties/foto-1.webp', false)
             ->assertSee('Tampak depan rumah');
+    }
+
+    public function test_kpr_form_is_prefilled_with_the_listing_price(): void
+    {
+        $this->listing(['slug' => 'rumah-kpr', 'price' => 1_250_000_000]);
+
+        $this->get('/properti/rumah-kpr')
+            ->assertOk()
+            ->assertSee('Simulasi KPR')
+            ->assertSee('name="hitung"', false)
+            ->assertSee('value="1250000000"', false);
+    }
+
+    public function test_kpr_result_is_calculated_from_the_query(): void
+    {
+        $this->listing(['slug' => 'rumah-kpr', 'price' => 1_000_000_000]);
+
+        $this->get('/properti/rumah-kpr?hitung=1&harga=1000000000&dp=20&tenor=10&bunga=7.5')
+            ->assertOk()
+            ->assertSee('Cicilan per bulan')
+            ->assertSee('Rp 9.496.142')
+            ->assertSee('Rp 200.000.000'); // 20% down payment
+    }
+
+    public function test_kpr_input_falls_back_when_the_query_is_invalid(): void
+    {
+        $this->listing(['slug' => 'rumah-kpr', 'price' => 1_000_000_000]);
+
+        $this->get('/properti/rumah-kpr?hitung=1&harga=abc&dp=200&tenor=99&bunga=-5')
+            ->assertOk()
+            ->assertSee('Cicilan per bulan')
+            ->assertSee('value="1000000000"', false);
     }
 
     public function test_card_links_to_the_detail_page(): void
