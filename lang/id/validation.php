@@ -104,6 +104,7 @@ return [
         'photos.*' => 'Foto',
         'price' => 'Harga',
         'property_type' => 'Tipe properti',
+        'role' => 'Role',
         'status' => 'Status',
         'title' => 'Judul',
     ],
