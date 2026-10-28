@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\ListingController;
@@ -36,6 +37,10 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
 
     Route::delete('/admin/listings/{listing}/foto/{image}', [App\Http\Controllers\Admin\ListingController::class, 'destroyPhoto'])
         ->name('admin.listings.photos.destroy');
+
+    Route::resource('/admin/developers', DeveloperController::class)
+        ->except('show')
+        ->names('admin.developers');
 });
 
 Route::middleware('auth')->group(function () {
