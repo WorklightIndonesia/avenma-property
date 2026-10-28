@@ -11,6 +11,8 @@ class Location extends Model
         'name',
         'name_en',
         'province',
+        'city',
+        'code',
         'slug',
     ];
 
