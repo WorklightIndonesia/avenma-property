@@ -26,6 +26,7 @@
     $gallery = $listing->images->map(fn ($image) => [
         'src' => asset($image->path),
         'alt' => $image->alt ?: $photoAlt,
+        'label' => $image->label,
     ])->values();
     $mapSrc = $listing->mapEmbedSrc();
     $price = 'Rp '.number_format($listing->price, 0, ',', '.');
@@ -79,6 +80,7 @@
                                     <div class="relative">
                                         <img src="{{ asset($cover->path) }}" :src="photos[active].src" alt="{{ $cover->alt ?: $photoAlt }}" :alt="photos[active].alt" class="aspect-[4/3] w-full object-cover">
                                         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ ucfirst($listing->status) }}</span>
+                                        <span x-show="photos[active].label" x-text="photos[active].label" class="absolute bottom-3 left-3 rounded bg-ink-950/90 px-2.5 py-1 text-xs font-semibold text-paper">{{ $cover->label }}</span>
 
                                         @if ($listing->images->count() > 1)
                                             <button type="button" @click="prev()" aria-label="Foto sebelumnya" class="absolute left-3 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded border border-line bg-paper/90 text-ink-950 transition-colors duration-150 hover:bg-paper focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-700">
@@ -94,16 +96,19 @@
                                     </div>
 
                                     @if ($listing->images->count() > 1)
-                                        <div class="mt-2 grid grid-cols-4 gap-2">
+                                        <div class="mt-2 flex snap-x snap-mandatory gap-2 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:thin]">
                                             @foreach ($listing->images as $image)
                                                 <button
                                                     type="button"
                                                     @click="active = {{ $loop->index }}"
                                                     :class="active === {{ $loop->index }} ? 'border-ink-950' : 'border-line'"
-                                                    class="border p-0.5 hover:border-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-700"
-                                                    aria-label="Tampilkan foto {{ $loop->iteration }}"
+                                                    class="relative w-[calc(25%-6px)] flex-none snap-start overflow-hidden border p-0.5 hover:border-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-700"
+                                                    aria-label="Tampilkan foto {{ $loop->iteration }}{{ $image->label ? ': '.$image->label : '' }}"
                                                 >
                                                     <img src="{{ asset($image->path) }}" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy">
+                                                    @if ($image->label)
+                                                        <span class="absolute bottom-1.5 left-1.5 hidden max-w-[calc(100%-0.75rem)] truncate rounded bg-ink-950/90 px-2 py-0.5 text-xs font-semibold text-paper sm:block">{{ $image->label }}</span>
+                                                    @endif
                                                 </button>
                                             @endforeach
                                         </div>

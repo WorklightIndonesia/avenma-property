@@ -96,13 +96,22 @@ class ListingShowTest extends TestCase
         $listing->images()->create([
             'path' => 'images/properties/foto-1.webp',
             'alt' => 'Tampak depan rumah',
+            'label' => 'Tampak depan',
             'sort_order' => 0,
+        ]);
+
+        $listing->images()->create([
+            'path' => 'images/properties/foto-2.webp',
+            'alt' => 'Dapur rumah',
+            'label' => 'Dapur',
+            'sort_order' => 1,
         ]);
 
         $this->get('/properti/rumah-foto')
             ->assertOk()
             ->assertSee('/images/properties/foto-1.webp', false)
-            ->assertSee('Tampak depan rumah');
+            ->assertSee('Tampilkan foto 1: Tampak depan')
+            ->assertSee('Tampilkan foto 2: Dapur');
     }
 
     public function test_kpr_widget_is_prefilled_from_the_listing_and_settings(): void

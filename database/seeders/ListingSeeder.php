@@ -125,39 +125,41 @@ class ListingSeeder extends Seeder
         // shortcut: Pexels sample photos stand in until the client sends real files (Task 14)
         $photos = [
             'rumah-cluster-bintaro' => [
-                ['pexels-1396122.webp', 'Rumah dua lantai dengan dua carport di Bintaro'],
-                ['pexels-1643383.webp', 'Ruang keluarga dengan sofa dan meja kopi'],
-                ['pexels-1080721.webp', 'Dapur putih dengan pulau dan kursi bar'],
-                ['pexels-1648776.webp', 'Ruang keluarga dengan sofa cokelat dan jendela besar'],
+                ['pexels-1396122.webp', 'Tampak depan', 'Rumah dua lantai dengan dua carport di Bintaro'],
+                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa dan meja kopi'],
+                ['pexels-1080721.webp', 'Dapur', 'Dapur putih dengan pulau dan kursi bar'],
+                ['pexels-1648776.webp', 'Ruang santai', 'Ruang keluarga dengan sofa cokelat dan jendela besar'],
+                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
+                ['pexels-1571460.webp', 'Area tangga', 'Ruang keluarga dengan tangga kayu dan jendela tinggi'],
             ],
             'apartemen-sudirman-park' => [
-                ['pexels-1571460.webp', 'Ruang keluarga apartemen dengan tangga dan jendela tinggi'],
-                ['pexels-2724749.webp', 'Dapur apartemen dengan kabinet putih'],
-                ['pexels-1457842.webp', 'Ruang keluarga dengan TV dan jendela lebar'],
+                ['pexels-1571460.webp', 'Ruang keluarga', 'Ruang keluarga apartemen dengan tangga dan jendela tinggi'],
+                ['pexels-2724749.webp', 'Dapur', 'Dapur apartemen dengan kabinet putih'],
+                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
             ],
             'townhouse-serpong-garden' => [
-                ['pexels-259588.webp', 'Townhouse batu dua lantai dengan jalan masuk'],
-                ['pexels-1648776.webp', 'Ruang keluarga dengan sofa cokelat'],
-                ['pexels-2724749.webp', 'Dapur dengan kabinet putih'],
-                ['pexels-1571460.webp', 'Ruang keluarga dengan tangga kayu'],
+                ['pexels-259588.webp', 'Tampak depan', 'Townhouse batu dua lantai dengan jalan masuk'],
+                ['pexels-1648776.webp', 'Ruang santai', 'Ruang keluarga dengan sofa cokelat'],
+                ['pexels-2724749.webp', 'Dapur', 'Dapur dengan kabinet putih'],
+                ['pexels-1571460.webp', 'Area tangga', 'Ruang keluarga dengan tangga kayu'],
             ],
             'rumah-minimalis-cipete' => [
-                ['pexels-106399.webp', 'Rumah dengan halaman depan dan garasi'],
-                ['pexels-1643383.webp', 'Ruang keluarga dengan sofa abu-abu'],
-                ['pexels-1457842.webp', 'Ruang keluarga dengan TV dan jendela lebar'],
-                ['pexels-1080721.webp', 'Dapur putih dengan pulau dan kursi bar'],
+                ['pexels-106399.webp', 'Tampak depan', 'Rumah dengan halaman depan dan garasi'],
+                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa abu-abu'],
+                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
+                ['pexels-1080721.webp', 'Dapur', 'Dapur putih dengan pulau dan kursi bar'],
             ],
             'apartemen-kemang-village' => [
-                ['pexels-1571460.webp', 'Ruang keluarga apartemen dengan tangga dan jendela tinggi'],
-                ['pexels-1080721.webp', 'Dapur apartemen dengan kabinet putih'],
-                ['pexels-2724749.webp', 'Dapur apartemen dengan pulau'],
-                ['pexels-1457842.webp', 'Ruang keluarga dengan TV dan jendela lebar'],
+                ['pexels-1571460.webp', 'Ruang keluarga', 'Ruang keluarga apartemen dengan tangga dan jendela tinggi'],
+                ['pexels-1080721.webp', 'Dapur', 'Dapur apartemen dengan kabinet putih'],
+                ['pexels-2724749.webp', 'Dapur tamu', 'Dapur apartemen dengan pulau'],
+                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
             ],
             'rumah-taman-beverly' => [
-                ['pexels-259600.webp', 'Rumah bata dua lantai dengan taman'],
-                ['pexels-1029599.webp', 'Rumah putih dengan pagar dan halaman'],
-                ['pexels-1648776.webp', 'Ruang keluarga dengan sofa cokelat'],
-                ['pexels-1643383.webp', 'Ruang keluarga dengan sofa abu-abu'],
+                ['pexels-259600.webp', 'Tampak depan', 'Rumah bata dua lantai dengan taman'],
+                ['pexels-1029599.webp', 'Taman depan', 'Rumah putih dengan pagar dan halaman'],
+                ['pexels-1648776.webp', 'Ruang santai', 'Ruang keluarga dengan sofa cokelat'],
+                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa abu-abu'],
             ],
         ];
 
@@ -168,10 +170,10 @@ class ListingSeeder extends Seeder
                 continue;
             }
 
-            foreach ($images as $sort => [$file, $alt]) {
+            foreach ($images as $sort => [$file, $label, $alt]) {
                 $listing->images()->updateOrCreate(
                     ['path' => 'images/properties/'.$file],
-                    ['alt' => $alt, 'sort_order' => $sort]
+                    ['label' => $label, 'alt' => $alt, 'sort_order' => $sort]
                 );
             }
         }

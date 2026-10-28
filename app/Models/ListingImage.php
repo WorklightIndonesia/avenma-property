@@ -11,6 +11,7 @@ class ListingImage extends Model
         'listing_id',
         'path',
         'alt',
+        'label',
         'sort_order',
     ];
 
