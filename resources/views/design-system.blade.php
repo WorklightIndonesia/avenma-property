@@ -478,144 +478,15 @@
                     <p class="text-xs font-semibold">Simulasi KPR</p>
                     <p class="text-xs text-ink-500">/properti/rumah-cluster-bintaro</p>
                 </div>
-                <div
-                    class="bg-paper px-4 py-6 sm:px-6"
-                    x-data="{
-                        price: 1250000000,
-                        rate: 7.5,
-                        rateType: 'fixed',
-                        dp: 20,
-                        tenor: 15,
-                        get dpAmount() { return this.price * this.dp / 100 },
-                        get principal() { return this.price - this.dpAmount },
-                        get rateLabel() { return this.rate.toLocaleString('id-ID', { maximumFractionDigits: 2 }) },
-                        get monthly() {
-                            const r = this.rate / 100 / 12, n = this.tenor * 12;
-                            return this.principal * r / (1 - Math.pow(1 + r, -n));
-                        },
-                        get totalInterest() { return this.monthly * this.tenor * 12 - this.principal },
-                        get totalPayment() { return this.dpAmount + this.monthly * this.tenor * 12 },
-                        rp: function (value) { return 'Rp ' + Math.round(value).toLocaleString('id-ID') },
-                        setPrice: function (event) {
-                            const el = event.target;
-                            const caretDigits = el.value.slice(0, el.selectionStart).replace(/\D/g, '').length;
-                            const digits = el.value.replace(/\D/g, '');
-                            this.price = digits === '' ? 0 : Math.min(parseInt(digits, 10), 999999999999);
-                            const text = this.price === 0 ? '' : this.price.toLocaleString('id-ID');
-                            el.value = text;
-                            let pos = 0, seen = 0;
-                            while (pos < text.length && seen < caretDigits) {
-                                if (/\d/.test(text[pos])) seen++;
-                                pos++;
-                            }
-                            el.setSelectionRange(pos, pos);
-                        }
-                    }"
-                >
-                    <p class="text-2xl font-semibold tracking-tight">Hitung angsuran Anda</p>
-                    <p class="mt-1 max-w-xl text-sm text-ink-500">Perkiraan angsuran bulanan untuk Rumah Cluster Bintaro, Rp 1.250.000.000.</p>
-
-                    <div class="mt-6 grid gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
-                        <div class="border border-line bg-white p-5 sm:p-6">
-                            <div>
-                                <label for="kpr-price" class="text-sm font-semibold">Harga properti</label>
-                                <div class="mt-1 flex items-baseline gap-2 rounded border border-line bg-white px-3 py-2 focus-within:border-gold-700 focus-within:ring-2 focus-within:ring-gold-500/30">
-                                    <span class="text-sm text-ink-500">Rp</span>
-                                    <input
-                                        id="kpr-price"
-                                        type="text"
-                                        inputmode="numeric"
-                                        autocomplete="off"
-                                        value="1.250.000.000"
-                                        @input="setPrice($event)"
-                                        class="tabular w-full min-w-0 border-0 bg-transparent p-0 text-lg font-semibold text-ink-950 focus:outline-none focus:ring-0"
-                                        aria-describedby="kpr-price-help"
-                                    >
-                                </div>
-                                <p id="kpr-price-help" class="mt-1 text-xs text-ink-500">Terisi dari listing. Ubah untuk mencoba harga lain.</p>
-                            </div>
-
-                            <div class="mt-6">
-                                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                                    <label for="kpr-dp" class="text-sm font-semibold">Uang muka (DP)</label>
-                                    <p class="tabular text-sm font-semibold"><span x-text="dp">20</span>% · <span x-text="rp(dpAmount)">Rp 250.000.000</span></p>
-                                </div>
-                                <input id="kpr-dp" type="range" min="20" max="70" step="5" class="range mt-2 w-full" x-model.number="dp" aria-describedby="kpr-dp-help">
-                                <p id="kpr-dp-help" class="mt-1 text-xs text-ink-500">Minimum 20%. Maksimum 70%.</p>
-                            </div>
-
-                            <div class="mt-6">
-                                <p id="kpr-tenor-label" class="text-sm font-semibold">Tenor (tahun)</p>
-                                <div class="mt-2 grid grid-cols-4 gap-2" role="group" aria-labelledby="kpr-tenor-label">
-                                    @foreach ([5, 10, 15, 20] as $years)
-                                        <button
-                                            type="button"
-                                            class="h-11 rounded border text-sm font-semibold transition-colors duration-150"
-                                            :class="tenor === {{ $years }} ? 'border-ink-950 bg-ink-950 text-paper' : 'border-line text-ink-600 hover:border-ink-950'"
-                                            :aria-pressed="tenor === {{ $years }}"
-                                            @click="tenor = {{ $years }}"
-                                        >{{ $years }}</button>
-                                    @endforeach
-                                </div>
-                            </div>
-
-                            <div class="mt-6 border-t border-line pt-5">
-                                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                                    <label for="kpr-rate" class="text-sm font-semibold">Suku bunga</label>
-                                    <p class="tabular text-sm font-semibold"><span x-text="rateLabel">7,5</span>% per tahun</p>
-                                </div>
-                                <input id="kpr-rate" type="range" min="3" max="15" step="0.25" class="range mt-2 w-full" x-model.number="rate" aria-describedby="kpr-rate-help">
-                                <div class="mt-2 flex flex-wrap gap-2" role="group" aria-label="Tipe suku bunga">
-                                    <button
-                                        type="button"
-                                        class="h-11 rounded border px-4 text-sm font-semibold transition-colors duration-150"
-                                        :class="rateType === 'fixed' ? 'border-ink-950 bg-ink-950 text-paper' : 'border-line text-ink-600 hover:border-ink-950'"
-                                        :aria-pressed="rateType === 'fixed'"
-                                        @click="rateType = 'fixed'"
-                                    >Tetap</button>
-                                    <button
-                                        type="button"
-                                        class="h-11 rounded border px-4 text-sm font-semibold transition-colors duration-150"
-                                        :class="rateType === 'floating' ? 'border-ink-950 bg-ink-950 text-paper' : 'border-line text-ink-600 hover:border-ink-950'"
-                                        :aria-pressed="rateType === 'floating'"
-                                        @click="rateType = 'floating'"
-                                    >Mengambang</button>
-                                </div>
-                                <p id="kpr-rate-help" class="mt-2 text-xs text-ink-500" x-text="rateType === 'fixed' ? 'Bunga tetap selama tenor. Angka asumsi internal, bukan penawaran bank.' : 'Bunga mengambang: angsuran bisa berubah bila suku bunga pasar naik.'">Bunga tetap selama tenor. Angka asumsi internal, bukan penawaran bank.</p>
-                            </div>
-                        </div>
-
-                        <div class="bg-ink-950 p-5 text-paper sm:p-6">
-                            <p class="text-sm text-paper/60">Angsuran per bulan</p>
-                            <p class="tabular mt-2 text-4xl font-semibold leading-none" x-text="rp(monthly)">Rp 9.270.124</p>
-                            <p class="mt-2 text-sm text-paper/60"><span x-text="tenor">15</span> tahun · <span x-text="rateType === 'fixed' ? 'bunga tetap' : 'bunga mengambang'">bunga tetap</span></p>
-
-                            <dl class="mt-6 space-y-3 border-t border-paper/15 pt-5 text-sm">
-                                <div class="flex items-baseline justify-between gap-3">
-                                    <dt class="text-paper/60">Uang muka</dt>
-                                    <dd class="tabular font-semibold" x-text="rp(dpAmount)">Rp 250.000.000</dd>
-                                </div>
-                                <div class="flex items-baseline justify-between gap-3">
-                                    <dt class="text-paper/60">Pokok pinjaman</dt>
-                                    <dd class="tabular font-semibold" x-text="rp(principal)">Rp 1.000.000.000</dd>
-                                </div>
-                                <div class="flex items-baseline justify-between gap-3">
-                                    <dt class="text-paper/60">Total bunga</dt>
-                                    <dd class="tabular font-semibold" x-text="rp(totalInterest)">Rp 668.622.248</dd>
-                                </div>
-                                <div class="flex items-baseline justify-between gap-3 border-t border-paper/15 pt-3">
-                                    <dt class="font-semibold">Total pembayaran</dt>
-                                    <dd class="tabular font-semibold" x-text="rp(totalPayment)">Rp 1.918.622.248</dd>
-                                </div>
-                            </dl>
-
-                            <span class="mt-6 flex items-center justify-center rounded bg-gold-500 px-5 py-3 text-center text-sm font-semibold text-ink-950">Konsultasi KPR via WhatsApp</span>
-
-                            <p class="mt-3 text-xs leading-relaxed text-paper/50">Perkiraan saja. Angsuran sebenarnya ditentukan bank dan mencakup provisi, asuransi, serta pajak.</p>
-                        </div>
-                    </div>
-
-                    <p class="mt-4 text-sm text-ink-500">Metode anuitas: angsuran tetap tiap bulan, bunga dihitung dari sisa pokok. Angka awal bunga dan DP minimum mengikuti <code class="text-xs">kpr_settings</code>.</p>
+                <div class="bg-paper px-4 py-6 sm:px-6">
+                    <x-kpr-simulation
+                        :price="1250000000"
+                        :interest="7.5"
+                        :min-dp="20"
+                        :max-dp="70"
+                        :max-tenor="20"
+                        subheading="Perkiraan angsuran bulanan untuk Rumah Cluster Bintaro, Rp 1.250.000.000."
+                    />
                 </div>
             </div>
         </section>

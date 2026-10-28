@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Listing;
 use App\Models\Location;
 use App\Models\SiteSetting;
+use App\Support\KprCalculator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Tests\TestCase;
@@ -104,36 +105,48 @@ class ListingShowTest extends TestCase
             ->assertSee('Tampak depan rumah');
     }
 
-    public function test_kpr_form_is_prefilled_with_the_listing_price(): void
+    public function test_kpr_widget_is_prefilled_from_the_listing_and_settings(): void
     {
         $this->listing(['slug' => 'rumah-kpr', 'price' => 1_250_000_000]);
 
         $this->get('/properti/rumah-kpr')
             ->assertOk()
             ->assertSee('Simulasi KPR')
-            ->assertSee('name="hitung"', false)
-            ->assertSee('value="1250000000"', false);
+            ->assertSee('value="1.250.000.000"', false)
+            ->assertSee('Tenor (tahun)')
+            ->assertSee('Minimum 20%. Maksimum 70%.');
     }
 
-    public function test_kpr_result_is_calculated_from_the_query(): void
+    public function test_kpr_panel_renders_the_estimate_server_side(): void
     {
         $this->listing(['slug' => 'rumah-kpr', 'price' => 1_000_000_000]);
 
-        $this->get('/properti/rumah-kpr?hitung=1&harga=1000000000&dp=20&tenor=10&bunga=7.5')
+        $monthly = KprCalculator::monthly(800_000_000, 7.5, 180);
+
+        $this->get('/properti/rumah-kpr')
             ->assertOk()
-            ->assertSee('Cicilan per bulan')
-            ->assertSee('Rp 9.496.142')
-            ->assertSee('Rp 200.000.000'); // 20% down payment
+            ->assertSee('Angsuran per bulan')
+            ->assertSee('Rp '.number_format($monthly, 0, ',', '.'))
+            ->assertSee('Rp 200.000.000');
     }
 
-    public function test_kpr_input_falls_back_when_the_query_is_invalid(): void
+    public function test_gallery_carets_appear_once_there_are_several_photos(): void
     {
-        $this->listing(['slug' => 'rumah-kpr', 'price' => 1_000_000_000]);
+        $listing = $this->listing(['slug' => 'rumah-banyak-foto']);
 
-        $this->get('/properti/rumah-kpr?hitung=1&harga=abc&dp=200&tenor=99&bunga=-5')
+        $this->get('/properti/rumah-banyak-foto')
             ->assertOk()
-            ->assertSee('Cicilan per bulan')
-            ->assertSee('value="1000000000"', false);
+            ->assertDontSee('Foto berikutnya');
+
+        $listing->images()->createMany([
+            ['path' => 'images/properties/foto-1.webp', 'alt' => 'Depan', 'sort_order' => 0],
+            ['path' => 'images/properties/foto-2.webp', 'alt' => 'Dapur', 'sort_order' => 1],
+        ]);
+
+        $this->get('/properti/rumah-banyak-foto')
+            ->assertOk()
+            ->assertSee('Foto sebelumnya')
+            ->assertSee('Foto berikutnya');
     }
 
     public function test_card_links_to_the_detail_page(): void

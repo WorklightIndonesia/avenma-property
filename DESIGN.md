@@ -123,11 +123,14 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Simulasi KPR**
 
+- Satu komponen untuk semua tempat: `resources/views/components/kpr-simulation.blade.php`, dipakai halaman detail properti dan `/design-system`. Jangan salin markup-nya ke view lain; perbaikan di satu tempat harus sampai ke keduanya.
+- Props: `price`, `interest`, `min-dp`, `max-dp`, `max-tenor`, `cta-url`, `cta-label`. Halaman detail mengirim harga listing dan nilai `kpr_settings`; halaman design system memakai angka prototipe.
 - Harga properti terisi dari listing tetapi bisa diedit; DP, tenor, dan suku bunga diubah pembeli.
 - Field harga memakai teks dengan pemisah ribuan saat mengetik (`1.250.000.000`), bukan `<input type="number">`, dan dibatasi 999.999.999.999.
 - Suku bunga punya dua tipe, `Tetap` dan `Mengambang`, dengan satu angka yang dipakai sama untuk perhitungan. Tipe `Mengambang` wajib disertai kalimat bahwa angsuran bisa berubah.
 - DP: slider 20–70%, langkah 5%. Tenor: 5, 10, 15, 20 tahun, dibatasi `max_tenor_years` di `kpr_settings`. Bunga: slider 3–15%, langkah 0,25.
 - Angsuran memakai anuitas `P·r / (1 − (1+r)^−n)`, `r` = bunga tahunan ÷ 12, `n` = tenor × 12. Nilai awal bunga dan DP minimum dibaca dari `kpr_settings`, jangan ditulis ulang di view.
+- Angka awal dirender di server dengan `KprCalculator` supaya panel benar sebelum Alpine aktif dan bisa diuji di PHP; rumus yang sama berjalan lagi di browser pada setiap perubahan. Bila rumus berubah, ubah keduanya.
 - Panel hasil berlatar `ink-950`: label 14 px `paper/60`, angsuran 36 px bobot 600 `paper` `.tabular`, rincian 14 px dengan garis `paper/15`, CTA emas penuh di dalam panel.
 - Setiap tampilan angka wajib disertai catatan "perkiraan, bukan penawaran bank" dan penyebutan biaya yang tidak dihitung (provisi, asuransi, pajak).
 - Slider memakai thumb 18×18 px bulat penuh `gold-500` di atas track 2 px `line`; fokus outline 2 px `gold-700`.
@@ -152,9 +155,12 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Detail properti**
 
-- Urutan header: meta `Primer/Sekunder · jenis · developer` (12 px), judul 24 px, alamat lengkap (jalan + lokasi) 14 px `ink-500`, lalu harga 24 px `.tabular`.
-- Spesifikasi lima kolom: kamar tidur, kamar mandi, carport, luas tanah, luas bangunan. Di layar sempit dua kolom.
-- Sidebar: harga, dua aksi (WhatsApp, simpan), tautan simulasi KPR, lalu developer dan agen penjual.
+- Header (tipe, judul, alamat, harga dan CTA versi mobile) memakai lebar penuh di atas grid. Grid di bawahnya dua kolom: galeri dan isi di kiri, panel harga 360 px di kanan.
+- Panel harga mulai sejajar dengan tepi atas foto utama, bukan dengan judul. Jangan menaruh header di dalam kolom kiri grid — itu yang membuat panel naik melewati foto.
+- Galeri: foto utama 4:3 dengan tombol caret kiri dan kanan 44×44 px, latar `paper/90`, border `line`, hanya muncul bila foto lebih dari satu. Penghitung `1 / 4` di kanan bawah, `aria-live="polite"`. Thumbnail di bawah memilih foto langsung.
+- Di bawah `lg`, panel harga hilang dan harga serta CTA pindah ke header sebagai tombol selebar layar.
+- Di dalam kolom kiri: spesifikasi (dua sampai lima kolom sesuai jumlah isi), deskripsi, peta, lalu simulasi KPR.
+- Panel harga memuat: harga, CTA kontak, tautan ke simulasi KPR, lalu developer dan agen penjual.
 - Tanggal "Diperbarui" 12 px `ink-500` sebaris dengan breadcrumb.
 
 **Tabel (admin)**
