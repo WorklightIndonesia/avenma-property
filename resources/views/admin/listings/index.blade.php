@@ -44,7 +44,7 @@
                         </td>
                         <td class="px-4 py-2 text-ink-600">{{ $listing->location?->name ?? '—' }}</td>
                         <td class="tabular whitespace-nowrap px-4 py-2 text-right">Rp {{ number_format($listing->price, 0, ',', '.') }}</td>
-                        <td class="px-4 py-2 text-ink-600">{{ ucfirst($listing->status) }}</td>
+                        <td class="px-4 py-2 text-ink-600">{{ $listing->statusLabel() }}</td>
                         <td class="px-4 py-2 text-ink-600">{{ $listing->creator?->name ?? '—' }}</td>
                         <td class="whitespace-nowrap px-4 py-1 text-right">
                             <a href="{{ route('admin.listings.edit', $listing) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>

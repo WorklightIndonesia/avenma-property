@@ -4,9 +4,9 @@ Website company profile dan katalog properti untuk Avenma Property. Website mena
 
 ## Overview
 
-- **Pengunjung:** melihat katalog properti, memfilter berdasarkan kategori, lokasi, developer, tipe, harga, kamar, dan status; membaca detail properti dan artikel blog; menghubungi tim lewat tautan WhatsApp.
+- **Pengunjung:** melihat katalog properti, memfilter berdasarkan wilayah, tipe, harga, kamar, dan status; membaca detail properti dan artikel blog; menghubungi tim lewat tautan WhatsApp.
 - **Admin:** semua akses Agen, ditambah pengelolaan akun, konten halaman, dan pengaturan situs.
-- **Agen:** mengelola listing miliknya sendiri, artikel blog, serta kategori, lokasi, dan developer.
+- **Agen:** mengelola listing miliknya sendiri, artikel blog, dan developer.
 
 Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dibangun bertahap. Lihat `tasks/todo.md` untuk daftar task dan `tasks/plan.md` untuk rencana implementasi.
 

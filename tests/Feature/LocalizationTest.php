@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Models\Category;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -28,7 +27,6 @@ class LocalizationTest extends TestCase
             ->assertSessionHasErrors([
                 'title' => 'Judul wajib diisi.',
                 'description' => 'Deskripsi wajib diisi.',
-                'category_id' => 'Kategori wajib diisi.',
                 'price' => 'Harga wajib diisi.',
             ]);
     }
@@ -41,7 +39,6 @@ class LocalizationTest extends TestCase
             ->post('/admin/listings', [
                 'title' => 'Rumah Uji',
                 'description' => 'Deskripsi uji.',
-                'category_id' => Category::create(['name' => 'Rumah', 'slug' => 'rumah'])->id,
                 'listing_type' => 'primary',
                 'property_type' => 'rumah',
                 'status' => 'dijual',

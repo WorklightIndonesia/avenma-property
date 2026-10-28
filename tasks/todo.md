@@ -39,14 +39,14 @@ Detail plan: `tasks/plan.md`
 ## Phase 2: Property Catalog
 
 - [x] **Task 5: Seeder master data + sample listings**
-  - Acceptance: seeder membuat akun `admin` (Fellix) dan `agen` (Budi, nomor `089630999996`), kategori, lokasi, developer, satu baris `site_settings`, dan 6 listing contoh tanpa foto. Password dibaca dari `ADMIN_PASSWORD` / `AGEN_PASSWORD` di `.env`; seeder gagal bila kosong atau tidak memenuhi aturan password.
-  - Verification: `php artisan migrate:fresh --seed`; cek dua akun, 6 listing, dan `site_settings` di database.
+  - Acceptance: seeder membuat akun `admin` (Fellix) dan `agen` (Budi, nomor `089630999996`), data wilayah resmi (7.285 kecamatan Kemendagri), developer, satu baris `site_settings`, dan 20 listing contoh dengan foto. Password dibaca dari `ADMIN_PASSWORD` / `AGEN_PASSWORD` di `.env`; seeder gagal bila kosong atau tidak memenuhi aturan password.
+  - Verification: `php artisan migrate:fresh --seed`; cek dua akun, 20 listing, data wilayah, dan `site_settings` di database.
   - Files: `database/seeders/*`
   - Depends: Task 4
   - Scope: Small
 
 - [x] **Task 6: Public listing index + filter**
-  - Acceptance: `/properti` menampilkan listing terbit; filter lokasi, tipe, harga (bucket), dan status; urutan Terbaru, Harga terendah, Harga tertinggi; jumlah per halaman 6, 12, atau 24 (default 6). Panel filter tertutup sampai diklik; perubahan hanya berlaku setelah Terapkan; filter aktif tampil sebagai chip, tombol hapus chip langsung berlaku.
+  - Acceptance: `/properti` menampilkan listing terbit; filter provinsi, kota/kabupaten, dan kecamatan (boleh hanya sebagian tingkat), tipe, harga (bucket), dan status; pilihan wilayah hanya yang punya listing terbit, lengkap dengan jumlah; urutan Terbaru, Harga terendah, Harga tertinggi; jumlah per halaman 6, 12, atau 24 (default 6). Panel filter tertutup sampai diklik; perubahan hanya berlaku setelah Terapkan; filter aktif tampil sebagai chip, tombol hapus chip langsung berlaku.
   - Verification: feature test tiap filter, kombinasi, sort, chip, dan pagination; manual cek di 390 px dan 1440 px.
   - Files: `app/Http/Controllers/Public/ListingController.php`, `app/Models/Listing.php`, `resources/views/public/listings/index.blade.php`, `_filters.blade.php`, `resources/views/components/property-card.blade.php`, `routes/web.php`
   - Depends: Task 5
@@ -67,17 +67,17 @@ Detail plan: `tasks/plan.md`
   - Scope: Medium
 
 - [ ] **Task 9: Admin CRUD master data, akun, dan pengaturan situs**
-  - Acceptance: CRUD kategori, lokasi, developer (kedua role, delete ditolak selama masih dipakai listing). CRUD akun (`admin` saja): nama, email, telepon wajib untuk role `agen`, role, password sesuai aturan. Halaman pengaturan situs (`admin` saja) untuk nomor WhatsApp kantor.
+  - Acceptance: CRUD developer (kedua role, delete ditolak selama masih dipakai listing). CRUD akun (`admin` saja): nama, email, telepon wajib untuk role `agen`, role, password sesuai aturan. Halaman pengaturan situs (`admin` saja) untuk nomor WhatsApp kantor. Wilayah dan kategori tidak lagi di-CRUD: `locations` berisi data resmi Kemendagri, kategori dihapus karena duplikat `property_type`.
   - Verification: feature test tiap CRUD; test `agen` ditolak di `/admin/users` dan `/admin/settings`; manual cek.
-  - Files: `app/Http/Controllers/Admin/CategoryController.php`, `LocationController.php`, `DeveloperController.php`, `UserController.php`, `SiteSettingController.php`, views
+  - Files: `app/Http/Controllers/Admin/DeveloperController.php`, `UserController.php`, `SiteSettingController.php`, views
   - Depends: Task 5
   - Scope: Medium
 
 ### Checkpoint: Core Features
-- [ ] Filter listing berfungsi
-- [ ] Detail listing tampil lengkap
-- [ ] Admin CRUD berfungsi
-- [ ] `php artisan test` lulus
+- [x] Filter listing berfungsi
+- [x] Detail listing tampil lengkap
+- [x] Admin CRUD berfungsi
+- [x] `php artisan test` lulus
 
 ## Phase 3: Content Features
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Developer;
 use App\Models\KprSetting;
 use App\Models\Listing;
 use App\Models\Location;
@@ -14,11 +15,38 @@ class ListingController extends Controller
 {
     public function index(Request $request): View
     {
+        $regions = $this->regions();
+
+        $developerOptions = Developer::query()
+            ->whereHas('listings', fn ($query) => $query->published())
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
+
+        // A value that is not in the tree (old link, hand-edited URL) is
+        // dropped, so the panel never shows a kota outside its provinsi.
+        $provinsi = $this->allowed($regions['provinces'], $request->query('provinsi'));
+        $kota = $this->allowed($regions['cities'][$provinsi] ?? [], $request->query('kota'));
+        $kecamatan = $this->allowed($regions['districts'][$provinsi.'|'.$kota] ?? [], $request->query('kecamatan'));
+
         $filters = [
-            'lokasi' => (string) $request->query('lokasi', ''),
+            'provinsi' => $provinsi,
+            'kota' => $kota,
+            'kecamatan' => $kecamatan,
             'tipe' => (string) $request->query('tipe', ''),
+            'penawaran' => array_key_exists((string) $request->query('penawaran'), Listing::LISTING_TYPES)
+                ? (string) $request->query('penawaran')
+                : '',
             'harga' => (string) $request->query('harga', ''),
             'status' => (string) $request->query('status', ''),
+            'kamar' => $this->minimum($request->query('kamar')),
+            'mandi' => $this->minimum($request->query('mandi')),
+            'lt' => $this->minimum($request->query('lt')),
+            'lb' => $this->minimum($request->query('lb')),
+            'lantai' => $this->minimum($request->query('lantai')),
+            'developer' => array_key_exists((string) $request->query('developer'), $developerOptions)
+                ? (string) $request->query('developer')
+                : '',
         ];
 
         $sort = (string) $request->query('urut', 'terbaru');
@@ -35,17 +63,17 @@ class ListingController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        $locationNames = Location::orderBy('name')->pluck('name', 'slug');
-
         return view('public.listings.index', [
             'listings' => $listings,
-            'locations' => $locationNames,
+            'regions' => $regions,
             'typeOptions' => Listing::typeOptions(),
-            'statusOptions' => Listing::statusOptions(),
+            'listingTypeOptions' => Listing::LISTING_TYPES,
+            'statusOptions' => Listing::STATUSES,
+            'developerOptions' => $developerOptions,
             'filters' => $filters,
             'sort' => $sort,
             'perPage' => $perPage,
-            'chips' => $this->chips($filters, $sort, $locationNames->all()),
+            'chips' => $this->chips($filters, $sort, $developerOptions),
         ]);
     }
 
@@ -103,20 +131,95 @@ class ListingController extends Controller
     }
 
     /**
+     * Regions that have at least one published listing, with counts, shaped for
+     * the three pickers: provinces, then cities by province, then kecamatan by
+     * "province|city".
+     *
+     * @return array{provinces: list<array{name: string, count: int}>, cities: array<string, list<array{name: string, count: int}>>, districts: array<string, list<array{name: string, count: int}>>}
+     */
+    private function regions(): array
+    {
+        $rows = Location::query()
+            ->whereHas('listings', fn ($query) => $query->published())
+            ->withCount(['listings as total' => fn ($query) => $query->published()])
+            ->get();
+
+        $provinces = [];
+        $cities = [];
+        $districts = [];
+
+        foreach ($rows as $row) {
+            $provinces[$row->province] = ($provinces[$row->province] ?? 0) + $row->total;
+            $cities[$row->province][$row->city] = ($cities[$row->province][$row->city] ?? 0) + $row->total;
+            $districts[$row->province.'|'.$row->city][$row->name] = $row->total;
+        }
+
+        return [
+            'provinces' => $this->options($provinces),
+            'cities' => array_map(fn (array $group) => $this->options($group), $cities),
+            'districts' => array_map(fn (array $group) => $this->options($group), $districts),
+        ];
+    }
+
+    /**
+     * @param  array<string, int>  $counts
+     * @return list<array{name: string, count: int}>
+     */
+    private function options(array $counts): array
+    {
+        ksort($counts);
+
+        $options = [];
+
+        foreach ($counts as $name => $count) {
+            $options[] = ['name' => $name, 'count' => $count];
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param  list<array{name: string, count: int}>  $options
+     */
+    private function allowed(array $options, mixed $value): string
+    {
+        $value = (string) $value;
+
+        return in_array($value, array_column($options, 'name'), true) ? $value : '';
+    }
+
+    /**
+     * Spec filters take "at least this many": anything not a positive number
+     * means "no filter".
+     */
+    private function minimum(mixed $value): string
+    {
+        $value = (int) $value;
+
+        return $value > 0 ? (string) $value : '';
+    }
+
+    /**
      * @param  array<string, string>  $filters
-     * @param  array<string, string>  $locationNames
+     * @param  array<int, string>  $developerOptions
      * @return list<array{key: string, label: string}>
      */
-    private function chips(array $filters, string $sort, array $locationNames): array
+    private function chips(array $filters, string $sort, array $developerOptions): array
     {
         $chips = [];
 
-        if ($filters['lokasi'] !== '') {
-            $chips[] = ['key' => 'lokasi', 'label' => $locationNames[$filters['lokasi']] ?? $filters['lokasi']];
+        foreach (['provinsi', 'kota', 'kecamatan'] as $key) {
+            if ($filters[$key] !== '') {
+                $chips[] = ['key' => $key, 'label' => $filters[$key]];
+            }
         }
 
         if ($filters['tipe'] !== '') {
             $chips[] = ['key' => 'tipe', 'label' => ucfirst($filters['tipe'])];
+        }
+
+        if ($filters['penawaran'] !== '') {
+            $chips[] = ['key' => 'penawaran', 'label' => Listing::LISTING_TYPES[$filters['penawaran']]];
         }
 
         if ($filters['harga'] !== '') {
@@ -124,7 +227,31 @@ class ListingController extends Controller
         }
 
         if ($filters['status'] !== '') {
-            $chips[] = ['key' => 'status', 'label' => ucfirst($filters['status'])];
+            $chips[] = ['key' => 'status', 'label' => Listing::STATUSES[$filters['status']] ?? ucfirst($filters['status'])];
+        }
+
+        if ($filters['kamar'] !== '') {
+            $chips[] = ['key' => 'kamar', 'label' => $filters['kamar'].'+ kamar tidur'];
+        }
+
+        if ($filters['mandi'] !== '') {
+            $chips[] = ['key' => 'mandi', 'label' => $filters['mandi'].'+ kamar mandi'];
+        }
+
+        if ($filters['lt'] !== '') {
+            $chips[] = ['key' => 'lt', 'label' => 'LT ≥ '.$filters['lt'].' m²'];
+        }
+
+        if ($filters['lb'] !== '') {
+            $chips[] = ['key' => 'lb', 'label' => 'LB ≥ '.$filters['lb'].' m²'];
+        }
+
+        if ($filters['lantai'] !== '') {
+            $chips[] = ['key' => 'lantai', 'label' => $filters['lantai'].'+ lantai'];
+        }
+
+        if ($filters['developer'] !== '') {
+            $chips[] = ['key' => 'developer', 'label' => $developerOptions[(int) $filters['developer']] ?? 'Developer'];
         }
 
         if ($sort !== 'terbaru') {

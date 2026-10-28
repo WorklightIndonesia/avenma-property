@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ListingRequest;
-use App\Models\Category;
 use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\ListingImage;
-use App\Models\Location;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -86,7 +84,7 @@ class ListingController extends Controller
                 $listing->images()->whereKey($id)->update([
                     'label' => $fields['label'] ?? null,
                     'alt' => $fields['alt'] ?? null,
-                    'sort_order' => $fields['sort_order'] ?? 0,
+                    'sort_order' => $fields['sort_order'] ?? 1,
                 ]);
             }
 
@@ -164,12 +162,10 @@ class ListingController extends Controller
     private function formOptions(): array
     {
         return [
-            'categories' => Category::orderBy('name')->pluck('name', 'id'),
-            'locations' => Location::orderBy('name')->pluck('name', 'id'),
             'developers' => Developer::orderBy('name')->pluck('name', 'id'),
-            'listingTypes' => ['primary' => 'Primer', 'secondary' => 'Sekunder'],
+            'listingTypes' => Listing::LISTING_TYPES,
             'propertyTypes' => ['rumah' => 'Rumah', 'apartemen' => 'Apartemen', 'townhouse' => 'Townhouse', 'ruko' => 'Ruko', 'tanah' => 'Tanah'],
-            'statuses' => ['dijual' => 'Dijual', 'disewa' => 'Disewa', 'baru' => 'Baru'],
+            'statuses' => Listing::STATUSES,
         ];
     }
 }

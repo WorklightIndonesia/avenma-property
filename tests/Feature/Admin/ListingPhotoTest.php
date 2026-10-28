@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\Category;
 use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -143,7 +142,7 @@ class ListingPhotoTest extends TestCase
     private function listing(array $attributes = []): Listing
     {
         return Listing::create(array_merge([
-            'category_id' => Category::firstOrCreate(['slug' => 'rumah'], ['name' => 'Rumah'])->id,
+            'location_id' => $this->location()->id,
             'title' => 'Rumah Uji',
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',
@@ -162,7 +161,7 @@ class ListingPhotoTest extends TestCase
         return array_merge([
             'title' => 'Rumah Uji',
             'description' => 'Deskripsi uji.',
-            'category_id' => Category::firstOrCreate(['slug' => 'rumah'], ['name' => 'Rumah'])->id,
+            'location_id' => $this->location()->id,
             'listing_type' => 'primary',
             'property_type' => 'rumah',
             'status' => 'dijual',

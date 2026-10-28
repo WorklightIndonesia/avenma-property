@@ -2,7 +2,6 @@
 
 namespace Tests\Feature\Admin;
 
-use App\Models\Category;
 use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -153,9 +152,57 @@ class ListingCrudTest extends TestCase
     {
         $this->actingAs($this->agen())
             ->post('/admin/listings', [])
-            ->assertSessionHasErrors(['title', 'description', 'category_id', 'price']);
+            ->assertSessionHasErrors(['title', 'description', 'location_id', 'price']);
 
         $this->assertDatabaseCount('listings', 0);
+    }
+
+    public function test_coordinates_are_saved_with_the_listing(): void
+    {
+        $agen = $this->agen();
+
+        $this->actingAs($agen)
+            ->post('/admin/listings', $this->payload([
+                'latitude' => '-6.2615',
+                'longitude' => '106.8',
+            ]))
+            ->assertRedirect();
+
+        $listing = Listing::firstOrFail();
+
+        $this->assertSame(-6.2615, $listing->latitude);
+        $this->assertSame(106.8, $listing->longitude);
+
+        $this->actingAs($agen)
+            ->put(route('admin.listings.update', $listing), $this->payload(['latitude' => '', 'longitude' => '']))
+            ->assertRedirect();
+
+        $this->assertNull($listing->refresh()->latitude);
+        $this->assertNull($listing->longitude);
+    }
+
+    public function test_half_a_point_is_rejected(): void
+    {
+        $this->actingAs($this->agen())
+            ->post('/admin/listings', $this->payload(['latitude' => '-6.2615']))
+            ->assertSessionHasErrors('longitude');
+
+        $this->assertDatabaseCount('listings', 0);
+    }
+
+    public function test_floors_are_saved_and_must_be_positive(): void
+    {
+        $agen = $this->agen();
+
+        $this->actingAs($agen)
+            ->post('/admin/listings', $this->payload(['floors' => 2]))
+            ->assertRedirect();
+
+        $this->assertSame(2, Listing::firstOrFail()->floors);
+
+        $this->actingAs($agen)
+            ->post('/admin/listings', $this->payload(['title' => 'Rumah Tanpa Lantai', 'floors' => 0]))
+            ->assertSessionHasErrors('floors');
     }
 
     private function agen(array $attributes = []): User
@@ -171,7 +218,7 @@ class ListingCrudTest extends TestCase
     private function listing(array $attributes = []): Listing
     {
         return Listing::create(array_merge([
-            'category_id' => Category::firstOrCreate(['slug' => 'rumah'], ['name' => 'Rumah'])->id,
+            'location_id' => $this->location()->id,
             'title' => 'Rumah Uji',
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',
@@ -190,7 +237,7 @@ class ListingCrudTest extends TestCase
         return array_merge([
             'title' => 'Rumah Uji',
             'description' => 'Deskripsi uji.',
-            'category_id' => Category::firstOrCreate(['slug' => 'rumah'], ['name' => 'Rumah'])->id,
+            'location_id' => $this->location()->id,
             'listing_type' => 'primary',
             'property_type' => 'rumah',
             'status' => 'dijual',

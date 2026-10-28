@@ -2,10 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
 use App\Models\Developer;
 use App\Models\KprSetting;
-use App\Models\Location;
 use App\Models\SiteSetting;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -14,28 +12,6 @@ class MasterDataSeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = ['Rumah', 'Apartemen', 'Townhouse'];
-
-        foreach ($categories as $name) {
-            Category::updateOrCreate(['slug' => Str::slug($name)], ['name' => $name]);
-        }
-
-        $locations = [
-            ['name' => 'Bintaro', 'province' => 'Banten'],
-            ['name' => 'BSD', 'province' => 'Banten'],
-            ['name' => 'Serpong', 'province' => 'Banten'],
-            ['name' => 'Cipete', 'province' => 'DKI Jakarta'],
-            ['name' => 'Kemang', 'province' => 'DKI Jakarta'],
-            ['name' => 'Sudirman', 'province' => 'DKI Jakarta'],
-        ];
-
-        foreach ($locations as $location) {
-            Location::updateOrCreate(
-                ['slug' => Str::slug($location['name'])],
-                $location
-            );
-        }
-
         $developers = [
             'Bintaro Development',
             'Graha Nusantara',
