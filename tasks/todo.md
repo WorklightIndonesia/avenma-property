@@ -66,7 +66,7 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 5
   - Scope: Medium
 
-- [ ] **Task 9: Admin CRUD master data, akun, dan pengaturan situs**
+- [x] **Task 9: Admin CRUD master data, akun, dan pengaturan situs**
   - Acceptance: CRUD developer (kedua role, delete ditolak selama masih dipakai listing). CRUD akun (`admin` saja): nama, email, telepon wajib untuk role `agen`, role, password sesuai aturan. Halaman pengaturan situs (`admin` saja) untuk nomor WhatsApp kantor. Wilayah dan kategori tidak lagi di-CRUD: `locations` berisi data resmi Kemendagri, kategori dihapus karena duplikat `property_type`.
   - Verification: feature test tiap CRUD; test `agen` ditolak di `/admin/users` dan `/admin/settings`; manual cek.
   - Files: `app/Http/Controllers/Admin/DeveloperController.php`, `UserController.php`, `SiteSettingController.php`, views

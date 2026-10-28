@@ -107,6 +107,7 @@ return [
         'role' => 'Role',
         'status' => 'Status',
         'title' => 'Judul',
+        'whatsapp' => 'Nomor WhatsApp',
     ],
 
 ];

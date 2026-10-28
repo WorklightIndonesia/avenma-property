@@ -43,6 +43,9 @@
                         <a href="{{ route('admin.users.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.users.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Akun
                         </a>
+                        <a href="{{ route('admin.settings.edit') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.settings.*') ? 'bg-paper/10 text-paper' : '' }}">
+                            Pengaturan
+                        </a>
                     @endif
                     <a href="{{ url('/') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 hover:text-paper">
                         Lihat Website

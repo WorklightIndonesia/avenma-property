@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DeveloperController;
+use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\ProfileController;
@@ -47,6 +48,9 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
         Route::resource('/admin/users', UserController::class)
             ->except('show')
             ->names('admin.users');
+
+        Route::get('/admin/settings', [SiteSettingController::class, 'edit'])->name('admin.settings.edit');
+        Route::put('/admin/settings', [SiteSettingController::class, 'update'])->name('admin.settings.update');
     });
 });
 
