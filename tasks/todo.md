@@ -59,10 +59,10 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 6
   - Scope: Medium
 
-- [ ] **Task 8: Admin listing CRUD + upload foto**
-  - Acceptance: `admin` dan `agen` bisa create listing (foto menyusul di Task 14), edit/delete; `agen` hanya listing miliknya sendiri, `admin` semua. `contact_phone` opsional dan otomatis terisi nomor agen pembuat. Validasi input.
-  - Verification: feature test CRUD; test `agen` tidak bisa mengubah listing milik agen lain.
-  - Files: `app/Http/Controllers/Admin/ListingController.php`, `app/Http/Requests/*`, `resources/views/admin/listings/*`
+- [x] **Task 8: Admin listing CRUD + upload foto**
+  - Acceptance: `admin` dan `agen` bisa create listing (termasuk unggah foto dan label tiap foto), edit/delete; `agen` hanya listing miliknya sendiri, `admin` semua. `contact_phone` opsional dan otomatis terisi nomor agen pembuat. Validasi input. Konversi WebP menyusul di Task 14.
+  - Verification: feature test CRUD dan upload; test `agen` tidak bisa mengubah listing milik agen lain.
+  - Files: `app/Http/Controllers/Admin/ListingController.php`, `app/Http/Requests/ListingRequest.php`, `app/Policies/ListingPolicy.php`, `resources/views/admin/listings/*`
   - Depends: Task 5
   - Scope: Medium
 

@@ -169,6 +169,15 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Baris 48 px, border bawah `line`, hover `paper`.
 - Angka rata kanan dan `.tabular`; harga `whitespace-nowrap`.
 - Di layar sempit, bungkus tabel dengan `overflow-x-auto`, jangan `overflow-hidden`.
+- Aksi baris berupa tautan dan tombol 40 px; sel aksi memakai `py-1` supaya tinggi baris tetap 48 px.
+
+**Form (admin)**
+
+- Satu kartu per kelompok isian: `border-line` di atas `paper`, padding 20–24 px, judul 18 px.
+- Isian memakai `<x-text-input>`, `<x-input-label>`, dan `<x-input-error>`; select dan textarea memakai kelas yang sama dengan input.
+- Grid dua kolom mulai `sm`; judul, deskripsi, dan peta memakai lebar penuh.
+- Harga diketik sebagai rupiah bertitik dan disimpan sebagai angka; server membuang non-digit.
+- Foto tampil sebagai baris: thumbnail 4:3, label, alt, urutan, hapus. Tombol hapus berada di luar form utama karena elemen form tidak boleh bersarang.
 
 **Navigasi**
 

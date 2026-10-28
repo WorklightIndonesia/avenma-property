@@ -47,6 +47,19 @@ return [
             'report' => false,
         ],
 
+        /*
+         * Uploads live in the public webroot so Hostinger needs no storage:link
+         * and asset() serves them directly, like the seeded sample photos.
+         */
+        'uploads' => [
+            'driver' => 'local',
+            'root' => public_path(),
+            'url' => '/',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

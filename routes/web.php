@@ -18,6 +18,13 @@ Route::middleware(['auth', 'role:'.App\Models\User::ROLE_ADMIN.','.App\Models\Us
     Route::get('/admin/dashboard', function () {
         return view('admin.dashboard');
     })->name('admin.dashboard');
+
+    Route::resource('/admin/listings', App\Http\Controllers\Admin\ListingController::class)
+        ->except('show')
+        ->names('admin.listings');
+
+    Route::delete('/admin/listings/{listing}/foto/{image}', [App\Http\Controllers\Admin\ListingController::class, 'destroyPhoto'])
+        ->name('admin.listings.photos.destroy');
 });
 
 Route::middleware('auth')->group(function () {
