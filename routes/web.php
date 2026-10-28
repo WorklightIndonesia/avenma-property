@@ -8,6 +8,7 @@ Route::get('/', function () {
 });
 
 Route::get('/properti', [App\Http\Controllers\Public\ListingController::class, 'index'])->name('public.listings.index');
+Route::get('/properti/{listing}', [App\Http\Controllers\Public\ListingController::class, 'show'])->name('public.listings.show');
 
 if (! app()->environment('production')) {
     Route::view('/design-system', 'design-system')->name('design-system');

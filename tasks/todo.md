@@ -52,7 +52,7 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 5
   - Scope: Medium
 
-- [ ] **Task 7: Public listing detail**
+- [x] **Task 7: Public listing detail**
   - Acceptance: `/properti/{slug}` menampilkan info, galeri, Google Maps embed, tombol WhatsApp dengan pesan otomatis berisi nama listing.
   - Verification: feature test route; manual cek link wa.me.
   - Files: `app/Http/Controllers/Public/ListingController.php`, `resources/views/public/listings/show.blade.php`

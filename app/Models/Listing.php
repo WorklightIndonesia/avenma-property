@@ -102,6 +102,27 @@ class Listing extends Model
     }
 
     /**
+     * The map iframe source. Only Google Maps URLs survive, so a pasted embed
+     * cannot smuggle script into the page; without one, the address is searched.
+     */
+    public function mapEmbedSrc(): ?string
+    {
+        $embed = trim((string) $this->map_embed);
+
+        if ($embed !== '' && preg_match('/src=["\']([^"\']+)["\']/i', $embed, $matches)) {
+            $embed = $matches[1];
+        }
+
+        if (str_starts_with($embed, 'https://www.google.com/maps') || str_starts_with($embed, 'https://maps.google.com/maps')) {
+            return $embed;
+        }
+
+        $query = $this->address ?: $this->location?->name;
+
+        return $query ? 'https://maps.google.com/maps?q='.rawurlencode($query).'&output=embed' : null;
+    }
+
+    /**
      * Unknown keys and values match nothing rather than failing, so a stale URL
      * shows the empty state instead of an error.
      */

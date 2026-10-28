@@ -17,7 +17,7 @@
     ])->filter()->implode(' · ');
 @endphp
 
-<article class="border border-line bg-white transition duration-150 hover:-translate-y-1 hover:border-ink-950 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+<article class="relative border border-line bg-white transition duration-150 hover:-translate-y-1 hover:border-ink-950 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
     {{-- shortcut: foto properti belum ada, ganti blok sand dengan gambar listing saat file tersedia (Task 14) --}}
     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
         <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
@@ -32,7 +32,9 @@
             @endif
         </p>
 
-        <h3 class="text-lg font-semibold leading-snug">{{ $listing->title }}</h3>
+        <h3 class="text-lg font-semibold leading-snug">
+            <a href="{{ route('public.listings.show', $listing) }}" class="after:absolute after:inset-0">{{ $listing->title }}</a>
+        </h3>
 
         @if ($listing->location)
             <p class="text-sm text-ink-500">{{ $listing->location->name }}</p>

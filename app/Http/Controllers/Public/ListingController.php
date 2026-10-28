@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use App\Http\Controllers\Controller;
 use App\Models\Listing;
 use App\Models\Location;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -45,6 +46,39 @@ class ListingController extends Controller
             'perPage' => $perPage,
             'chips' => $this->chips($filters, $sort, $locationNames->all()),
         ]);
+    }
+
+    public function show(Listing $listing): View
+    {
+        abort_unless($listing->is_published, 404);
+
+        $listing->load(['location', 'developer', 'creator', 'images']);
+
+        // Listing phone wins; blank falls back to the office number in settings.
+        $phone = $listing->contact_phone ?: SiteSetting::whatsapp();
+
+        return view('public.listings.show', [
+            'listing' => $listing,
+            'whatsappUrl' => $this->whatsappUrl($phone, $listing),
+            'contactLabel' => $listing->contact_phone ? 'Hubungi Agen' : 'Hubungi Avenma',
+        ]);
+    }
+
+    private function whatsappUrl(?string $phone, Listing $listing): ?string
+    {
+        $digits = preg_replace('/\D+/', '', (string) $phone);
+
+        if (str_starts_with($digits, '0')) {
+            $digits = '62'.substr($digits, 1);
+        }
+
+        if (strlen($digits) < 10) {
+            return null;
+        }
+
+        $message = 'Halo, saya tertarik dengan properti "'.$listing->title.'" ('.route('public.listings.show', $listing).'). Mohon informasi lebih lanjut.';
+
+        return 'https://wa.me/'.$digits.'?text='.rawurlencode($message);
     }
 
     /**
