@@ -23,10 +23,34 @@
                     @endforeach
                 </div>
 
-                <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-sm">
-                    <span class="text-ink-500">
-                        Menampilkan {{ $listings->firstItem() }}–{{ $listings->lastItem() }} dari {{ $listings->total() }}
-                    </span>
+                <div class="mt-8 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 border-t border-line pt-5 text-sm">
+                    <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
+                        <span class="text-ink-500">
+                            Menampilkan {{ $listings->firstItem() }}–{{ $listings->lastItem() }} dari {{ $listings->total() }}
+                        </span>
+
+                        <form method="GET" action="{{ route('public.listings.index') }}" class="flex items-center gap-2">
+                            @foreach (Arr::except(request()->query(), ['per', 'page']) as $key => $value)
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endforeach
+
+                            <label for="per" class="text-ink-500">Per halaman</label>
+                            <select
+                                id="per"
+                                name="per"
+                                onchange="this.form.submit()"
+                                class="min-h-11 w-20 rounded border border-line bg-white px-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30"
+                            >
+                                @foreach (App\Models\Listing::PER_PAGE_OPTIONS as $option)
+                                    <option value="{{ $option }}" @selected($perPage === $option)>{{ $option }}</option>
+                                @endforeach
+                            </select>
+
+                            <noscript>
+                                <button type="submit" class="min-h-11 rounded border border-line px-3 text-sm font-semibold">Terapkan</button>
+                            </noscript>
+                        </form>
+                    </div>
 
                     <div class="flex items-center gap-1">
                         @if ($listings->onFirstPage())

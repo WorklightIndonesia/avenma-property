@@ -6,7 +6,6 @@
     $badge = [
         'dijual' => 'border border-ink-950 bg-paper text-ink-950',
         'disewa' => 'bg-gold-700 text-white',
-        'baru' => 'bg-gold-300 text-ink-950',
     ][$listing->status] ?? 'border border-ink-950 bg-paper text-ink-950';
 
     $specs = collect([
@@ -26,7 +25,10 @@
             <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
         @endif
 
-        <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ ucfirst($listing->status) }}</span>
+        <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
+        @if ($listing->isNew())
+            <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+        @endif
     </div>
 
     <div class="space-y-3 p-4">

@@ -2,9 +2,7 @@
 
 namespace Tests\Feature\Public;
 
-use App\Models\Category;
 use App\Models\Listing;
-use App\Models\Location;
 use App\Models\SiteSetting;
 use App\Support\KprCalculator;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -72,21 +70,35 @@ class ListingShowTest extends TestCase
             ->assertDontSee('wa.me', false);
     }
 
-    public function test_map_uses_the_stored_embed_and_rejects_other_sources(): void
+    public function test_map_prefers_the_picked_point(): void
     {
-        $listing = $this->listing([
+        $this->listing([
             'slug' => 'rumah-peta',
-            'map_embed' => '<iframe src="https://www.google.com/maps/embed?pb=abc"></iframe>',
+            'latitude' => -6.2615,
+            'longitude' => 106.8,
         ]);
 
         $this->get('/properti/rumah-peta')
-            ->assertSee('https://www.google.com/maps/embed?pb=abc', false);
+            ->assertOk()
+            ->assertSee('https://maps.google.com/maps?q=-6.2615,106.8&amp;z=17&amp;output=embed', false);
+    }
 
-        $listing->update(['map_embed' => '<iframe src="javascript:alert(1)"></iframe>']);
+    public function test_map_falls_back_to_the_address_text(): void
+    {
+        $this->listing(['slug' => 'rumah-peta', 'address' => 'Jl. Uji No. 1']);
 
         $this->get('/properti/rumah-peta')
-            ->assertDontSee('javascript:alert', false)
-            ->assertSee('https://maps.google.com/maps?q=', false);
+            ->assertOk()
+            ->assertSee('https://maps.google.com/maps?q='.rawurlencode('Jl. Uji No. 1'), false);
+    }
+
+    public function test_map_is_hidden_without_a_point_or_address(): void
+    {
+        $this->listing(['slug' => 'rumah-peta', 'address' => null]);
+
+        $this->get('/properti/rumah-peta')
+            ->assertOk()
+            ->assertDontSee('Peta lokasi', false);
     }
 
     public function test_gallery_images_replace_the_placeholder(): void
@@ -139,6 +151,20 @@ class ListingShowTest extends TestCase
             ->assertSee('Rp 200.000.000');
     }
 
+    public function test_a_rented_listing_shows_no_kpr_simulation(): void
+    {
+        $this->listing(['slug' => 'rumah-disewa', 'status' => 'disewa']);
+        $this->listing(['slug' => 'rumah-dijual', 'status' => 'dijual']);
+
+        $this->get('/properti/rumah-disewa')
+            ->assertOk()
+            ->assertDontSee('Simulasi KPR');
+
+        $this->get('/properti/rumah-dijual')
+            ->assertOk()
+            ->assertSee('Simulasi KPR');
+    }
+
     public function test_gallery_carets_appear_once_there_are_several_photos(): void
     {
         $listing = $this->listing(['slug' => 'rumah-banyak-foto']);
@@ -167,14 +193,61 @@ class ListingShowTest extends TestCase
             ->assertSee(route('public.listings.show', 'rumah-tertaut'));
     }
 
+    public function test_land_area_and_floors_show_for_a_house(): void
+    {
+        $this->listing([
+            'slug' => 'rumah-dua-lantai',
+            'land_area' => 120,
+            'building_area' => 90,
+            'floors' => 2,
+        ]);
+
+        $this->get('/properti/rumah-dua-lantai')
+            ->assertOk()
+            ->assertSee('Luas tanah')
+            ->assertSee('120 m²')
+            ->assertSee('Jumlah lantai')
+            ->assertSee('2 lantai');
+    }
+
+    public function test_an_apartment_does_not_show_land_area_or_floors(): void
+    {
+        $this->listing([
+            'slug' => 'apartemen-sudirman',
+            'property_type' => 'apartemen',
+            'land_area' => 68,
+            'building_area' => 68,
+            'floors' => 5,
+        ]);
+
+        $this->get('/properti/apartemen-sudirman')
+            ->assertOk()
+            ->assertSee('Luas unit')
+            ->assertDontSee('Luas tanah')
+            ->assertDontSee('Luas bangunan')
+            ->assertDontSee('Jumlah lantai');
+    }
+
+    public function test_a_land_listing_shows_land_area_instead_of_building_area(): void
+    {
+        $this->listing([
+            'slug' => 'tanah-ciputat',
+            'property_type' => 'tanah',
+            'land_area' => 500,
+            'building_area' => 100,
+        ]);
+
+        $this->get('/properti/tanah-ciputat')
+            ->assertOk()
+            ->assertSee('Luas tanah')
+            ->assertSee('500 m²')
+            ->assertDontSee('Luas bangunan');
+    }
+
     private function listing(array $attributes = []): Listing
     {
-        $category = Category::firstOrCreate(['slug' => 'rumah'], ['name' => 'Rumah']);
-        $location = Location::firstOrCreate(['slug' => 'bintaro'], ['name' => 'Bintaro']);
-
         return Listing::create(array_merge([
-            'category_id' => $category->id,
-            'location_id' => $location->id,
+            'location_id' => $this->location()->id,
             'title' => 'Rumah Uji',
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',

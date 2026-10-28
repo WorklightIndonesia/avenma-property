@@ -20,7 +20,7 @@
 
     $statusBadge = [
         'Dijual' => 'border border-ink-950 bg-paper text-ink-950',
-        'Disewa' => 'bg-gold-700 text-white',
+        'Disewakan' => 'bg-gold-700 text-white',
         'Baru' => 'bg-gold-300 text-ink-950',
     ];
 
@@ -48,7 +48,8 @@
             'location' => 'Serpong, Tangerang Selatan',
             'price' => 'Rp 1.480.000.000',
             'specs' => '4 KT · 3 KM · 2 carport · LT 150 m²',
-            'status' => 'Baru',
+            'status' => 'Dijual',
+            'baru' => true,
             'type' => 'Primer',
             'developer' => 'Graha Nusantara',
         ],
@@ -75,7 +76,8 @@
             'location' => 'BSD, Tangerang Selatan',
             'price' => 'Rp 1.950.000.000',
             'specs' => '4 KT · 3 KM · 2 carport · LT 165 m²',
-            'status' => 'Baru',
+            'status' => 'Dijual',
+            'baru' => true,
             'type' => 'Primer',
             'developer' => 'Beverly Group',
         ],
@@ -164,6 +166,9 @@
                                     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
                                         <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
                                         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $statusBadge[$listing['status']] }}">{{ $listing['status'] }}</span>
+                                        @if (! empty($listing['baru']))
+                                            <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                        @endif
                                     </div>
                                     <div class="space-y-3 p-4">
                                         <p class="text-xs">
@@ -224,6 +229,9 @@
                                 <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
                                     <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
                                     <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $statusBadge[$listing['status']] }}">{{ $listing['status'] }}</span>
+                                    @if (! empty($listing['baru']))
+                                        <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                    @endif
                                 </div>
                                 <div class="space-y-3 p-4">
                                     <p class="text-xs">
@@ -264,15 +272,24 @@
                 <div>
                     <p class="text-xs font-semibold text-ink-500">Keadaan 1: belum ada filter</p>
                     <div class="mt-2 border border-line px-4 py-4">
+                        @php
+                            $previewRegions = [
+                                'provinces' => [['name' => 'Banten', 'count' => 4], ['name' => 'DKI Jakarta', 'count' => 2]],
+                                'cities' => ['Banten' => [['name' => 'Kota Tangerang Selatan', 'count' => 4]]],
+                                'districts' => ['Banten|Kota Tangerang Selatan' => [['name' => 'Pondok Aren', 'count' => 4]]],
+                            ];
+                        @endphp
                         @include('public.listings._filters', [
                             'idPrefix' => 'preview-a-',
                             'action' => '#',
-                            'filters' => ['lokasi' => '', 'tipe' => '', 'harga' => '', 'status' => ''],
+                            'filters' => ['provinsi' => '', 'kota' => '', 'kecamatan' => '', 'tipe' => '', 'penawaran' => '', 'harga' => '', 'status' => '', 'kamar' => '', 'mandi' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
                             'sort' => 'terbaru',
                             'perPage' => 6,
-                            'locations' => ['bintaro' => 'Bintaro', 'cipete' => 'Cipete'],
+                            'regions' => $previewRegions,
                             'typeOptions' => ['rumah' => 'Rumah', 'apartemen' => 'Apartemen'],
-                            'statusOptions' => ['dijual' => 'Dijual', 'baru' => 'Baru'],
+                            'listingTypeOptions' => ['primary' => 'Primer', 'secondary' => 'Sekunder'],
+                            'statusOptions' => ['dijual' => 'Dijual', 'disewa' => 'Disewakan'],
+                            'developerOptions' => [1 => 'Bintaro Development', 2 => 'Graha Nusantara'],
                             'chips' => [],
                         ])
                     </div>
@@ -284,15 +301,20 @@
                         @include('public.listings._filters', [
                             'idPrefix' => 'preview-b-',
                             'action' => '#',
-                            'filters' => ['lokasi' => 'bintaro', 'tipe' => '', 'harga' => '1000-2000', 'status' => ''],
+                            'filters' => ['provinsi' => 'Banten', 'kota' => 'Kota Tangerang Selatan', 'kecamatan' => '', 'tipe' => '', 'penawaran' => 'primary', 'harga' => '1000-2000', 'status' => '', 'kamar' => '3', 'mandi' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
                             'sort' => 'terbaru',
                             'perPage' => 6,
-                            'locations' => ['bintaro' => 'Bintaro', 'cipete' => 'Cipete'],
+                            'regions' => $previewRegions,
                             'typeOptions' => ['rumah' => 'Rumah', 'apartemen' => 'Apartemen'],
-                            'statusOptions' => ['dijual' => 'Dijual', 'baru' => 'Baru'],
+                            'listingTypeOptions' => ['primary' => 'Primer', 'secondary' => 'Sekunder'],
+                            'statusOptions' => ['dijual' => 'Dijual', 'disewa' => 'Disewakan'],
+                            'developerOptions' => [1 => 'Bintaro Development', 2 => 'Graha Nusantara'],
                             'chips' => [
-                                ['key' => 'lokasi', 'label' => 'Bintaro'],
+                                ['key' => 'provinsi', 'label' => 'Banten'],
+                                ['key' => 'kota', 'label' => 'Kota Tangerang Selatan'],
+                                ['key' => 'penawaran', 'label' => 'Primer'],
                                 ['key' => 'harga', 'label' => 'Rp 1 – 2 miliar'],
+                                ['key' => 'kamar', 'label' => '3+ kamar tidur'],
                             ],
                         ])
                     </div>
@@ -682,8 +704,9 @@
             <h2 id="badge" class="text-xl font-semibold">Badge status</h2>
             <div class="mt-6 flex flex-wrap gap-3 border border-line p-6">
                 <span class="rounded border border-ink-950 bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Dijual</span>
-                <span class="rounded bg-gold-700 px-2 py-0.5 text-xs font-semibold text-white">Disewa</span>
+                <span class="rounded bg-gold-700 px-2 py-0.5 text-xs font-semibold text-white">Disewakan</span>
                 <span class="rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                <p class="w-full text-sm text-ink-500">Chip Baru menandai listing yang dibuat dalam 30 hari terakhir; status hanya Dijual atau Disewakan.</p>
             </div>
         </section>
 

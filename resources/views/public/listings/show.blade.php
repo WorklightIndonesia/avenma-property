@@ -8,18 +8,23 @@
     $badge = [
         'dijual' => 'border border-ink-950 bg-paper text-ink-950',
         'disewa' => 'bg-gold-700 text-white',
-        'baru' => 'bg-gold-300 text-ink-950',
     ][$listing->status] ?? 'border border-ink-950 bg-paper text-ink-950';
+
+    // Apartments have no land; a unit's size is its building area.
+    $isHouse = in_array($listing->property_type, ['rumah', 'ruko'], true);
+    $isLand = $listing->property_type === 'tanah';
+    $isApartment = $listing->property_type === 'apartemen';
 
     $specs = array_filter([
         'Kamar tidur' => $listing->bedrooms,
         'Kamar mandi' => $listing->bathrooms,
         'Carport' => $listing->carport,
-        'Luas tanah' => $listing->land_area ? $listing->land_area.' m²' : null,
-        'Luas bangunan' => $listing->building_area ? $listing->building_area.' m²' : null,
+        'Luas tanah' => ($isHouse || $isLand) && $listing->land_area ? $listing->land_area.' m²' : null,
+        ($isApartment ? 'Luas unit' : 'Luas bangunan') => ! $isLand && $listing->building_area ? $listing->building_area.' m²' : null,
+        'Jumlah lantai' => $isHouse && $listing->floors ? $listing->floors.' lantai' : null,
     ], fn ($value) => $value !== null);
 
-    $specCols = [1 => 'grid-cols-1', 2 => 'grid-cols-2', 3 => 'grid-cols-2 sm:grid-cols-3', 4 => 'grid-cols-2 sm:grid-cols-4', 5 => 'grid-cols-2 sm:grid-cols-5'][count($specs)] ?? 'grid-cols-2';
+    $specCols = [1 => 'grid-cols-1', 2 => 'grid-cols-2', 3 => 'grid-cols-2 sm:grid-cols-3', 4 => 'grid-cols-2 sm:grid-cols-4', 5 => 'grid-cols-2 sm:grid-cols-5', 6 => 'grid-cols-2 sm:grid-cols-3'][count($specs)] ?? 'grid-cols-2';
 
     $cover = $listing->images->first();
     $photoAlt = $listing->title.($listing->location ? ' di '.$listing->location->name : '');
@@ -79,7 +84,10 @@
                                 <div x-data="{ active: 0, photos: @js($gallery), next() { this.active = (this.active + 1) % this.photos.length }, prev() { this.active = (this.active - 1 + this.photos.length) % this.photos.length } }">
                                     <div class="relative">
                                         <img src="{{ asset($cover->path) }}" :src="photos[active].src" alt="{{ $cover->alt ?: $photoAlt }}" :alt="photos[active].alt" class="aspect-[4/3] w-full object-cover">
-                                        <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ ucfirst($listing->status) }}</span>
+                                        <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
+                                        @if ($listing->isNew())
+                                            <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                        @endif
                                         <span x-show="photos[active].label" x-text="photos[active].label" class="absolute bottom-3 left-3 rounded bg-ink-950/90 px-2.5 py-1 text-xs font-semibold text-paper">{{ $cover->label }}</span>
 
                                         @if ($listing->images->count() > 1)
@@ -117,7 +125,10 @@
                             @else
                                 <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
                                     <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="80" height="56" class="h-14 w-auto" onerror="this.remove()">
-                                    <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ ucfirst($listing->status) }}</span>
+                                    <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
+                                    @if ($listing->isNew())
+                                        <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                    @endif
                                 </div>
                             @endif
                         </div>
@@ -150,21 +161,23 @@
                         </section>
                     @endif
 
-                    <section id="kpr" class="mt-10 scroll-mt-24 border-t border-line pt-8">
-                        <h2 class="text-lg font-semibold">Simulasi KPR</h2>
-                        <p class="mt-1 text-sm text-ink-500">Perkiraan cicilan dengan bunga tetap. Bukan penawaran resmi bank.</p>
+                    @if ($listing->status !== 'disewa')
+                        <section id="kpr" class="mt-10 scroll-mt-24 border-t border-line pt-8">
+                            <h2 class="text-lg font-semibold">Simulasi KPR</h2>
+                            <p class="mt-1 text-sm text-ink-500">Perkiraan cicilan dengan bunga tetap. Bukan penawaran resmi bank.</p>
 
-                        <x-kpr-simulation
-                            class="mt-4"
-                            :price="$kpr['price']"
-                            :interest="$kpr['rate']"
-                            :min-dp="$kpr['minDp']"
-                            :max-dp="$kpr['maxDp']"
-                            :max-tenor="$kpr['maxTenor']"
-                            :cta-url="$whatsappUrl"
-                            cta-label="Konsultasi KPR via WhatsApp"
-                        />
-                    </section>
+                            <x-kpr-simulation
+                                class="mt-4"
+                                :price="$kpr['price']"
+                                :interest="$kpr['rate']"
+                                :min-dp="$kpr['minDp']"
+                                :max-dp="$kpr['maxDp']"
+                                :max-tenor="$kpr['maxTenor']"
+                                :cta-url="$whatsappUrl"
+                                cta-label="Konsultasi KPR via WhatsApp"
+                            />
+                        </section>
+                    @endif
                 </div>
 
                 <aside class="hidden lg:sticky lg:top-24 lg:block lg:self-start">
@@ -178,7 +191,9 @@
                             </a>
                         @endif
 
-                        <a href="#kpr" class="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded border border-line px-5 text-sm font-semibold text-ink-950 hover:bg-sand">Simulasi KPR</a>
+                        @if ($listing->status !== 'disewa')
+                            <a href="#kpr" class="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded border border-line px-5 text-sm font-semibold text-ink-950 hover:bg-sand">Simulasi KPR</a>
+                        @endif
 
                         @if ($listing->developer || $listing->creator)
                             <dl class="mt-5 space-y-4 border-t border-line pt-5 text-sm">
