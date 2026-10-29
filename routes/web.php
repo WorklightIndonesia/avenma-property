@@ -1,17 +1,20 @@
 <?php
 
 use App\Http\Controllers\Admin\DeveloperController;
+use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\ListingController;
+use App\Http\Controllers\Public\PageController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('public.home');
-});
+Route::get('/', [PageController::class, 'home'])->name('public.pages.home');
+Route::get('/tentang-kami', [PageController::class, 'about'])->name('public.pages.about');
+Route::get('/kontak', [PageController::class, 'contact'])->name('public.pages.contact');
+Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('public.pages.terms');
 
 Route::get('/properti', [ListingController::class, 'index'])->name('public.listings.index');
 Route::get('/properti/{listing}', [ListingController::class, 'show'])->name('public.listings.show');
@@ -48,6 +51,10 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
         Route::resource('/admin/users', UserController::class)
             ->except('show')
             ->names('admin.users');
+
+        Route::get('/admin/pages', [PageContentController::class, 'index'])->name('admin.pages.index');
+        Route::get('/admin/pages/{page}/edit', [PageContentController::class, 'edit'])->name('admin.pages.edit');
+        Route::put('/admin/pages/{page}', [PageContentController::class, 'update'])->name('admin.pages.update');
 
         Route::get('/admin/settings', [SiteSettingController::class, 'edit'])->name('admin.settings.edit');
         Route::put('/admin/settings', [SiteSettingController::class, 'update'])->name('admin.settings.update');

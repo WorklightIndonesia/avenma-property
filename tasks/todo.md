@@ -95,25 +95,25 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 7
   - Scope: Small
 
-- [ ] **Task 12: Static pages**
-  - Acceptance: Home, Tentang Kami, Kontak, Syarat & Ketentuan tampil; konten dari `page_contents`.
+- [x] **Task 12: Static pages**
+  - Acceptance: Home, Tentang Kami, Kontak, Syarat & Ketentuan tampil; konten dari `page_contents` dan `page_sections`; beranda menampilkan lima listing (unggulan dulu).
   - Verification: feature test tiap route; manual cek.
-  - Files: `app/Http/Controllers/Public/PageController.php`, `resources/views/public/pages/*`
+  - Files: `app/Http/Controllers/Public/PageController.php`, `config/pages.php`, `resources/views/public/pages/show.blade.php`
   - Depends: Task 4
   - Scope: Medium
 
-- [ ] **Task 13: Admin page content CRUD**
-  - Acceptance: admin edit title, content, meta title, meta description per halaman.
-  - Verification: feature test update; manual cek perubahan tampil di public.
-  - Files: `app/Http/Controllers/Admin/PageContentController.php`, views
+- [x] **Task 13: Admin page content CRUD**
+  - Acceptance: admin edit judul, meta, isi Quill per bagian, gambar hero + alt, dan CTA tiap halaman. Agen 403.
+  - Verification: feature test update, sanitasi, unggah gambar, dan CTA; manual cek perubahan tampil di public.
+  - Files: `app/Http/Controllers/Admin/PageContentController.php`, `app/Support/HtmlSanitizer.php`, views, `public/vendor/quill/`
   - Depends: Task 12
-  - Scope: Small
+  - Scope: Medium
 
 ### Checkpoint: Content
 - [ ] Blog tampil dan bisa dibaca
-- [ ] KPR calculator benar
-- [ ] Static pages dari database
-- [ ] Admin edit konten berfungsi
+- [x] KPR calculator benar
+- [x] Static pages dari database
+- [x] Admin edit konten berfungsi
 
 ## Phase 4: Polish & Deploy
 

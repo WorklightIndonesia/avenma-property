@@ -55,4 +55,67 @@
         border-radius: 50%;
         background: #dfa73a;
     }
+
+    /* Copy written in the admin editor. Only the tags the sanitiser keeps are
+       styled, so nothing else can arrive through it. */
+    .rich-text {
+        max-width: 45rem;
+        color: #4a443c;
+        font-size: 1rem;
+        line-height: 1.75;
+    }
+
+    .rich-text > * + * {
+        margin-top: 1rem;
+    }
+
+    .rich-text h2,
+    .rich-text h3 {
+        color: #14110e;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    .rich-text h2 {
+        margin-top: 2rem;
+        font-size: 1.25rem;
+    }
+
+    .rich-text h3 {
+        margin-top: 1.5rem;
+        font-size: 1.125rem;
+    }
+
+    .rich-text ul,
+    .rich-text ol {
+        padding-left: 1.5rem;
+    }
+
+    .rich-text ul {
+        list-style: disc;
+    }
+
+    .rich-text ol {
+        list-style: decimal;
+    }
+
+    .rich-text li + li {
+        margin-top: 0.375rem;
+    }
+
+    .rich-text strong {
+        color: #14110e;
+        font-weight: 600;
+    }
+
+    .rich-text a {
+        color: #8a6a1f;
+        text-decoration: underline;
+    }
+
+    .rich-text blockquote {
+        border-left: 2px solid #e4e1db;
+        padding-left: 1rem;
+        color: #6b635a;
+    }
 }

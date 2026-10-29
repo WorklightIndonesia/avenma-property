@@ -2,19 +2,19 @@
 
 namespace Tests\Feature;
 
-// use Illuminate\Foundation\Testing\RefreshDatabase;
+use Database\Seeders\PageContentSeeder;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
 {
-    /**
-     * A basic test example.
-     */
+    use RefreshDatabase;
+
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
+        $this->seed(PageContentSeeder::class);
 
-        $response->assertStatus(200);
+        $this->get('/')->assertOk();
     }
 
     public function test_design_system_page_renders(): void

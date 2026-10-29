@@ -37,6 +37,9 @@ class Listing extends Model
 
     public const PER_PAGE_OPTIONS = [6, 12, 24];
 
+    /** How many listings the home page shows: featured first, then the newest. */
+    public const HOME_LIMIT = 5;
+
     protected $fillable = [
         'location_id',
         'developer_id',
@@ -155,6 +158,8 @@ class Listing extends Model
                 ->where('bedrooms', '>=', (int) $value))
             ->when($filters['mandi'] ?? null, fn (Builder $q, string $value) => $q
                 ->where('bathrooms', '>=', (int) $value))
+            ->when($filters['carport'] ?? null, fn (Builder $q, string $value) => $q
+                ->where('carport', '>=', (int) $value))
             ->when($filters['lt'] ?? null, fn (Builder $q, string $value) => $q
                 ->where('land_area', '>=', (int) $value))
             ->when($filters['lb'] ?? null, fn (Builder $q, string $value) => $q

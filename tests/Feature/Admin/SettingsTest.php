@@ -40,7 +40,7 @@ class SettingsTest extends TestCase
             ->put('/admin/settings', ['whatsapp' => '087736786969'])
             ->assertRedirect(route('admin.settings.edit'));
 
-        $this->assertSame('087736786969', SiteSetting::whatsapp());
+        $this->assertSame('087736786969', SiteSetting::whatsappNumber());
         $this->assertDatabaseCount('site_settings', 1);
     }
 
@@ -50,7 +50,7 @@ class SettingsTest extends TestCase
             ->put('/admin/settings', ['whatsapp' => '+62 877-3678-6969'])
             ->assertRedirect(route('admin.settings.edit'));
 
-        $this->assertSame('087736786969', SiteSetting::whatsapp());
+        $this->assertSame('087736786969', SiteSetting::whatsappNumber());
     }
 
     public function test_invalid_numbers_are_rejected(): void
@@ -73,6 +73,56 @@ class SettingsTest extends TestCase
             ->assertRedirect(route('admin.settings.edit'));
 
         $this->assertDatabaseHas('site_settings', ['whatsapp' => '087736786969']);
+    }
+
+    public function test_the_contact_details_are_saved_and_validated(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'whatsapp' => '087736786969',
+                'email' => 'halo@avenma.id',
+                'address' => 'Jl. Contoh No. 1, Jakarta Selatan',
+                'instagram' => 'avenma.properti',
+            ])
+            ->assertRedirect(route('admin.settings.edit'));
+
+        $setting = SiteSetting::current();
+
+        $this->assertSame('halo@avenma.id', $setting->email);
+        $this->assertSame('Jl. Contoh No. 1, Jakarta Selatan', $setting->address);
+        $this->assertSame('avenma.properti', $setting->instagram);
+        $this->assertSame('https://instagram.com/avenma.properti', $setting->instagramUrl());
+    }
+
+    public function test_invalid_contacts_are_rejected(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'email' => 'bukan-email'])
+            ->assertSessionHasErrors('email');
+
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'instagram' => 'avenma properti'])
+            ->assertSessionHasErrors('instagram');
+    }
+
+    public function test_a_full_instagram_address_is_reduced_to_the_handle(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'instagram' => 'https://instagram.com/@avenma/'])
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('avenma', SiteSetting::current()->instagram);
+    }
+
+    public function test_empty_contact_fields_stay_empty(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'email' => '', 'address' => '', 'instagram' => ''])
+            ->assertSessionHasNoErrors();
+
+        $this->assertNull(SiteSetting::current()->email);
+        $this->assertNull(SiteSetting::current()->address);
+        $this->assertNull(SiteSetting::current()->instagramUrl());
     }
 
     private function admin(): User

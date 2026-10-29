@@ -79,14 +79,27 @@
                             <li><a href="{{ url('/blog') }}" class="hover:text-paper">Blog</a></li>
                             <li><a href="{{ url('/tentang-kami') }}" class="hover:text-paper">Tentang Kami</a></li>
                             <li><a href="{{ url('/kontak') }}" class="hover:text-paper">Kontak</a></li>
+                            <li><a href="{{ url('/syarat-ketentuan') }}" class="hover:text-paper">Syarat &amp; Ketentuan</a></li>
                         </ul>
                     </div>
+
+                    @php($contact = App\Models\SiteSetting::current())
 
                     <div>
                         <h2 class="text-sm font-semibold text-paper">Kontak</h2>
                         <ul class="mt-4 space-y-2 text-sm">
-                            <li>WhatsApp: segera tersedia</li>
-                            <li>Email: segera tersedia</li>
+                            @if ($contact->whatsappUrl())
+                                <li><a href="{{ $contact->whatsappUrl() }}" class="hover:text-paper">WhatsApp {{ $contact->whatsapp }}</a></li>
+                            @endif
+                            @if (filled($contact->email))
+                                <li><a href="mailto:{{ $contact->email }}" class="hover:text-paper">{{ $contact->email }}</a></li>
+                            @endif
+                            @if (filled($contact->address))
+                                <li>{{ $contact->address }}</li>
+                            @endif
+                            @if ($contact->instagramUrl())
+                                <li><a href="{{ $contact->instagramUrl() }}" rel="noopener" target="_blank" class="hover:text-paper">Instagram {{ '@'.$contact->instagram }}</a></li>
+                            @endif
                         </ul>
                     </div>
                 </div>
