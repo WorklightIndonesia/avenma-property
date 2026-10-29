@@ -169,6 +169,24 @@ class Listing extends Model
             });
     }
 
+    /**
+     * Admin table lookup. Text matches part of the title, the kecamatan, or the
+     * city; blank values are ignored. Filters stack on top of any ownership
+     * restriction the controller already applied.
+     */
+    public function scopeSearch(Builder $query, array $filters): Builder
+    {
+        $title = is_string($filters['properti'] ?? null) ? trim($filters['properti']) : '';
+        $location = is_string($filters['lokasi'] ?? null) ? trim($filters['lokasi']) : '';
+
+        return $query
+            ->when($title !== '', fn (Builder $q) => $q->where('title', 'like', "%{$title}%"))
+            ->when($location !== '', fn (Builder $q) => $q->whereHas('location', fn (Builder $l) => $l
+                ->where(fn (Builder $l) => $l->where('name', 'like', "%{$location}%")
+                    ->orWhere('city', 'like', "%{$location}%"))))
+            ->when($filters['status'] ?? null, fn (Builder $q, string $status) => $q->where('status', $status));
+    }
+
     public function scopeSorted(Builder $query, string $sort): Builder
     {
         return match ($sort) {

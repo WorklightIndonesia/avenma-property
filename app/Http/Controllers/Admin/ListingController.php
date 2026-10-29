@@ -21,14 +21,22 @@ class ListingController extends Controller
 {
     public function index(Request $request): View
     {
+        $filters = $request->only(['properti', 'lokasi', 'status']);
+        $sort = (string) $request->query('urut');
+
         $listings = Listing::query()
             ->with(['location', 'creator', 'images'])
             ->when($request->user()->role !== User::ROLE_ADMIN, fn ($query) => $query->where('created_by', $request->user()->id))
-            ->latest('id')
+            ->search($filters)
+            ->sorted($sort)
             ->paginate(20)
             ->withQueryString();
 
-        return view('admin.listings.index', ['listings' => $listings]);
+        return view('admin.listings.index', [
+            'listings' => $listings,
+            'filters' => $filters,
+            'sort' => $sort,
+        ]);
     }
 
     public function create(): View
