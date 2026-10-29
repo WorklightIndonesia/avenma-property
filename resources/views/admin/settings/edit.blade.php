@@ -3,11 +3,8 @@
 @section('title', 'Kontak Avenma')
 
 @section('content')
+    <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
     <h1 class="text-xl font-semibold text-ink-950">Kontak Avenma</h1>
-
-    @if (session('status'))
-        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
-    @endif
 
     <form method="POST" action="{{ route('admin.settings.update') }}" class="mt-6 space-y-6">
         @csrf

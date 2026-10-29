@@ -5,6 +5,7 @@
 @section('content')
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
+            <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">Akun</h1>
             <p class="mt-1 text-sm text-ink-500">Admin mengelola semua data, agen hanya listing miliknya sendiri.</p>
         </div>
@@ -13,14 +14,6 @@
             Tambah akun
         </a>
     </div>
-
-    @if (session('status'))
-        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
-    @endif
-
-    @if ($errors->any())
-        <p class="mt-4 rounded border border-danger/30 bg-white px-4 py-3 text-sm text-danger">{{ $errors->first() }}</p>
-    @endif
 
     <div class="mt-6 overflow-x-auto border border-line bg-white">
         <table class="w-full min-w-[720px] text-sm">
@@ -46,11 +39,7 @@
                             <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
 
                             @unless ($user->is(auth()->user()))
-                                <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="inline" onsubmit="return confirm('Hapus akun ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
-                                </form>
+                                <button type="button" x-on:click="$dispatch('open-modal', 'delete-user-{{ $user->id }}')" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
                             @endunless
                         </td>
                     </tr>
@@ -66,4 +55,26 @@
     <div class="mt-4">
         {{ $users->links() }}
     </div>
+
+    {{-- One dialog per row. Your own account has no dialog because it cannot be deleted. --}}
+    @foreach ($users as $user)
+        @continue($user->is(auth()->user()))
+
+        <x-modal name="delete-user-{{ $user->id }}" max-width="md" focusable>
+            <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="p-6">
+                @csrf
+                @method('DELETE')
+
+                <h2 class="text-lg font-semibold text-ink-950">Hapus akun?</h2>
+                <p class="mt-2 text-sm text-ink-600">
+                    Akun &ldquo;{{ $user->name }}&rdquo; ({{ $user->email }}) akan dihapus permanen. Listing dan artikel yang dibuat akun ini tetap tampil, atas nama Avenma Properti.
+                </p>
+
+                <div class="mt-6 flex flex-wrap justify-end gap-3">
+                    <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                    <x-danger-button>Hapus akun</x-danger-button>
+                </div>
+            </form>
+        </x-modal>
+    @endforeach
 @endsection

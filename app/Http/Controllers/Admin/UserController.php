@@ -47,7 +47,7 @@ class UserController extends Controller
         if ($user->is($request->user()) && $data['role'] !== $user->role) {
             return back()
                 ->withInput()
-                ->withErrors(['role' => 'Anda tidak bisa mengubah role akun sendiri.']);
+                ->withErrors(['role' => 'Role akun yang sedang Anda pakai tidak bisa diubah.']);
         }
 
         if (blank($data['password'] ?? null)) {
@@ -64,7 +64,7 @@ class UserController extends Controller
     public function destroy(Request $request, User $user): RedirectResponse
     {
         if ($user->is($request->user())) {
-            return back()->withErrors(['user' => 'Anda tidak bisa menghapus akun sendiri.']);
+            return back()->withErrors(['user' => 'Akun yang sedang Anda pakai tidak bisa dihapus.']);
         }
 
         $user->delete();

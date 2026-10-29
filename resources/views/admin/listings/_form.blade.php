@@ -369,8 +369,8 @@
                     </div>
 
                     <button
-                        type="submit"
-                        form="delete-photo-{{ $image->id }}"
+                        type="button"
+                        x-on:click="$dispatch('open-modal', 'delete-photo-{{ $image->id }}')"
                         class="inline-flex h-11 items-center justify-center rounded border border-line px-4 text-sm font-medium text-danger hover:bg-sand"
                     >Hapus</button>
                 </div>
@@ -391,12 +391,24 @@
     </div>
 </form>
 
-{{-- Form elements cannot nest, so each delete form lives outside and its button points here. --}}
+ {{-- Each photo dialog lives outside the main form: form elements cannot nest. --}}
 @if ($listing->exists)
     @foreach ($listing->images as $image)
-        <form id="delete-photo-{{ $image->id }}" method="POST" action="{{ route('admin.listings.photos.destroy', [$listing, $image]) }}" onsubmit="return confirm('Hapus foto ini?')">
-            @csrf
-            @method('DELETE')
-        </form>
+        <x-modal name="delete-photo-{{ $image->id }}" max-width="md" focusable>
+            <form method="POST" action="{{ route('admin.listings.photos.destroy', [$listing, $image]) }}" class="p-6">
+                @csrf
+                @method('DELETE')
+
+                <h2 class="text-lg font-semibold text-ink-950">Hapus foto?</h2>
+                <p class="mt-2 text-sm text-ink-600">
+                    Foto &ldquo;{{ $image->label ?: 'tanpa label' }}&rdquo; akan dihapus dari galeri listing ini. Tindakan ini tidak bisa dibatalkan.
+                </p>
+
+                <div class="mt-6 flex flex-wrap justify-end gap-3">
+                    <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                    <x-danger-button>Hapus foto</x-danger-button>
+                </div>
+            </form>
+        </x-modal>
     @endforeach
 @endif

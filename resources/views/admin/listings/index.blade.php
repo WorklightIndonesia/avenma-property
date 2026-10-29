@@ -5,6 +5,7 @@
 @section('content')
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
+            <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">Listing</h1>
             <p class="mt-1 text-sm text-ink-500">
                 {{ auth()->user()->role === App\Models\User::ROLE_ADMIN ? 'Semua listing di website.' : 'Listing yang Anda buat.' }}
@@ -21,10 +22,6 @@
             </a>
         </div>
     </div>
-
-    @if (session('status'))
-        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
-    @endif
 
     @if ($featured && $featured['count'] > $featured['shown'])
         <div class="mt-4 border border-gold-700 bg-gold-300/30 px-4 py-3 text-sm text-ink-950">
@@ -135,11 +132,7 @@
                         <td class="whitespace-nowrap px-4 py-1 text-center">
                             <a href="{{ route('admin.listings.edit', $listing) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
 
-                            <form method="POST" action="{{ route('admin.listings.destroy', $listing) }}" class="inline" onsubmit="return confirm('Hapus listing ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
-                            </form>
+                            <button type="button" x-on:click="$dispatch('open-modal', 'delete-listing-{{ $listing->id }}')" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
                         </td>
                     </tr>
                 @empty
@@ -161,4 +154,24 @@
     <div class="mt-4">
         {{ $listings->links() }}
     </div>
+
+    {{-- One dialog per row, placed outside the table so nothing clips it. --}}
+    @foreach ($listings as $listing)
+        <x-modal name="delete-listing-{{ $listing->id }}" max-width="md" focusable>
+            <form method="POST" action="{{ route('admin.listings.destroy', $listing) }}" class="p-6">
+                @csrf
+                @method('DELETE')
+
+                <h2 class="text-lg font-semibold text-ink-950">Hapus listing?</h2>
+                <p class="mt-2 text-sm text-ink-600">
+                    &ldquo;{{ $listing->title }}&rdquo; akan dihapus permanen, termasuk semua fotonya. Tindakan ini tidak bisa dibatalkan.
+                </p>
+
+                <div class="mt-6 flex flex-wrap justify-end gap-3">
+                    <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                    <x-danger-button>Hapus listing</x-danger-button>
+                </div>
+            </form>
+        </x-modal>
+    @endforeach
 @endsection

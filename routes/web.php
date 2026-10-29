@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ListingController;
 use App\Http\Controllers\Public\PageController;
 use App\Models\User;
@@ -18,6 +20,9 @@ Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('public.
 
 Route::get('/properti', [ListingController::class, 'index'])->name('public.listings.index');
 Route::get('/properti/{listing}', [ListingController::class, 'show'])->name('public.listings.show');
+
+Route::get('/blog', [BlogController::class, 'index'])->name('public.blog.index');
+Route::get('/blog/{post}', [BlogController::class, 'show'])->name('public.blog.show');
 
 if (! app()->environment('production')) {
     Route::view('/design-system', 'design-system')->name('design-system');
@@ -42,6 +47,11 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
 
     Route::delete('/admin/listings/{listing}/foto/{image}', [App\Http\Controllers\Admin\ListingController::class, 'destroyPhoto'])
         ->name('admin.listings.photos.destroy');
+
+    Route::resource('/admin/blog', BlogPostController::class)
+        ->except('show')
+        ->parameters(['blog' => 'post'])
+        ->names('admin.blog');
 
     Route::resource('/admin/developers', DeveloperController::class)
         ->except('show')

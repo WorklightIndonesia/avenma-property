@@ -3,12 +3,6 @@
         Verifikasi email Anda lewat tautan yang kami kirim. Belum menerima emailnya? Kami kirim ulang.
     </div>
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-success">
-            Tautan verifikasi baru sudah dikirim ke email Anda.
-        </div>
-    @endif
-
     <div class="mt-4 flex items-center justify-between">
         <form method="POST" action="{{ route('verification.send') }}">
             @csrf

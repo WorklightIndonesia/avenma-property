@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             ListingSeeder::class,
             PageContentSeeder::class,
+            BlogPostSeeder::class,
         ]);
     }
 }

@@ -81,7 +81,7 @@ Detail plan: `tasks/plan.md`
 
 ## Phase 3: Content Features
 
-- [ ] **Task 10: Blog public + admin CRUD**
+- [x] **Task 10: Blog public + admin CRUD**
   - Acceptance: `/blog` dan `/blog/{slug}` tampil; `admin` dan `agen` CRUD artikel; `agen` hanya artikel miliknya sendiri; 10 artikel placeholder ter-seed.
   - Verification: feature test route dan CRUD; test `agen` tidak bisa mengubah artikel agen lain.
   - Files: `app/Http/Controllers/Public/BlogController.php`, `app/Http/Controllers/Admin/BlogPostController.php`, views, `database/seeders/BlogPostSeeder.php`
@@ -110,7 +110,7 @@ Detail plan: `tasks/plan.md`
   - Scope: Medium
 
 ### Checkpoint: Content
-- [ ] Blog tampil dan bisa dibaca
+- [x] Blog tampil dan bisa dibaca
 - [x] KPR calculator benar
 - [x] Static pages dari database
 - [x] Admin edit konten berfungsi

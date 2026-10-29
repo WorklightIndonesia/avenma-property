@@ -51,27 +51,7 @@
                         </form>
                     </div>
 
-                    <div class="flex items-center gap-1">
-                        @if ($listings->onFirstPage())
-                            <span class="px-3 py-1.5 text-ink-500">Sebelumnya</span>
-                        @else
-                            <a href="{{ $listings->previousPageUrl() }}" class="px-3 py-1.5 text-ink-600 hover:text-ink-950">Sebelumnya</a>
-                        @endif
-
-                        @foreach ($listings->getUrlRange(max(1, $listings->currentPage() - 2), min($listings->lastPage(), $listings->currentPage() + 2)) as $page => $url)
-                            @if ($page === $listings->currentPage())
-                                <span aria-current="page" class="border border-ink-950 px-3 py-1.5 font-semibold">{{ $page }}</span>
-                            @else
-                                <a href="{{ $url }}" class="px-3 py-1.5 text-ink-600 hover:text-ink-950">{{ $page }}</a>
-                            @endif
-                        @endforeach
-
-                        @if ($listings->hasMorePages())
-                            <a href="{{ $listings->nextPageUrl() }}" class="px-3 py-1.5 text-ink-600 hover:text-ink-950">Berikutnya</a>
-                        @else
-                            <span class="px-3 py-1.5 text-ink-500">Berikutnya</span>
-                        @endif
-                    </div>
+                    <x-pagination :paginator="$listings" />
                 </div>
             @endif
         </div>

@@ -74,7 +74,7 @@ class DeveloperController extends Controller
 
         if ($count > 0) {
             return back()->withErrors([
-                'developer' => "Developer masih dipakai {$count} listing. Pindahkan atau hapus listing itu dulu.",
+                'developer' => "Developer {$developer->name} masih dipakai {$count} listing. Pindahkan atau hapus listing itu dulu.",
             ]);
         }
 

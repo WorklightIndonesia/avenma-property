@@ -49,6 +49,9 @@
                     <a href="{{ route('admin.developers.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.developers.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Developer
                     </a>
+                    <a href="{{ route('admin.blog.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.blog.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Blog
+                    </a>
                     @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
                         <a href="{{ route('admin.pages.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.pages.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Halaman
@@ -101,6 +104,8 @@
         </div>
 
         @stack('scripts')
+
+        <x-toast />
 
         {{-- Textareas sized by rows clip their own content; grow them to fit instead. --}}
         <script>

@@ -5,6 +5,7 @@
 @section('content')
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
+            <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">Developer</h1>
             <p class="mt-1 text-sm text-ink-500">Developer yang bisa dipilih saat membuat atau mengubah listing.</p>
         </div>
@@ -19,14 +20,6 @@
             </a>
         </div>
     </div>
-
-    @if (session('status'))
-        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
-    @endif
-
-    @if ($errors->any())
-        <p class="mt-4 rounded border border-danger/30 bg-white px-4 py-3 text-sm text-danger">{{ $errors->first() }}</p>
-    @endif
 
     <form id="developer-filters" method="GET" action="{{ route('admin.developers.index') }}" x-data x-on:submit="$refs.focus.value = document.activeElement?.name ?? ''">
         <input type="hidden" name="focus" x-ref="focus">
@@ -88,11 +81,7 @@
                         <td class="whitespace-nowrap px-4 py-1 text-center">
                             <a href="{{ route('admin.developers.edit', $developer) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
 
-                            <form method="POST" action="{{ route('admin.developers.destroy', $developer) }}" class="inline" onsubmit="return confirm('Hapus developer ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
-                            </form>
+                            <button type="button" x-on:click="$dispatch('open-modal', 'delete-developer-{{ $developer->id }}')" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
                         </td>
                     </tr>
                 @empty
@@ -114,4 +103,24 @@
     <div class="mt-4">
         {{ $developers->links() }}
     </div>
+
+    {{-- One dialog per row, placed outside the table so nothing clips it. --}}
+    @foreach ($developers as $developer)
+        <x-modal name="delete-developer-{{ $developer->id }}" max-width="md" focusable>
+            <form method="POST" action="{{ route('admin.developers.destroy', $developer) }}" class="p-6">
+                @csrf
+                @method('DELETE')
+
+                <h2 class="text-lg font-semibold text-ink-950">Hapus developer?</h2>
+                <p class="mt-2 text-sm text-ink-600">
+                    &ldquo;{{ $developer->name }}&rdquo; akan dihapus. Developer yang masih dipakai listing tidak bisa dihapus, jadi pindahkan listingnya lebih dulu.
+                </p>
+
+                <div class="mt-6 flex flex-wrap justify-end gap-3">
+                    <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                    <x-danger-button>Hapus developer</x-danger-button>
+                </div>
+            </form>
+        </x-modal>
+    @endforeach
 @endsection

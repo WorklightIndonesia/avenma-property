@@ -5,16 +5,13 @@
 @section('content')
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
+            <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">Halaman</h1>
             <p class="mt-1 max-w-xl text-sm text-ink-500">
                 Teks, gambar hero, dan tombol tiap halaman. Susunan dan gaya halaman sudah tetap; yang diubah hanya isinya.
             </p>
         </div>
     </div>
-
-    @if (session('status'))
-        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
-    @endif
 
     <div class="mt-6 overflow-x-auto border border-line bg-white">
         <table class="w-full min-w-[640px] text-sm">

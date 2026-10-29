@@ -11,6 +11,7 @@
 
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
+            <x-back-link :href="route('admin.pages.index')">Halaman</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">{{ $page->title }}</h1>
             <p class="mt-1 text-sm text-ink-500">{{ config("pages.{$page->key}.path") }}</p>
         </div>
@@ -19,16 +20,6 @@
             Semua halaman
         </a>
     </div>
-
-    @if (session('status'))
-        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
-    @endif
-
-    @if ($errors->any())
-        <p class="mt-4 rounded border border-danger bg-white px-4 py-3 text-sm text-danger">
-            Ada isian yang perlu diperbaiki. Periksa pesan di bawah tiap bagian.
-        </p>
-    @endif
 
     <form method="POST" action="{{ route('admin.pages.update', $page) }}" enctype="multipart/form-data" class="mt-6 space-y-6">
         @csrf
