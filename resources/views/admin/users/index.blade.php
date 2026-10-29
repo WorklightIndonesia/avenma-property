@@ -26,11 +26,11 @@
         <table class="w-full min-w-[720px] text-sm">
             <thead class="bg-sand text-sm font-semibold text-ink-600">
                 <tr>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Nama</span></th>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Email</span></th>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Telepon</span></th>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Role</span></th>
-                    <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Nama</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Email</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Telepon</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Role</span></th>
+                    <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center font-semibold">Aksi</span></th>
                 </tr>
             </thead>
             <tbody>

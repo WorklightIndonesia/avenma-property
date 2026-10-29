@@ -20,10 +20,10 @@
         <table class="w-full min-w-[640px] text-sm">
             <thead class="bg-sand text-sm font-semibold text-ink-600">
                 <tr>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Halaman</span></th>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Alamat</span></th>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Bagian</span></th>
-                    <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Halaman</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Alamat</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Bagian</span></th>
+                    <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center font-semibold">Aksi</span></th>
                 </tr>
             </thead>
             <tbody>
