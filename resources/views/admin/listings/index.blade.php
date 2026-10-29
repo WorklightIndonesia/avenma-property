@@ -26,66 +26,67 @@
         <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-ink-950">{{ session('status') }}</p>
     @endif
 
+    @if ($featured && $featured['count'] > $featured['shown'])
+        <div class="mt-4 border border-gold-700 bg-gold-300/30 px-4 py-3 text-sm text-ink-950">
+            <p class="font-semibold">
+                {{ $featured['count'] }} properti ditandai unggulan, beranda hanya menampilkan {{ $featured['shown'] }}.
+            </p>
+            <p class="mt-1">
+                Sisanya tidak tampil di beranda. Lepas centang pada yang paling lama ditandai:
+                @if ($featured['oldest'])
+                    <a href="{{ route('admin.listings.edit', $featured['oldest']) }}" class="font-semibold underline hover:text-gold-700">{{ $featured['oldest']->title }}</a>.
+                @endif
+            </p>
+        </div>
+    @endif
+
     <form id="listing-filters" method="GET" action="{{ route('admin.listings.index') }}" x-data x-on:submit="$refs.focus.value = document.activeElement?.name ?? ''">
         <input type="hidden" name="focus" x-ref="focus">
         <button type="submit" class="sr-only">Terapkan</button>
     </form>
 
     @php
-        $select = 'mt-1.5 block w-full rounded border-line bg-white py-2 pl-3 pr-8 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
-        $field = 'mt-1.5 block w-full rounded border-line bg-white px-3 py-2 text-sm text-ink-950 placeholder:text-ink-500 focus:border-gold-700 focus:ring-gold-500/30';
-        $header = 'flex w-full items-center justify-between gap-2 rounded text-left text-xs font-semibold text-ink-600 hover:text-ink-950';
+    $field = 'block w-full rounded border-line bg-white px-3 py-2 text-sm text-ink-950 placeholder:text-ink-500 focus:border-gold-700 focus:ring-gold-500/30';
+    $header = 'flex w-full items-center justify-between gap-2 rounded text-left text-sm font-semibold text-ink-600 hover:text-ink-950';
         $refocus = fn (string $name) => request('focus') === $name
             ? '$nextTick(() => { $el.focus(); $el.setSelectionRange($el.value.length, $el.value.length) })'
             : '';
 
-        // The column that was being edited stays open across the reload; otherwise
-        // the first column carrying a value opens, so no active filter is hidden.
-        $active = collect([
-            'properti' => $filters['properti'] ?? '',
-            'lokasi' => $filters['lokasi'] ?? '',
-            'urut' => in_array($sort, ['termurah', 'termahal'], true) ? $sort : '',
-            'status' => $filters['status'] ?? '',
-        ])->filter()->keys()->first();
-
+        // A column only opens when its header was the last thing being edited.
+        // A filled filter is readable from the header text, so it stays closed.
         $open = in_array(request('focus'), ['properti', 'lokasi', 'urut', 'status'], true)
             ? request('focus')
-            : $active;
+            : null;
     @endphp
 
     <div class="mt-6 overflow-x-auto border border-line bg-white">
-        <table class="w-full min-w-[880px] text-sm" x-data="{
-            open: @js($open),
-            filled: @js([
-                'properti' => ($filters['properti'] ?? '') !== '',
-                'lokasi' => ($filters['lokasi'] ?? '') !== '',
-                'urut' => in_array($sort, ['termurah', 'termahal'], true),
-                'status' => ($filters['status'] ?? '') !== '',
-            ]),
-            closeEmpty() {
-                if (this.open && ! this.filled[this.open]) {
-                    this.open = null;
-                }
-            },
-        }">
-            <thead class="bg-sand text-xs font-semibold text-ink-600" x-on:click.outside="closeEmpty()">
+        <table class="w-full table-fixed min-w-[880px] text-sm" x-data="{ open: @js($open) }">
+            <colgroup>
+                <col class="w-[21%]">
+                <col class="w-[17%]">
+                <col class="w-[18%]">
+                <col class="w-[16%]">
+                <col class="w-[9%]">
+                <col class="w-[19%]">
+            </colgroup>
+            <thead class="bg-sand text-sm font-semibold text-ink-600">
                 <tr>
                     <th class="px-3 py-3 text-left align-top">
                         <button type="button" x-show="open !== 'properti'" x-on:click="open = 'properti'; $nextTick(() => $refs.properti.focus())" class="{{ $header }} min-h-10">
                             <span class="truncate">{{ ($filters['properti'] ?? '') !== '' ? $filters['properti'] : 'Properti' }}</span>
                             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
                         </button>
-                        <input x-cloak x-show="open === 'properti'" x-ref="properti" aria-label="Cari judul properti" form="listing-filters" id="filter-properti" type="search" name="properti" value="{{ $filters['properti'] ?? '' }}" placeholder="Cari judul" class="{{ $field }}" x-on:input.debounce.1000ms="$el.form.requestSubmit()" x-on:keydown.escape="open = null" x-init="{{ $refocus('properti') }}">
+                        <input x-cloak x-show="open === 'properti'" x-ref="properti" aria-label="Cari judul properti" form="listing-filters" id="filter-properti" type="search" name="properti" value="{{ $filters['properti'] ?? '' }}" placeholder="Cari judul" class="{{ $field }}" x-on:input.debounce.1000ms="$el.form.requestSubmit()" x-on:blur="open = null" x-on:keydown.escape="open = null" x-init="{{ $refocus('properti') }}">
                     </th>
                     <th class="px-3 py-3 text-left align-top">
                         <button type="button" x-show="open !== 'lokasi'" x-on:click="open = 'lokasi'; $nextTick(() => $refs.lokasi.focus())" class="{{ $header }} min-h-10">
                             <span class="truncate">{{ ($filters['lokasi'] ?? '') !== '' ? $filters['lokasi'] : 'Lokasi' }}</span>
                             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5" stroke-linecap="round"/></svg>
                         </button>
-                        <input x-cloak x-show="open === 'lokasi'" x-ref="lokasi" aria-label="Cari kecamatan atau kota" form="listing-filters" id="filter-lokasi" type="search" name="lokasi" value="{{ $filters['lokasi'] ?? '' }}" placeholder="Kecamatan atau kota" class="{{ $field }}" x-on:input.debounce.1000ms="$el.form.requestSubmit()" x-on:keydown.escape="open = null" x-init="{{ $refocus('lokasi') }}">
+                        <input x-cloak x-show="open === 'lokasi'" x-ref="lokasi" aria-label="Cari kecamatan atau kota" form="listing-filters" id="filter-lokasi" type="search" name="lokasi" value="{{ $filters['lokasi'] ?? '' }}" placeholder="Kecamatan atau kota" class="{{ $field }}" x-on:input.debounce.1000ms="$el.form.requestSubmit()" x-on:blur="open = null" x-on:keydown.escape="open = null" x-init="{{ $refocus('lokasi') }}">
                     </th>
                     <th class="px-3 py-3 text-left align-top">
-                        <button type="button" x-show="open !== 'urut'" x-on:click="open = 'urut'; $nextTick(() => $refs.urut.focus())" class="{{ $header }} min-h-10">
+                        <button type="button" x-show="open !== 'urut'" x-on:click="open = 'urut'" class="{{ $header }} min-h-10">
                             <span class="truncate">{{ App\Models\Listing::SORTS[$sort] ?? 'Harga' }}</span>
                             @if ($sort === 'termurah')
                                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M12 19V5m0 0-6 6m6-6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -95,23 +96,35 @@
                                 <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M8 7l4-4 4 4M8 17l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                             @endif
                         </button>
-                        <select x-cloak x-show="open === 'urut'" x-ref="urut" aria-label="Urutkan harga" form="listing-filters" id="filter-urut" name="urut" class="{{ $select }}" x-on:change="$el.form.requestSubmit()" x-on:keydown.escape="open = null">
-                            @foreach (App\Models\Listing::SORTS as $value => $label)
-                                <option value="{{ $value }}" @selected($sort === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        <div x-cloak x-show="open === 'urut'" class="mt-1.5" x-on:select="open = null">
+                            <x-select
+                                id="filter-urut"
+                                name="urut"
+                                form="listing-filters"
+                                :options="App\Models\Listing::SORTS"
+                                :value="$sort"
+                                aria-label="Urutkan harga"
+                                :submit="true"
+                            />
+                        </div>
                     </th>
                     <th class="px-3 py-3 text-left align-top">
-                        <button type="button" x-show="open !== 'status'" x-on:click="open = 'status'; $nextTick(() => $refs.status.focus())" class="{{ $header }} min-h-10">
+                        <button type="button" x-show="open !== 'status'" x-on:click="open = 'status'" class="{{ $header }} min-h-10">
                             <span class="truncate">{{ App\Models\Listing::STATUSES[$filters['status'] ?? ''] ?? 'Status' }}</span>
                             <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </button>
-                        <select x-cloak x-show="open === 'status'" x-ref="status" aria-label="Filter status" form="listing-filters" id="filter-status" name="status" class="{{ $select }}" x-on:change="$el.form.requestSubmit()" x-on:keydown.escape="open = null">
-                            <option value="">Semua status</option>
-                            @foreach (App\Models\Listing::STATUSES as $value => $label)
-                                <option value="{{ $value }}" @selected(($filters['status'] ?? '') === $value)>{{ $label }}</option>
-                            @endforeach
-                        </select>
+                        <div x-cloak x-show="open === 'status'" class="mt-1.5" x-on:select="open = null">
+                            <x-select
+                                id="filter-status"
+                                name="status"
+                                form="listing-filters"
+                                :options="App\Models\Listing::STATUSES"
+                                :value="$filters['status'] ?? ''"
+                                placeholder="Semua status"
+                                aria-label="Status penawaran"
+                                :submit="true"
+                            />
+                        </div>
                     </th>
                     <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Agen</span></th>
                     <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>
@@ -126,6 +139,10 @@
                             @unless ($listing->is_published)
                                 <span class="ml-2 rounded bg-sand px-1.5 py-0.5 text-xs font-medium text-ink-500">Draf</span>
                             @endunless
+
+                            @if ($listing->is_featured)
+                                <span class="ml-2 rounded bg-gold-300 px-1.5 py-0.5 text-xs font-medium text-ink-950">Unggulan</span>
+                            @endif
                         </td>
                         <td class="px-4 py-2 text-ink-600">{{ $listing->location?->name ?? '—' }}</td>
                         <td class="tabular whitespace-nowrap px-4 py-2 text-left">Rp {{ number_format($listing->price, 0, ',', '.') }}</td>

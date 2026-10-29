@@ -282,7 +282,7 @@
                         @include('public.listings._filters', [
                             'idPrefix' => 'preview-a-',
                             'action' => '#',
-                            'filters' => ['provinsi' => '', 'kota' => '', 'kecamatan' => '', 'tipe' => '', 'penawaran' => '', 'harga' => '', 'status' => '', 'kamar' => '', 'mandi' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
+                            'filters' => ['provinsi' => '', 'kota' => '', 'kecamatan' => '', 'tipe' => '', 'penawaran' => '', 'harga' => '', 'status' => '', 'kamar' => '', 'mandi' => '', 'carport' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
                             'sort' => 'terbaru',
                             'perPage' => 6,
                             'regions' => $previewRegions,
@@ -301,7 +301,7 @@
                         @include('public.listings._filters', [
                             'idPrefix' => 'preview-b-',
                             'action' => '#',
-                            'filters' => ['provinsi' => 'Banten', 'kota' => 'Kota Tangerang Selatan', 'kecamatan' => '', 'tipe' => '', 'penawaran' => 'primary', 'harga' => '1000-2000', 'status' => '', 'kamar' => '3', 'mandi' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
+                            'filters' => ['provinsi' => 'Banten', 'kota' => 'Kota Tangerang Selatan', 'kecamatan' => '', 'tipe' => '', 'penawaran' => 'primary', 'harga' => '1000-2000', 'status' => '', 'kamar' => '3', 'mandi' => '', 'carport' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
                             'sort' => 'terbaru',
                             'perPage' => 6,
                             'regions' => $previewRegions,

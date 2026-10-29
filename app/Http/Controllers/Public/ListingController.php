@@ -41,6 +41,7 @@ class ListingController extends Controller
             'status' => (string) $request->query('status', ''),
             'kamar' => $this->minimum($request->query('kamar')),
             'mandi' => $this->minimum($request->query('mandi')),
+            'carport' => $this->minimum($request->query('carport')),
             'lt' => $this->minimum($request->query('lt')),
             'lb' => $this->minimum($request->query('lb')),
             'lantai' => $this->minimum($request->query('lantai')),
@@ -84,7 +85,7 @@ class ListingController extends Controller
         $listing->load(['location', 'developer', 'creator', 'images']);
 
         // Listing phone wins; blank falls back to the office number in settings.
-        $phone = $listing->contact_phone ?: SiteSetting::whatsapp();
+        $phone = $listing->contact_phone ?: SiteSetting::whatsappNumber();
 
         return view('public.listings.show', [
             'listing' => $listing,
@@ -218,16 +219,12 @@ class ListingController extends Controller
             $chips[] = ['key' => 'tipe', 'label' => ucfirst($filters['tipe'])];
         }
 
-        if ($filters['penawaran'] !== '') {
-            $chips[] = ['key' => 'penawaran', 'label' => Listing::LISTING_TYPES[$filters['penawaran']]];
-        }
-
-        if ($filters['harga'] !== '') {
-            $chips[] = ['key' => 'harga', 'label' => Listing::PRICE_BUCKETS[$filters['harga']]['label'] ?? $filters['harga']];
-        }
-
         if ($filters['status'] !== '') {
             $chips[] = ['key' => 'status', 'label' => Listing::STATUSES[$filters['status']] ?? ucfirst($filters['status'])];
+        }
+
+        if ($filters['penawaran'] !== '') {
+            $chips[] = ['key' => 'penawaran', 'label' => Listing::LISTING_TYPES[$filters['penawaran']]];
         }
 
         if ($filters['kamar'] !== '') {
@@ -236,6 +233,10 @@ class ListingController extends Controller
 
         if ($filters['mandi'] !== '') {
             $chips[] = ['key' => 'mandi', 'label' => $filters['mandi'].'+ kamar mandi'];
+        }
+
+        if ($filters['carport'] !== '') {
+            $chips[] = ['key' => 'carport', 'label' => $filters['carport'].'+ carport'];
         }
 
         if ($filters['lt'] !== '') {
@@ -248,6 +249,10 @@ class ListingController extends Controller
 
         if ($filters['lantai'] !== '') {
             $chips[] = ['key' => 'lantai', 'label' => $filters['lantai'].'+ lantai'];
+        }
+
+        if ($filters['harga'] !== '') {
+            $chips[] = ['key' => 'harga', 'label' => Listing::PRICE_BUCKETS[$filters['harga']]['label'] ?? $filters['harga']];
         }
 
         if ($filters['developer'] !== '') {

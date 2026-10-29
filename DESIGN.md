@@ -165,9 +165,10 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Tabel (admin)**
 
-- Header `sand`, teks 12 px bobot 600 `ink-600`.
+- Header `sand`, teks 14 px (sama dengan isi tabel) bobot 600 `ink-600`; tautan header menggelap ke `ink-950` saat hover.
 - Baris 48 px, border bawah `line`, hover `paper`.
 - Angka rata kanan dan `.tabular`; harga `whitespace-nowrap`.
+- Sel Aksi rata tengah di semua tabel.
 - Di layar sempit, bungkus tabel dengan `overflow-x-auto`, jangan `overflow-hidden`.
 - Aksi baris berupa tautan dan tombol 40 px; sel aksi memakai `py-1` supaya tinggi baris tetap 48 px.
 
@@ -175,6 +176,12 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 - Satu kartu per kelompok isian: `border-line` di atas `paper`, padding 20–24 px, judul 18 px.
 - Isian memakai `<x-text-input>`, `<x-input-label>`, dan `<x-input-error>`; select dan textarea memakai kelas yang sama dengan input.
+
+**Dropdown**
+
+- Semua pilihan memakai `<x-select>`: tombol 44 px dengan border `line`, panel `absolute` bergaris `line` dan `shadow-float`, butir 44 px dengan garis kiri 2 px `gold-700` serta latar `gold-500/20` untuk pilihan aktif.
+- Panah keyboard, Enter, Escape, Home, dan End bekerja; panel menutup saat klik di luar.
+- Tanpa JavaScript, komponen merender `<select>` biasa di dalam `<noscript>` supaya formulir tetap bisa dikirim.
 - Grid dua kolom mulai `sm`; judul, deskripsi, dan peta memakai lebar penuh.
 - Harga diketik sebagai rupiah bertitik dan disimpan sebagai angka; server membuang non-digit.
 - Foto tampil sebagai baris: thumbnail 4:3, label, alt, urutan, hapus. Tombol hapus berada di luar form utama karena elemen form tidak boleh bersarang.

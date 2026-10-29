@@ -188,6 +188,102 @@ const PICKER = {
 };
 
 document.addEventListener('alpine:init', () => {
+    /* One listbox for every dropdown: the location picker's panel look, applied
+       to plain option lists. The hidden input is what actually submits. */
+    Alpine.data('selectBox', (config = {}) => ({
+        open: false,
+        value: String(config.value ?? ''),
+        options: config.options ?? [],
+        submit: config.submit === true,
+        active: 0,
+
+        init() {
+            this.active = Math.max(0, this.options.findIndex((option) => option.value === this.value));
+
+            // Without Alpine the plain <select> in <noscript> is what submits.
+            if (this.$refs.input && ! this.$refs.input.name) {
+                this.$refs.input.name = this.$refs.input.dataset.name;
+            }
+        },
+
+        get label() {
+            const hit = this.options.find((option) => option.value === this.value);
+
+            return hit ? hit.label : '';
+        },
+
+        toggle() {
+            this.open = !this.open;
+
+            if (this.open) {
+                this.active = Math.max(0, this.options.findIndex((option) => option.value === this.value));
+                this.$nextTick(() => this.$refs.panel.focus());
+            }
+        },
+
+        move(step) {
+            if (!this.open) {
+                this.toggle();
+
+                return;
+            }
+
+            const count = this.options.length;
+
+            this.active = (this.active + step + count) % count;
+        },
+
+        pick(option) {
+            if (!option) {
+                return;
+            }
+
+            this.value = option.value;
+            this.open = false;
+            this.$refs.input.value = option.value;
+            this.$refs.input.dispatchEvent(new Event('change', { bubbles: true }));
+            this.$root.dispatchEvent(new CustomEvent('select', { bubbles: true, detail: { value: option.value } }));
+            this.$refs.button.focus();
+
+            if (this.submit) {
+                this.$nextTick(() => this.$refs.input.form?.requestSubmit());
+            }
+        },
+
+        keydown(event) {
+            if (event.key === 'Escape') {
+                this.open = false;
+                this.$refs.button.focus();
+
+                return;
+            }
+
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                this.move(event.key === 'ArrowDown' ? 1 : -1);
+
+                return;
+            }
+
+            if (event.key === 'Home' || event.key === 'End') {
+                event.preventDefault();
+                this.active = event.key === 'Home' ? 0 : this.options.length - 1;
+
+                return;
+            }
+
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+
+                if (this.open) {
+                    this.pick(this.options[this.active]);
+                } else {
+                    this.toggle();
+                }
+            }
+        },
+    }));
+
     /* Admin/agen form: three pickers plus the address suggestions and the pin
        preview. The hidden location_id is set only by pickDistrict, so typed
        text that was never picked cannot be saved. */

@@ -10,8 +10,10 @@
         ? '#'
         : route('public.listings.index', Arr::except($query, [...($children[$key] ?? []), $key, 'page']));
 
-    $selectClass = 'mt-1 block w-full scroll-mt-24 rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
     $inputClass = 'mt-1 block w-full scroll-mt-24 rounded border-line bg-white py-2 text-sm text-ink-950 placeholder:text-ink-500 focus:border-gold-700 focus:ring-gold-500/30 disabled:bg-sand disabled:text-ink-500';
+
+    $countOptions = fn (int $max) => collect(range(1, $max))->mapWithKeys(fn (int $n) => [$n => $n.'+'])->all();
+    $hargaOptions = collect(App\Models\Listing::PRICE_BUCKETS)->map(fn (array $bucket) => $bucket['label'])->all();
 
     $regionData = [
         'provinces' => $regions['provinces'],
@@ -152,62 +154,32 @@
 
             <div>
                 <label for="{{ $prefix }}filter-tipe" class="block text-xs font-medium text-ink-500">Tipe</label>
-                <select id="{{ $prefix }}filter-tipe" name="tipe" class="{{ $selectClass }}">
-                    <option value="">Semua tipe</option>
-                    @foreach ($typeOptions as $value => $label)
-                        <option value="{{ $value }}" @selected($filters['tipe'] === (string) $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div>
-                <label for="{{ $prefix }}filter-penawaran" class="block text-xs font-medium text-ink-500">Jenis penawaran</label>
-                <select id="{{ $prefix }}filter-penawaran" name="penawaran" class="{{ $selectClass }}">
-                    <option value="">Semua penawaran</option>
-                    @foreach ($listingTypeOptions as $value => $label)
-                        <option value="{{ $value }}" @selected($filters['penawaran'] === (string) $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <x-select :id="$prefix.'filter-tipe'" name="tipe" :options="$typeOptions" :value="$filters['tipe']" placeholder="Semua tipe" aria-label="Tipe properti" class="mt-1 scroll-mt-24" />
             </div>
 
             <div>
                 <label for="{{ $prefix }}filter-status" class="block text-xs font-medium text-ink-500">Status</label>
-                <select id="{{ $prefix }}filter-status" name="status" class="{{ $selectClass }}">
-                    <option value="">Semua status</option>
-                    @foreach ($statusOptions as $value => $label)
-                        <option value="{{ $value }}" @selected($filters['status'] === (string) $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <x-select :id="$prefix.'filter-status'" name="status" :options="$statusOptions" :value="$filters['status']" placeholder="Semua status" aria-label="Status penawaran" class="mt-1 scroll-mt-24" />
             </div>
 
             <div>
-                <label for="{{ $prefix }}filter-harga" class="block text-xs font-medium text-ink-500">Harga</label>
-                <select id="{{ $prefix }}filter-harga" name="harga" class="{{ $selectClass }}">
-                    <option value="">Semua harga</option>
-                    @foreach (App\Models\Listing::PRICE_BUCKETS as $value => $bucket)
-                        <option value="{{ $value }}" @selected($filters['harga'] === $value)>{{ $bucket['label'] }}</option>
-                    @endforeach
-                </select>
+                <label for="{{ $prefix }}filter-penawaran" class="block text-xs font-medium text-ink-500">Jenis penawaran</label>
+                <x-select :id="$prefix.'filter-penawaran'" name="penawaran" :options="$listingTypeOptions" :value="$filters['penawaran']" placeholder="Semua penawaran" aria-label="Jenis penawaran" class="mt-1 scroll-mt-24" />
             </div>
 
             <div>
                 <label for="{{ $prefix }}filter-kamar" class="block text-xs font-medium text-ink-500">Kamar tidur</label>
-                <select id="{{ $prefix }}filter-kamar" name="kamar" class="{{ $selectClass }}">
-                    <option value="">Semua</option>
-                    @foreach (range(1, 5) as $count)
-                        <option value="{{ $count }}" @selected($filters['kamar'] === (string) $count)>{{ $count }}+</option>
-                    @endforeach
-                </select>
+                <x-select :id="$prefix.'filter-kamar'" name="kamar" :options="$countOptions(5)" :value="$filters['kamar']" placeholder="Semua" aria-label="Kamar tidur minimal" class="mt-1 scroll-mt-24" />
             </div>
 
             <div>
                 <label for="{{ $prefix }}filter-mandi" class="block text-xs font-medium text-ink-500">Kamar mandi</label>
-                <select id="{{ $prefix }}filter-mandi" name="mandi" class="{{ $selectClass }}">
-                    <option value="">Semua</option>
-                    @foreach (range(1, 4) as $count)
-                        <option value="{{ $count }}" @selected($filters['mandi'] === (string) $count)>{{ $count }}+</option>
-                    @endforeach
-                </select>
+                <x-select :id="$prefix.'filter-mandi'" name="mandi" :options="$countOptions(4)" :value="$filters['mandi']" placeholder="Semua" aria-label="Kamar mandi minimal" class="mt-1 scroll-mt-24" />
+            </div>
+
+            <div>
+                <label for="{{ $prefix }}filter-carport" class="block text-xs font-medium text-ink-500">Carport</label>
+                <x-select :id="$prefix.'filter-carport'" name="carport" :options="$countOptions(4)" :value="$filters['carport']" placeholder="Semua" aria-label="Carport minimal" class="mt-1 scroll-mt-24" />
             </div>
 
             <div>
@@ -241,23 +213,18 @@
             </div>
 
             <div>
-                <label for="{{ $prefix }}filter-lantai" class="block text-xs font-medium text-ink-500">Jumlah lantai</label>
-                <select id="{{ $prefix }}filter-lantai" name="lantai" class="{{ $selectClass }}">
-                    <option value="">Semua</option>
-                    @foreach (range(1, 3) as $count)
-                        <option value="{{ $count }}" @selected($filters['lantai'] === (string) $count)>{{ $count }}+</option>
-                    @endforeach
-                </select>
+                <label for="{{ $prefix }}filter-lantai" class="block text-xs font-medium text-ink-500">Jumlah lantai minimal</label>
+                <x-select :id="$prefix.'filter-lantai'" name="lantai" :options="$countOptions(3)" :value="$filters['lantai']" placeholder="Semua" aria-label="Jumlah lantai minimal" class="mt-1 scroll-mt-24" />
+            </div>
+
+            <div>
+                <label for="{{ $prefix }}filter-harga" class="block text-xs font-medium text-ink-500">Harga</label>
+                <x-select :id="$prefix.'filter-harga'" name="harga" :options="$hargaOptions" :value="$filters['harga']" placeholder="Semua harga" aria-label="Rentang harga" class="mt-1 scroll-mt-24" />
             </div>
 
             <div>
                 <label for="{{ $prefix }}filter-developer" class="block text-xs font-medium text-ink-500">Developer</label>
-                <select id="{{ $prefix }}filter-developer" name="developer" class="{{ $selectClass }}">
-                    <option value="">Semua developer</option>
-                    @foreach ($developerOptions as $id => $name)
-                        <option value="{{ $id }}" @selected($filters['developer'] === (string) $id)>{{ $name }}</option>
-                    @endforeach
-                </select>
+                <x-select :id="$prefix.'filter-developer'" name="developer" :options="$developerOptions" :value="$filters['developer']" placeholder="Semua developer" aria-label="Developer" class="mt-1 scroll-mt-24" />
             </div>
 
             <fieldset id="{{ $prefix }}filter-urut" tabindex="-1" class="scroll-mt-24 sm:col-span-2 lg:col-span-3">

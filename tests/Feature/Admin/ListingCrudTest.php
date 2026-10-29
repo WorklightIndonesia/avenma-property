@@ -42,6 +42,64 @@ class ListingCrudTest extends TestCase
             ->assertSee('Milik Agen Lain');
     }
 
+    public function test_only_admin_can_flag_a_listing_as_featured(): void
+    {
+        $agen = $this->agen();
+
+        $this->actingAs($agen)
+            ->post('/admin/listings', $this->payload(['is_featured' => '1']))
+            ->assertRedirect();
+
+        $this->assertFalse(Listing::firstOrFail()->is_featured);
+
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['is_featured' => '1', 'title' => 'Rumah Pilihan']))
+            ->assertRedirect();
+
+        $this->assertTrue(Listing::where('title', 'Rumah Pilihan')->firstOrFail()->is_featured);
+    }
+
+    public function test_an_agen_edit_keeps_the_featured_flag_the_admin_set(): void
+    {
+        $agen = $this->agen();
+        $listing = $this->listing(['created_by' => $agen->id, 'is_featured' => true]);
+
+        $this->actingAs($agen)
+            ->put("/admin/listings/{$listing->slug}", $this->payload(['title' => 'Judul Baru']))
+            ->assertRedirect();
+
+        $listing->refresh();
+
+        $this->assertSame('Judul Baru', $listing->title);
+        $this->assertTrue($listing->is_featured);
+    }
+
+    public function test_the_agen_form_hides_the_featured_checkbox(): void
+    {
+        $this->actingAs($this->agen())
+            ->get('/admin/listings/create')
+            ->assertOk()
+            ->assertDontSee('Tandai sebagai unggulan');
+
+        $this->actingAs($this->admin())
+            ->get('/admin/listings/create')
+            ->assertOk()
+            ->assertSee('Tandai sebagai unggulan');
+    }
+
+    public function test_the_index_warns_when_more_than_five_are_featured(): void
+    {
+        foreach (range(1, 6) as $index) {
+            $this->listing(['title' => 'Unggulan '.$index, 'is_featured' => true]);
+        }
+
+        $this->actingAs($this->admin())
+            ->get('/admin/listings')
+            ->assertOk()
+            ->assertSee('6 properti ditandai unggulan')
+            ->assertSee('beranda hanya menampilkan 5');
+    }
+
     public function test_agen_creates_a_listing_under_their_own_name(): void
     {
         $agen = $this->agen(['phone' => '081234567890']);

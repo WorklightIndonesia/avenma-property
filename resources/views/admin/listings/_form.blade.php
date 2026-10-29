@@ -42,42 +42,55 @@
 
             <div>
                 <x-input-label for="developer_id" value="Developer" />
-                <select id="developer_id" name="developer_id" class="{{ $select }}">
-                    <option value="">Tanpa developer</option>
-                    @foreach ($developers as $id => $name)
-                        <option value="{{ $id }}" @selected((string) old('developer_id', $listing->developer_id) === (string) $id)>{{ $name }}</option>
-                    @endforeach
-                </select>
+                <x-select
+                    id="developer_id"
+                    name="developer_id"
+                    :options="$developers"
+                    :value="old('developer_id', $listing->developer_id)"
+                    placeholder="Tanpa developer"
+                    aria-label="Developer"
+                    class="mt-1"
+                />
                 <x-input-error class="mt-2" :messages="$errors->get('developer_id')" />
             </div>
 
             <div>
                 <x-input-label for="property_type" value="Tipe properti" />
-                <select id="property_type" name="property_type" x-model="propertyType" class="{{ $select }}">
-                    @foreach ($propertyTypes as $value => $label)
-                        <option value="{{ $value }}" @selected(old('property_type', $listing->property_type ?? 'rumah') === $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <x-select
+                    id="property_type"
+                    name="property_type"
+                    :options="$propertyTypes"
+                    :value="old('property_type', $listing->property_type ?? 'rumah')"
+                    aria-label="Tipe properti"
+                    class="mt-1"
+                    x-on:select="propertyType = $event.detail.value"
+                />
                 <x-input-error class="mt-2" :messages="$errors->get('property_type')" />
             </div>
 
             <div>
                 <x-input-label for="listing_type" value="Jenis penawaran" />
-                <select id="listing_type" name="listing_type" class="{{ $select }}">
-                    @foreach ($listingTypes as $value => $label)
-                        <option value="{{ $value }}" @selected(old('listing_type', $listing->listing_type ?? 'primary') === $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <x-select
+                    id="listing_type"
+                    name="listing_type"
+                    :options="$listingTypes"
+                    :value="old('listing_type', $listing->listing_type ?? 'primary')"
+                    aria-label="Jenis penawaran"
+                    class="mt-1"
+                />
                 <x-input-error class="mt-2" :messages="$errors->get('listing_type')" />
             </div>
 
             <div>
                 <x-input-label for="status" value="Status" />
-                <select id="status" name="status" class="{{ $select }}">
-                    @foreach ($statuses as $value => $label)
-                        <option value="{{ $value }}" @selected(old('status', $listing->status ?? 'dijual') === $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <x-select
+                    id="status"
+                    name="status"
+                    :options="$statuses"
+                    :value="old('status', $listing->status ?? 'dijual')"
+                    aria-label="Status penawaran"
+                    class="mt-1"
+                />
                 <x-input-error class="mt-2" :messages="$errors->get('status')" />
             </div>
 
@@ -313,10 +326,13 @@
                     Terbitkan di website
                 </label>
 
-                <label for="is_featured" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">
-                    <input id="is_featured" name="is_featured" type="checkbox" value="1" class="{{ $check }}" @checked(old('is_featured', $listing->is_featured ?? false))>
-                    Tandai sebagai unggulan
-                </label>
+                @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
+                    <label for="is_featured" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">
+                        <input id="is_featured" name="is_featured" type="checkbox" value="1" class="{{ $check }}" @checked(old('is_featured', $listing->is_featured ?? false))>
+                        Tandai sebagai unggulan
+                    </label>
+                    <p class="text-xs text-ink-500">Unggulan tampil lebih dulu di beranda. Hanya admin yang dapat menandainya.</p>
+                @endif
             </div>
         </div>
     </section>
@@ -342,11 +358,14 @@
 
                     <div>
                         <x-input-label for="sort-{{ $image->id }}" value="Urutan" />
-                        <select id="sort-{{ $image->id }}" name="images[{{ $image->id }}][sort_order]" class="{{ $select }}">
-                            @for ($position = 1; $position <= $listing->images->count(); $position++)
-                                <option value="{{ $position }}" @selected((string) old('images.'.$image->id.'.sort_order', $image->sort_order) === (string) $position)>{{ $position }}</option>
-                            @endfor
-                        </select>
+                        <x-select
+                            :id="'sort-'.$image->id"
+                            :name="'images['.$image->id.'][sort_order]'"
+                            :options="collect(range(1, $listing->images->count()))->mapWithKeys(fn (int $position) => [$position => (string) $position])->all()"
+                            :value="old('images.'.$image->id.'.sort_order', $image->sort_order)"
+                            aria-label="Urutan foto"
+                            class="mt-1"
+                        />
                     </div>
 
                     <button

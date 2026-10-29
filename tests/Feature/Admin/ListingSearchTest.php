@@ -110,16 +110,23 @@ class ListingSearchTest extends TestCase
         $this->assertStringContainsString('properti=Rumah', $response->viewData('listings')->url(2));
     }
 
-    public function test_the_column_holding_an_active_filter_opens_on_load(): void
+    public function test_only_the_column_just_edited_opens_on_load(): void
     {
         $admin = $this->admin();
 
+        // A filled filter stays closed: its value is already readable in the
+        // header, so the column must not cover the table with an input box.
         $this->actingAs($admin)
             ->get('/admin/listings?lokasi=Bogor')
+            ->assertSee('open: null', false)
+            ->assertSee('Bogor');
+
+        $this->actingAs($admin)
+            ->get('/admin/listings?lokasi=Bogor&focus=lokasi')
             ->assertSee('open: \'lokasi\'', false);
 
         $this->actingAs($admin)
-            ->get('/admin/listings?urut=termahal')
+            ->get('/admin/listings?urut=termahal&focus=urut')
             ->assertSee('open: \'urut\'', false);
 
         $this->actingAs($admin)

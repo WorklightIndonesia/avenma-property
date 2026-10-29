@@ -24,13 +24,13 @@
 
     <div class="mt-6 overflow-x-auto border border-line bg-white">
         <table class="w-full min-w-[720px] text-sm">
-            <thead class="bg-sand text-xs font-semibold text-ink-600">
+            <thead class="bg-sand text-sm font-semibold text-ink-600">
                 <tr>
-                    <th class="px-4 py-3 text-left">Nama</th>
-                    <th class="px-4 py-3 text-left">Email</th>
-                    <th class="px-4 py-3 text-left">Telepon</th>
-                    <th class="px-4 py-3 text-left">Role</th>
-                    <th class="px-4 py-3 text-right">Aksi</th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Nama</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Email</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Telepon</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Role</span></th>
+                    <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>
                 </tr>
             </thead>
             <tbody>
@@ -42,7 +42,7 @@
                         <td class="px-4 py-2 text-ink-600">{{ $user->email }}</td>
                         <td class="px-4 py-2 text-ink-600">{{ $user->phone ?? '—' }}</td>
                         <td class="px-4 py-2 text-ink-600">{{ $roles[$user->role] ?? $user->role }}</td>
-                        <td class="whitespace-nowrap px-4 py-1 text-right">
+                        <td class="whitespace-nowrap px-4 py-1 text-center">
                             <a href="{{ route('admin.users.edit', $user) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
 
                             @unless ($user->is(auth()->user()))

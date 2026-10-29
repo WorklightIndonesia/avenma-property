@@ -130,6 +130,7 @@ class ListingIndexTest extends TestCase
             'title' => 'Rumah Besar',
             'bedrooms' => 4,
             'bathrooms' => 3,
+            'carport' => 2,
             'land_area' => 200,
             'building_area' => 180,
             'floors' => 2,
@@ -146,7 +147,7 @@ class ListingIndexTest extends TestCase
             'listing_type' => 'secondary',
         ]);
 
-        foreach (['kamar=3', 'mandi=2', 'lt=100', 'lb=100', 'lantai=2', 'penawaran=primary', 'developer='.$developer->id] as $query) {
+        foreach (['kamar=3', 'mandi=2', 'carport=2', 'lt=100', 'lb=100', 'lantai=2', 'penawaran=primary', 'developer='.$developer->id] as $query) {
             $this->get('/properti?'.$query)
                 ->assertOk()
                 ->assertSee('Rumah Besar')
@@ -158,9 +159,10 @@ class ListingIndexTest extends TestCase
     {
         $this->listing(['title' => 'Rumah Uji', 'bedrooms' => 3, 'land_area' => 120]);
 
-        $this->get('/properti?kamar=2&lt=100&lantai=2')
+        $this->get('/properti?kamar=2&lt=100&lantai=2&carport=1')
             ->assertOk()
             ->assertSee('2+ kamar tidur')
+            ->assertSee('1+ carport')
             ->assertSee('LT ≥ 100 m²')
             ->assertSee('2+ lantai');
     }

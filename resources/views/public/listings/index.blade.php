@@ -35,16 +35,15 @@
                             @endforeach
 
                             <label for="per" class="text-ink-500">Per halaman</label>
-                            <select
+                            <x-select
                                 id="per"
                                 name="per"
-                                onchange="this.form.submit()"
-                                class="min-h-11 w-20 rounded border border-line bg-white px-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30"
-                            >
-                                @foreach (App\Models\Listing::PER_PAGE_OPTIONS as $option)
-                                    <option value="{{ $option }}" @selected($perPage === $option)>{{ $option }}</option>
-                                @endforeach
-                            </select>
+                                :options="collect(App\Models\Listing::PER_PAGE_OPTIONS)->mapWithKeys(fn (int $option) => [$option => (string) $option])->all()"
+                                :value="$perPage"
+                                aria-label="Jumlah properti per halaman"
+                                :submit="true"
+                                class="w-24"
+                            />
 
                             <noscript>
                                 <button type="submit" class="min-h-11 rounded border border-line px-3 text-sm font-semibold">Terapkan</button>

@@ -1,7 +1,3 @@
-@php
-    $select = 'mt-1 block w-full rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
-@endphp
-
 <form method="POST" action="{{ $action }}" class="mt-6 space-y-6">
     @csrf
     @if ($method !== 'POST')
@@ -33,11 +29,14 @@
 
             <div>
                 <x-input-label for="role" value="Role" />
-                <select id="role" name="role" class="{{ $select }}">
-                    @foreach ($roles as $value => $label)
-                        <option value="{{ $value }}" @selected(old('role', $user->role ?? App\Models\User::ROLE_AGEN) === $value)>{{ $label }}</option>
-                    @endforeach
-                </select>
+                <x-select
+                    id="role"
+                    name="role"
+                    :options="$roles"
+                    :value="old('role', $user->role ?? App\Models\User::ROLE_AGEN)"
+                    aria-label="Role akun"
+                    class="mt-1"
+                />
                 <x-input-error class="mt-2" :messages="$errors->get('role')" />
             </div>
 

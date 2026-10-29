@@ -36,7 +36,26 @@ class ListingController extends Controller
             'listings' => $listings,
             'filters' => $filters,
             'sort' => $sort,
+            'featured' => $request->user()->role === User::ROLE_ADMIN ? $this->featuredSummary() : null,
         ]);
+    }
+
+    /**
+     * The home page shows five listings, featured ones first. When more than
+     * five are flagged the oldest ones never appear, so the admin needs to see
+     * which ones to release.
+     *
+     * @return array{count: int, shown: int, oldest: ?Listing}
+     */
+    private function featuredSummary(): array
+    {
+        $query = Listing::query()->where('is_featured', true)->published();
+
+        return [
+            'count' => (clone $query)->count(),
+            'shown' => Listing::HOME_LIMIT,
+            'oldest' => (clone $query)->oldest('created_at')->oldest('id')->first(),
+        ];
     }
 
     public function create(): View
@@ -46,7 +65,7 @@ class ListingController extends Controller
 
     public function store(ListingRequest $request): RedirectResponse
     {
-        $data = $request->validated();
+        $data = $this->withoutAdminFields($request);
 
         $listing = DB::transaction(function () use ($request, $data) {
             $listing = new Listing($data);
@@ -79,7 +98,7 @@ class ListingController extends Controller
     {
         Gate::authorize('update', $listing);
 
-        $data = $request->validated();
+        $data = $this->withoutAdminFields($request);
 
         DB::transaction(function () use ($request, $listing, $data) {
             $listing->fill($data);
@@ -143,6 +162,23 @@ class ListingController extends Controller
 
             $listing->images()->create(['path' => $path, 'sort_order' => $sort++]);
         }
+    }
+
+    /**
+     * Only an admin may flag a listing as featured; agen keeps whatever the
+     * admin set because the key is dropped before fill.
+     *
+     * @return array<string, mixed>
+     */
+    private function withoutAdminFields(ListingRequest $request): array
+    {
+        $data = $request->validated();
+
+        if ($request->user()->role !== User::ROLE_ADMIN) {
+            unset($data['is_featured']);
+        }
+
+        return $data;
     }
 
     /**
