@@ -74,7 +74,7 @@ Pastikan semua dependensi berikut tersedia sebelum menjalankan proyek.
 - [ ] SQLite (lokal) atau MariaDB 10.5 (production)
 - [ ] Git
 
-Ekstensi `gd` atau `imagick` dibutuhkan saat konversi foto ke WebP (Phase 4).
+Ekstensi `gd` dengan dukungan WebP dibutuhkan untuk konversi foto. Tanpa ekstensi itu, unggahan disimpan apa adanya.
 
 ### Package Composer
 

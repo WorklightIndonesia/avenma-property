@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\PageContent;
 use App\Models\PageSection;
+use App\Services\ImageService;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,6 +21,8 @@ use Illuminate\View\View;
  */
 class PageContentController extends Controller
 {
+    public function __construct(private readonly ImageService $images) {}
+
     public function index(): View
     {
         return view('admin.pages.index', [
@@ -51,7 +54,7 @@ class PageContentController extends Controller
         $data = $request->validate($this->rules($skeleton, $imageKeys), [
             'sections.*.cta_url.regex' => 'Tujuan tombol harus diawali http://, https://, atau / untuk alamat di situs ini.',
             'sections.*.cta_url_2.regex' => 'Tujuan tombol kedua harus diawali http://, https://, atau / untuk alamat di situs ini.',
-            'sections.*.image.mimetypes' => 'Gambar harus JPEG atau PNG.',
+            'sections.*.image.mimetypes' => 'Gambar harus JPEG, PNG, atau WebP.',
             'sections.*.image.max' => 'Ukuran gambar maksimal 5 MB.',
         ]);
 
@@ -126,8 +129,7 @@ class PageContentController extends Controller
         }
 
         foreach ($imageKeys as $key) {
-            // shortcut: no WebP conversion until Task 14; raise the limit then
-            $rules["sections.$key.image"] = ['nullable', 'file', 'mimetypes:image/jpeg,image/png', 'max:5120'];
+            $rules["sections.$key.image"] = ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'];
             $rules["sections.$key.image_alt"] = ['nullable', 'string', 'max:255'];
             $rules["sections.$key.remove_image"] = ['nullable', 'boolean'];
         }
@@ -162,6 +164,6 @@ class PageContentController extends Controller
             Storage::disk('uploads')->delete($section->image);
         }
 
-        $section->image = $file?->store('images/pages/'.$section->page_content_id, 'uploads');
+        $section->image = $file ? $this->images->store($file, 'images/pages/'.$section->page_content_id) : null;
     }
 }

@@ -117,10 +117,10 @@ Detail plan: `tasks/plan.md`
 
 ## Phase 4: Polish & Deploy
 
-- [ ] **Task 14: WebP image conversion**
+- [x] **Task 14: WebP image conversion**
   - Acceptance: upload foto dikonversi ke WebP, max 1920 px, max 5 MB.
   - Verification: feature test upload; cek file output.
-  - Files: `app/Services/ImageService.php`, update `ListingController`
+  - Files: `app/Services/ImageService.php` (GD bawaan PHP), dipakai `ListingController`, `BlogPostController`, `PageContentController`
   - Depends: Task 8
   - Scope: Small
 

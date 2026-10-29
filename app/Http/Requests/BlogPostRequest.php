@@ -21,7 +21,6 @@ class BlogPostRequest extends FormRequest
             'excerpt' => ['nullable', 'string', 'max:600'],
             'content' => ['required', 'string'],
 
-            // shortcut: no WebP conversion until Task 14
             'cover' => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
             'remove_cover' => ['nullable', 'boolean'],
             'is_published' => ['boolean'],

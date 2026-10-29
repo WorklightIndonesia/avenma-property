@@ -103,8 +103,8 @@
                             <div class="mt-3 grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <x-input-label :for="'image-'.$key" value="{{ $section?->image ? 'Ganti gambar' : 'Unggah gambar' }}" />
-                                    <input type="file" id="image-{{ $key }}" name="{{ $field }}[image]" accept="image/jpeg,image/png" class="mt-1 block w-full text-sm text-ink-950 file:mr-3 file:rounded file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-ink-950">
-                                    <p class="mt-1 text-xs text-ink-500">JPEG atau PNG, maksimal 5 MB.</p>
+                                    <input type="file" id="image-{{ $key }}" name="{{ $field }}[image]" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-ink-950 file:mr-3 file:rounded file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-ink-950">
+                                    <p class="mt-1 text-xs text-ink-500">JPEG, PNG, atau WebP, maksimal 5 MB. Disimpan sebagai WebP, lebar maksimal 1920 px.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get($path.'.image')" />
                                 </div>
 

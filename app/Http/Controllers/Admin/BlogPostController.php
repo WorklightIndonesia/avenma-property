@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogPostRequest;
 use App\Models\BlogPost;
 use App\Models\User;
+use App\Services\ImageService;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use Illuminate\View\View;
 
 class BlogPostController extends Controller
 {
+    public function __construct(private readonly ImageService $images) {}
+
     public function index(Request $request): View
     {
         $filters = $request->only(['judul']);
@@ -138,7 +141,7 @@ class BlogPostController extends Controller
             Storage::disk('uploads')->delete($post->cover_image);
         }
 
-        $post->cover_image = $file?->store('images/blog', 'uploads');
+        $post->cover_image = $file ? $this->images->store($file, 'images/blog') : null;
         $post->save();
     }
 

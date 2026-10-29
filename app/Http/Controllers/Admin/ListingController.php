@@ -8,6 +8,7 @@ use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\User;
+use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -19,6 +20,8 @@ use Illuminate\View\View;
 
 class ListingController extends Controller
 {
+    public function __construct(private readonly ImageService $images) {}
+
     public function index(Request $request): View
     {
         $filters = $request->only(['properti', 'lokasi', 'status']);
@@ -154,7 +157,7 @@ class ListingController extends Controller
         $sort = (int) $listing->images()->max('sort_order') + 1;
 
         foreach ($files as $file) {
-            $path = $file->store('images/listings/'.$listing->id, 'uploads');
+            $path = $this->images->store($file, 'images/listings/'.$listing->id);
 
             if (! $path) {
                 continue;

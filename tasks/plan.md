@@ -11,7 +11,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 
 - Custom `role` column di `users`, bukan Spatie — hanya 2 role, hemat dependency di shared hosting.
 - Role `admin` dan `agen`: agen mengelola listing miliknya sendiri, artikel blog, serta kategori/lokasi/developer. Halaman, pengaturan situs, dan akun hanya untuk `admin`. Default kolom `agen`.
-- Intervention Image untuk WebP conversion (max 1920 px, upload max 5 MB).
+- GD bawaan PHP untuk konversi WebP (max 1920 px, upload max 5 MB); tanpa package tambahan.
 - Google Maps embed iframe tanpa API key.
 - wa.me deep link tanpa API.
 - Sitemap manual (`/sitemap.xml`), bukan package — cukup untuk basic SEO.
@@ -56,7 +56,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 - [ ] Admin edit konten berfungsi
 
 ### Phase 4: Polish & Deploy
-- [ ] Task 14: WebP image conversion
+- [x] Task 14: WebP image conversion
 - [ ] Task 15: Photo gallery lightbox
 - [ ] Task 16: SEO meta tags + sitemap + robots.txt
 - [ ] Task 17: Bilingual ID/EN
@@ -64,7 +64,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 - [ ] Task 19: Hostinger deployment prep
 
 ### Checkpoint: Complete
-- [ ] Semua foto WebP
+- [x] Semua foto WebP
 - [ ] Sitemap accessible
 - [ ] Switch bahasa berfungsi
 - [ ] Lighthouse > 80
