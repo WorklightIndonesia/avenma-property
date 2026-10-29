@@ -145,7 +145,7 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 6, 10, 12
   - Scope: Large — pecah per resource saat implementasi
 
-- [ ] **Task 18: Responsive & accessibility review**
+- [x] **Task 18: Responsive & accessibility review**
   - Acceptance: semua halaman oke di 375/768/1440 px; alt text, label form, kontras.
   - Verification: DevTools device mode; Lighthouse accessibility.
   - Files: semua view

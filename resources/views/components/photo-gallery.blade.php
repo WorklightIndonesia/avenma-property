@@ -74,6 +74,7 @@
             x-show="isOpen"
             role="dialog"
             aria-modal="true"
+            aria-label="Foto"
             :aria-label="'Foto ' + (active + 1) + ' dari ' + photos.length"
             x-on:click.self="close()"
             x-transition:enter="transition ease-out duration-200 motion-reduce:transition-none"
@@ -95,7 +96,7 @@
             </div>
 
             <div class="relative flex min-h-0 flex-1 items-center justify-center px-4 pb-4 sm:px-16">
-                <img :src="photos[active].src" :alt="photos[active].alt" class="max-h-full max-w-full object-contain">
+                <img :src="photos[active].src" :alt="photos[active].alt" alt="{{ $photos[0]['alt'] }}" class="max-h-full max-w-full object-contain">
 
                 @if ($total > 1)
                     <button type="button" x-on:click="prev()" aria-label="Foto sebelumnya" class="absolute left-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded border border-paper/25 text-paper transition-colors duration-150 hover:bg-paper/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-300 sm:left-4">

@@ -258,9 +258,10 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Teks body minimal 4.5:1; elemen UI minimal 3:1.
 - Fokus selalu terlihat; jangan pernah `outline: none` tanpa pengganti.
 - Target sentuh 44×44 px untuk aksi utama; aksi di bilah alat (header, admin) minimal 40×40 px.
-- Setiap input punya `<label>`; error diumumkan sebagai teks, bukan hanya warna.
+- Setiap input punya `<label>`; field yang gagal ditandai `aria-invalid` (otomatis lewat `<x-text-input>` dan `<x-select>`), dan pesan galat pertama diumumkan lewat toast `role="alert"`.
 - Alt foto: `Rumah 3 kamar tidur di {lokasi}`; foto dekoratif `alt=""`.
-- Skip link ke `#main` di setiap layout publik.
+- Skip link ke `#main` di layout publik dan admin. Judul halaman selalu satu `h1`; kartu memakai `h2` bila berada langsung di bawah `h1`.
+- Foto utama halaman detail dimuat dengan `fetchpriority="high"` dan di-preload, karena ia elemen terbesar yang dilihat pembeli.
 
 ## 9. Konten
 

@@ -40,7 +40,7 @@
                         </a>
                     </nav>
 
-                    <button @click="open = !open" class="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 hover:bg-sand" :aria-expanded="open" aria-controls="mobile-menu" :aria-label="open ? 'Tutup menu' : 'Buka menu'">
+                    <button @click="open = !open" class="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 hover:bg-sand" :aria-expanded="open" aria-controls="mobile-menu" aria-label="Buka menu" :aria-label="open ? 'Tutup menu' : 'Buka menu'">
                         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path x-show="! open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                             <path x-show="open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />

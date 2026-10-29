@@ -26,6 +26,10 @@
             },
         }"
     >
+        <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[60] focus:bg-ink-950 focus:px-4 focus:py-3 focus:text-paper">
+            Lewati ke konten
+        </a>
+
         <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 z-30 bg-ink-950/50 lg:hidden"></div>
 
         <div class="min-h-screen lg:flex">
@@ -71,7 +75,7 @@
 
             <div class="flex-1 min-w-0">
                 <header class="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-line bg-paper px-4 sm:px-6 lg:px-8">
-                    <button @click="toggleSidebar()" class="inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 hover:bg-sand" :aria-expanded="sidebarOpen" aria-controls="admin-sidebar" :aria-label="sidebarOpen ? 'Sembunyikan menu' : 'Buka menu'">
+                    <button @click="toggleSidebar()" class="inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 hover:bg-sand" :aria-expanded="sidebarOpen" aria-controls="admin-sidebar" aria-label="Buka menu" :aria-label="sidebarOpen ? 'Sembunyikan menu' : 'Buka menu'">
                         <svg class="h-6 w-6" :class="sidebarOpen ? '-scale-x-100' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                             {{-- top bar slides into the panel edge --}}
                             <path d="M4 7h16" stroke-width="2" stroke-linecap="round" class="origin-center transition-transform duration-[400ms] ease-out [transform-box:fill-box] motion-reduce:transition-none" :class="sidebarOpen ? 'rotate-90 -translate-x-[7px] translate-y-[5px]' : ''" />
@@ -97,7 +101,7 @@
                     </div>
                 </header>
 
-                <main class="p-4 sm:p-6 lg:p-8">
+                <main id="main" class="p-4 sm:p-6 lg:p-8">
                     @yield('content')
                 </main>
             </div>

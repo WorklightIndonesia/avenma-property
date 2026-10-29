@@ -22,6 +22,8 @@
                     <a href="{{ route('public.listings.index') }}" class="mt-6 inline-flex items-center rounded border border-line px-5 py-3 text-sm font-semibold text-ink-950 hover:bg-sand">Hapus semua filter</a>
                 </div>
             @else
+                <h2 class="sr-only">Hasil pencarian properti</h2>
+
                 <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($listings as $listing)
                         <x-property-card :listing="$listing" />

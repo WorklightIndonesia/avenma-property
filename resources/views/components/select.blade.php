@@ -47,6 +47,7 @@
         @if ($id) id="{{ $id }}" @endif
         aria-haspopup="listbox"
         aria-label="{{ $ariaLabel ?? $placeholder ?? $name }}"
+        @if ($errors->has($name)) aria-invalid="true" @endif
         :aria-expanded="open ? 'true' : 'false'"
         class="{{ $trigger }}"
         x-on:click="toggle()"
@@ -63,6 +64,7 @@
     <ul
         role="listbox"
         tabindex="-1"
+        aria-label="{{ $ariaLabel ?? $placeholder ?? $name }}"
         x-ref="panel"
         x-cloak
         x-show="open"
