@@ -64,19 +64,6 @@
                         Lihat Website
                     </a>
                 </nav>
-
-                <div class="flex shrink-0 justify-end border-t border-paper/10 p-3">
-                    <button
-                        @click="toggleSidebar()"
-                        class="inline-flex h-10 w-10 items-center justify-center rounded text-paper/60 hover:bg-paper/10 hover:text-paper"
-                        aria-controls="admin-sidebar"
-                        aria-label="Sembunyikan menu"
-                    >
-                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5">
-                            <path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
-                </div>
             </aside>
 
             <div class="flex-1 min-w-0">

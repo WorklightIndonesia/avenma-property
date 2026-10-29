@@ -69,7 +69,7 @@
                 <col class="w-[9%]">
                 <col class="w-[19%]">
             </colgroup>
-            <thead class="bg-sand text-sm font-semibold text-ink-600">
+            <thead class="bg-sand text-sm font-semibold text-ink-600" x-on:click.outside="open = null">
                 <tr>
                     <th class="px-3 py-3 text-left align-top">
                         <button type="button" x-show="open !== 'properti'" x-on:click="open = 'properti'; $nextTick(() => $refs.properti.focus())" class="{{ $header }} min-h-10">
@@ -102,7 +102,7 @@
                                 name="urut"
                                 form="listing-filters"
                                 :options="App\Models\Listing::SORTS"
-                                :value="$sort"
+                                :value="$sort ?: 'terbaru'"
                                 aria-label="Urutkan harga"
                                 :submit="true"
                             />
