@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ListingController;
 use App\Http\Controllers\Public\PageController;
+use App\Http\Controllers\Public\SitemapController;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,14 @@ Route::get('/properti/{listing}', [ListingController::class, 'show'])->name('pub
 
 Route::get('/blog', [BlogController::class, 'index'])->name('public.blog.index');
 Route::get('/blog/{post}', [BlogController::class, 'show'])->name('public.blog.show');
+
+Route::get('/sitemap.xml', SitemapController::class)->name('public.sitemap');
+
+// Generated instead of a static file because APP_URL is still open; the
+// Sitemap line must be absolute.
+Route::get('/robots.txt', fn () => response(
+    "User-agent: *\nDisallow: /admin\n\nSitemap: ".route('public.sitemap')."\n",
+)->header('Content-Type', 'text/plain; charset=UTF-8'))->name('public.robots');
 
 if (! app()->environment('production')) {
     Route::view('/design-system', 'design-system')->name('design-system');

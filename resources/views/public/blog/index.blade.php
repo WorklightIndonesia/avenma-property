@@ -1,7 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Blog — Avenma Properti')
-@section('meta_description', 'Artikel tentang membeli, menjual, dan merawat properti dari Avenma Properti.')
+@section('meta')
+    <x-meta
+        title="Blog"
+        description="Artikel tentang membeli, menjual, dan merawat properti dari Avenma Properti."
+    />
+@endsection
 
 @section('content')
     <section class="bg-paper">

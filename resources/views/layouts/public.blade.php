@@ -5,8 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>@yield('title', config('app.name'))</title>
-        <meta name="description" content="@yield('meta_description', 'Avenma Properti — katalog properti primer dan sekunder.')">
+        @hasSection('meta')
+            @yield('meta')
+        @else
+            <x-meta />
+        @endif
 
         <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/brand/favicon-512.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('images/brand/favicon-512.png') }}">

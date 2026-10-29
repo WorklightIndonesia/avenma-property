@@ -1,7 +1,13 @@
 @extends('layouts.public')
 
-@section('title', $post->title.' — Avenma Properti')
-@section('meta_description', \Illuminate\Support\Str::limit(strip_tags($post->excerpt ?: $post->content), 155))
+@section('meta')
+    <x-meta
+        :title="$post->title"
+        :description="\Illuminate\Support\Str::limit(strip_tags($post->excerpt ?: $post->content), 155)"
+        :image="$post->cover_image ? asset($post->cover_image) : null"
+        type="article"
+    />
+@endsection
 
 @section('content')
     @php($date = ($post->published_at ?? $post->created_at)->locale('id')->translatedFormat('j F Y'))

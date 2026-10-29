@@ -1,7 +1,16 @@
 @extends('layouts.public')
 
-@section('title', ($page->meta_title ?: $page->title).' - Avenma Properti')
-@section('meta_description', $page->meta_description ?: 'Avenma Properti - katalog properti primer dan sekunder.')
+@section('meta')
+    @php
+        $heroImage = $page->section('hero')?->image;
+    @endphp
+
+    <x-meta
+        :title="$page->meta_title ?: $page->title"
+        :description="$page->meta_description ?: 'Avenma Properti - katalog properti primer dan sekunder.'"
+        :image="$heroImage ? asset($heroImage) : null"
+    />
+@endsection
 
 @section('content')
     @php

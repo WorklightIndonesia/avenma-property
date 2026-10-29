@@ -629,6 +629,55 @@ document.addEventListener('alpine:init', () => {
             this.initRegions();
         },
     }));
+
+    /* Property photo viewer. The gallery on the page stays inline; this is the
+       fullscreen layer, so it is the only place that reads the keyboard. */
+    Alpine.data('photoGallery', (photos = []) => ({
+        photos,
+        active: 0,
+        isOpen: false,
+
+        open(index = 0) {
+            this.active = Math.max(0, Math.min(index, this.photos.length - 1));
+            this.isOpen = true;
+            document.body.classList.add('overflow-y-hidden');
+            this.$nextTick(() => this.$refs.close?.focus());
+        },
+
+        close() {
+            this.isOpen = false;
+            document.body.classList.remove('overflow-y-hidden');
+            this.$refs.trigger?.focus();
+        },
+
+        next() {
+            this.active = (this.active + 1) % this.photos.length;
+        },
+
+        prev() {
+            this.active = (this.active - 1 + this.photos.length) % this.photos.length;
+        },
+
+        // Focus stays on the three overlay buttons while the dialog is open.
+        trap(event) {
+            const nodes = [...this.$refs.overlay.querySelectorAll('button')];
+
+            if (nodes.length === 0) {
+                return;
+            }
+
+            const first = nodes[0];
+            const last = nodes[nodes.length - 1];
+
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
+        },
+    }));
 });
 
 Alpine.start();

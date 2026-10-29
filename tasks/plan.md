@@ -57,15 +57,15 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 
 ### Phase 4: Polish & Deploy
 - [x] Task 14: WebP image conversion
-- [ ] Task 15: Photo gallery lightbox
-- [ ] Task 16: SEO meta tags + sitemap + robots.txt
+- [x] Task 15: Photo gallery lightbox
+- [x] Task 16: SEO meta tags + sitemap + robots.txt
 - [ ] Task 17: Bilingual ID/EN
 - [ ] Task 18: Responsive & accessibility review
 - [ ] Task 19: Hostinger deployment prep
 
 ### Checkpoint: Complete
 - [x] Semua foto WebP
-- [ ] Sitemap accessible
+- [x] Sitemap accessible
 - [ ] Switch bahasa berfungsi
 - [ ] Lighthouse > 80
 - [ ] Build production sukses

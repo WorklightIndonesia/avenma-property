@@ -124,17 +124,17 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 8
   - Scope: Small
 
-- [ ] **Task 15: Photo gallery lightbox**
+- [x] **Task 15: Photo gallery lightbox**
   - Acceptance: galeri bisa dibuka fullscreen, navigasi next/prev, tutup dengan Esc.
   - Verification: manual cek di mobile + desktop.
   - Files: `resources/views/components/photo-gallery.blade.php`, `resources/js/app.js`
   - Depends: Task 7, 14
   - Scope: Small
 
-- [ ] **Task 16: SEO meta tags + sitemap + robots.txt**
+- [x] **Task 16: SEO meta tags + sitemap + robots.txt**
   - Acceptance: meta title/description dinamis per halaman; `/sitemap.xml` berisi listing, blog, static pages; `robots.txt` benar.
   - Verification: cek view-source, akses sitemap, validasi XML.
-  - Files: `resources/views/components/meta.blade.php`, `app/Http/Controllers/Public/SitemapController.php`, `public/robots.txt`
+  - Files: `resources/views/components/meta.blade.php`, `app/Http/Controllers/Public/SitemapController.php`; robots.txt dibuat lewat route karena domain belum ditentukan
   - Depends: Task 6, 10, 12
   - Scope: Small
 

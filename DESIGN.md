@@ -208,6 +208,17 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 - Satu kalimat penjelas, satu aksi. Tanpa ilustrasi dekoratif.
 
+**Galeri foto (lightbox)**
+
+- Satu komponen: `resources/views/components/photo-gallery.blade.php`. Halaman detail mengirim `photos` (src, alt, label) dan menaruh badge status serta `Baru` lewat slot.
+- Di halaman: foto utama 4:3, caret hanya muncul bila foto lebih dari satu, penghitung `1 / 6` di kanan bawah, label di kiri bawah, thumbnail 4:3 di bawahnya.
+- Pemicu: klik foto utama, atau tombol `Lihat semua foto` dengan ikon bingkai. Tombol adalah pemicu yang bisa dijangkau keyboard; klik foto hanya jalan pintas tetikus.
+- Overlay: `fixed inset-0` dengan `bg-ink-950` **tanpa transparansi**, supaya halaman di belakang tidak mengintip. Penghitung di kiri atas, tombol tutup 44×44 px dengan ikon silang di kanan atas, panah 44×44 px di tengah kiri dan kanan hanya bila foto lebih dari satu, label di tengah bawah. Gambar memakai `object-contain` dan tidak pernah melebihi viewport.
+- Perilaku: Esc menutup, panah kiri dan kanan berpindah foto, Tab terkurung di tiga tombol overlay, scroll halaman terkunci selama terbuka, fokus pindah ke tombol tutup saat dibuka dan kembali ke pemicu saat ditutup.
+- Satu foto: viewer tetap bisa dibuka, tanpa panah dan tanpa penghitung. Tanpa foto: blok `sand` dengan mark, tanpa pemicu.
+- Motion: 200 ms masuk, 150 ms keluar, hanya `opacity`. `prefers-reduced-motion` mematikan transisinya.
+- Alt foto berasal dari `images.alt`; bila kosong, dipakai judul listing dan lokasinya.
+
 **Pesan sistem**
 
 - Satu komponen untuk seluruh aplikasi: `resources/views/components/toast.blade.php`, dipasang di empat layout (`admin`, `public`, `app`, `guest`). Halaman tidak menulis banner status sendiri; controller cukup mengirim `session('status')` atau `$errors`.

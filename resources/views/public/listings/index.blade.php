@@ -1,6 +1,11 @@
 @extends('layouts.public')
 
-@section('title', 'Properti — Avenma Properti')
+@section('meta')
+    <x-meta
+        title="Properti"
+        description="Katalog properti primer dan sekunder di Indonesia. Saring berdasarkan lokasi resmi, tipe, status, harga, jumlah kamar, dan developer."
+    />
+@endsection
 
 @section('content')
     <section class="bg-paper">
