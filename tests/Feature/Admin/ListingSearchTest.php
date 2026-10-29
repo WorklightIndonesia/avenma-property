@@ -110,6 +110,23 @@ class ListingSearchTest extends TestCase
         $this->assertStringContainsString('properti=Rumah', $response->viewData('listings')->url(2));
     }
 
+    public function test_the_column_holding_an_active_filter_opens_on_load(): void
+    {
+        $admin = $this->admin();
+
+        $this->actingAs($admin)
+            ->get('/admin/listings?lokasi=Bogor')
+            ->assertSee('open: \'lokasi\'', false);
+
+        $this->actingAs($admin)
+            ->get('/admin/listings?urut=termahal')
+            ->assertSee('open: \'urut\'', false);
+
+        $this->actingAs($admin)
+            ->get('/admin/listings')
+            ->assertSee('open: null', false);
+    }
+
     private function agen(): User
     {
         return User::factory()->create(['role' => User::ROLE_AGEN]);
