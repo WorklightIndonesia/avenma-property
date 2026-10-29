@@ -125,9 +125,11 @@ class ListingSearchTest extends TestCase
             ->get('/admin/listings?lokasi=Bogor&focus=lokasi')
             ->assertSee('open: \'lokasi\'', false);
 
+        // Sort and status are dropdowns in the header, so they never open a column.
         $this->actingAs($admin)
-            ->get('/admin/listings?urut=termahal&focus=urut')
-            ->assertSee('open: \'urut\'', false);
+            ->get('/admin/listings?urut=termahal')
+            ->assertSee('open: null', false)
+            ->assertSee('Harga tertinggi');
 
         $this->actingAs($admin)
             ->get('/admin/listings')

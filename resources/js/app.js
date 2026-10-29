@@ -195,6 +195,7 @@ document.addEventListener('alpine:init', () => {
         value: String(config.value ?? ''),
         options: config.options ?? [],
         submit: config.submit === true,
+        header: config.header === true,
         active: 0,
 
         init() {

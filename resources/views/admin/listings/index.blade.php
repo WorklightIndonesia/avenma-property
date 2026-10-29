@@ -86,45 +86,29 @@
                         <input x-cloak x-show="open === 'lokasi'" x-ref="lokasi" aria-label="Cari kecamatan atau kota" form="listing-filters" id="filter-lokasi" type="search" name="lokasi" value="{{ $filters['lokasi'] ?? '' }}" placeholder="Kecamatan atau kota" class="{{ $field }}" x-on:input.debounce.1000ms="$el.form.requestSubmit()" x-on:blur="open = null" x-on:keydown.escape="open = null" x-init="{{ $refocus('lokasi') }}">
                     </th>
                     <th class="px-3 py-3 text-left align-top">
-                        <button type="button" x-show="open !== 'urut'" x-on:click="open = 'urut'" class="{{ $header }} min-h-10">
-                            <span class="truncate">{{ App\Models\Listing::SORTS[$sort] ?? 'Harga' }}</span>
-                            @if ($sort === 'termurah')
-                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M12 19V5m0 0-6 6m6-6 6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            @elseif ($sort === 'termahal')
-                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M12 5v14m0 0 6-6m-6 6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            @else
-                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M8 7l4-4 4 4M8 17l4 4 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                            @endif
-                        </button>
-                        <div x-cloak x-show="open === 'urut'" class="mt-1.5" x-on:select="open = null">
-                            <x-select
-                                id="filter-urut"
-                                name="urut"
-                                form="listing-filters"
-                                :options="App\Models\Listing::SORTS"
-                                :value="$sort ?: 'terbaru'"
-                                aria-label="Urutkan harga"
-                                :submit="true"
-                            />
-                        </div>
+                        <x-select
+                            id="filter-urut"
+                            name="urut"
+                            form="listing-filters"
+                            variant="header"
+                            :options="App\Models\Listing::SORTS"
+                            :value="$sort ?: 'terbaru'"
+                            aria-label="Urutkan harga"
+                            :submit="true"
+                        />
                     </th>
                     <th class="px-3 py-3 text-left align-top">
-                        <button type="button" x-show="open !== 'status'" x-on:click="open = 'status'" class="{{ $header }} min-h-10">
-                            <span class="truncate">{{ App\Models\Listing::STATUSES[$filters['status'] ?? ''] ?? 'Status' }}</span>
-                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0"><path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                        </button>
-                        <div x-cloak x-show="open === 'status'" class="mt-1.5" x-on:select="open = null">
-                            <x-select
-                                id="filter-status"
-                                name="status"
-                                form="listing-filters"
-                                :options="App\Models\Listing::STATUSES"
-                                :value="$filters['status'] ?? ''"
-                                placeholder="Semua status"
-                                aria-label="Status penawaran"
-                                :submit="true"
-                            />
-                        </div>
+                        <x-select
+                            id="filter-status"
+                            name="status"
+                            form="listing-filters"
+                            variant="header"
+                            :options="App\Models\Listing::STATUSES"
+                            :value="$filters['status'] ?? ''"
+                            placeholder="Semua status"
+                            aria-label="Status penawaran"
+                            :submit="true"
+                        />
                     </th>
                     <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center">Agen</span></th>
                     <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>

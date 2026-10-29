@@ -7,6 +7,7 @@
     'form' => null,
     'submit' => false,
     'ariaLabel' => null,
+    'variant' => 'field',
 ])
 
 @php
@@ -21,13 +22,19 @@
     }
 
     $value = (string) $value;
+
+    // A table header reads as a label, so the trigger drops the field chrome and
+    // the panel opens straight from the header click.
+    $trigger = $variant === 'header'
+        ? 'flex min-h-10 w-full items-center justify-between gap-2 rounded bg-transparent p-0 text-left text-sm font-semibold text-ink-600 hover:text-ink-950'
+        : 'flex min-h-11 w-full items-center justify-between gap-2 rounded border border-line bg-white px-3 py-2 text-left text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
 @endphp
 
 {{-- One dropdown for the whole site: the same panel, gold highlight, and
      keyboard handling as the location picker on the public filter. --}}
 <div
     {{ $attributes->class(['relative']) }}
-    x-data="selectBox({ value: @js($value), options: @js($items), submit: @js($submit) })"
+    x-data="selectBox({ value: @js($value), options: @js($items), submit: @js($submit), header: @js($variant === 'header') })"
     x-on:click.outside="open = false"
 >
     {{-- The name is attached by Alpine so a no-JS browser submits only the
@@ -41,10 +48,10 @@
         aria-haspopup="listbox"
         aria-label="{{ $ariaLabel ?? $placeholder ?? $name }}"
         :aria-expanded="open ? 'true' : 'false'"
-        class="flex min-h-11 w-full items-center justify-between gap-2 rounded border border-line bg-white px-3 py-2 text-left text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30"
+        class="{{ $trigger }}"
         x-on:click="toggle()"
         x-on:keydown="keydown($event)"
-        x-bind:class="open ? 'border-gold-700 ring-1 ring-gold-500/30' : ''"
+        x-bind:class="open && ! header ? 'border-gold-700 ring-1 ring-gold-500/30' : ''"
     >
         <span class="truncate" x-text="label"></span>
 
