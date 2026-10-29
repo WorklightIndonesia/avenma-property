@@ -94,7 +94,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Satu-satunya bentuk bulat penuh: thumb slider rentang (18 px) dan avatar. Thumb bulat karena ia pegangan, bukan bidang.
 - Tidak ada `rounded-full` untuk tombol; CTA tetap persegi panjang bersudut 6 px.
 - Pemisah memakai `border-line` 1 px atau langkah warna `paper` → `sand`. Bukan bayangan.
-- Satu-satunya bayangan: `shadow-float` untuk elemen yang benar-benar mengapung (dropdown, dialog).
+- Satu-satunya bayangan: `shadow-float` untuk elemen yang benar-benar mengapung (dropdown, dialog, toast).
 
 ## 6. Komponen
 
@@ -163,6 +163,12 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Panel harga memuat: harga, CTA kontak, tautan ke simulasi KPR, lalu developer dan agen penjual.
 - Tanggal "Diperbarui" 12 px `ink-500` sebaris dengan breadcrumb.
 
+**Navigasi admin**
+
+- Sidebar menempel di viewport dan tidak ikut tergulir; satu-satunya tombol buka-tutup ada di header.
+- Setiap layar selain dashboard membuka dengan tautan kembali di atas judul: panah 16 px, nama tujuan (`Dashboard`, `Blog`, `Listing`, `Halaman`), 14 px bobot 500 `ink-600`, hover `ink-950`, tinggi target 40 px.
+- Tujuan tautan adalah induk layar itu, bukan halaman sebelumnya di riwayat browser. Komponen: `<x-back-link :href="…">`.
+
 **Tabel (admin)**
 
 - Header `sand`, teks 14 px (sama dengan isi tabel) bobot 600 `ink-600`; tautan header menggelap ke `ink-950` saat hover.
@@ -202,6 +208,32 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 - Satu kalimat penjelas, satu aksi. Tanpa ilustrasi dekoratif.
 
+**Pesan sistem**
+
+- Satu komponen untuk seluruh aplikasi: `resources/views/components/toast.blade.php`, dipasang di empat layout (`admin`, `public`, `app`, `guest`). Halaman tidak menulis banner status sendiri; controller cukup mengirim `session('status')` atau `$errors`.
+- Muncul di kanan bawah: `inset-x-4 bottom-4` di ponsel, `sm:right-6 sm:bottom-6 sm:w-[28rem]` di layar lebar. Beberapa pesan menumpuk dengan jarak 12 px, sukses di atas dan galat di bawah.
+- Ukuran sama untuk kedua jenis: `bg-white` bergaris `line`, garis kiri 4 px sebagai penanda jenis, teks 16 px, padding `px-6 py-5` dengan `pr-14` untuk tombol tutup, `shadow-float`.
+- Sukses: teks dan garis kiri `success` (#2E6B4F, 6.4:1). Hilang sendiri setelah 6 detik.
+- Galat: teks dan garis kiri `danger` (#A33B2A, 6.3:1). Hilang sendiri setelah 10 detik.
+- Tombol tutup 40×40 px berikon silang `ink-500`, hover `ink-950` dengan latar `sand`. Pesan boleh ditutup kapan saja.
+- Sukses memakai `role="status"` dan `aria-live="polite"`. Galat memakai `role="alert"` dan `aria-live="assertive"`.
+- Sumber pesan: `session('status')` untuk sukses, `$errors->first()` untuk galat. Hanya pesan pertama yang tampil sebagai toast.
+- Error per field tetap tampil di bawah field lewat `<x-input-error>`; toast tidak menggantikannya.
+- Durasi mengikuti panjang baca: 6 detik untuk sukses satu baris, 10 detik untuk galat yang bisa dua baris. Jangan memendekkannya tanpa mengukur ulang.
+- Hanya untuk hasil aksi atau kegagalan aksi. Bukan untuk ajakan bertindak, dan bukan pengganti teks yang memang ada di dalam halaman.
+
+**Dialog konfirmasi**
+
+- Pakai `<x-modal>` yang sudah ada: latar `ink-950/60`, panel `paper` bergaris `line`, `shadow-float`, lebar maksimum `md` (448 px). Esc, klik latar, scroll terkunci, dan fokus terkurung sudah ditangani komponen.
+- Render di luar tabel, karena bingkai `overflow-x-auto` memotong elemen bersarang.
+- Dipakai untuk setiap aksi hapus di dashboard: listing, foto listing, developer, akun, dan artikel. Hapus akun sendiri di halaman profil memakai dialog yang sama, ditambah kolom password.
+- Judul 18 px bobot 600 berupa pertanyaan: `Hapus artikel?`.
+- Isi 14 px `ink-600`: nama objek dalam tanda kutip (atau nama, email, dan label foto), akibatnya, lalu `Tindakan ini tidak bisa dibatalkan.` untuk aksi permanen.
+- Aksi rata kanan: `Batal` (`x-secondary-button`) lebih dulu, aksi destruktif (`x-danger-button`) terakhir. Label destruktif menyebut kata kerja dan objeknya: `Hapus artikel`.
+- `Batal` menerima fokus awal, sehingga Enter tidak langsung menghapus.
+- Wajib untuk aksi yang menghapus atau tidak bisa dibatalkan. Simpan, terbitkan, dan navigasi tidak meminta konfirmasi.
+- Jangan memakai `window.confirm()` atau `alert()`: gayanya mengikuti browser, teksnya tidak bisa memuat nama objek, dan tidak mengikuti aturan di dokumen ini.
+
 ## 7. Motion
 
 - Durasi 150 ms untuk hover dan fokus, 200 ms untuk panel.
@@ -229,6 +261,9 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Tombol menyebut aksinya: `Lihat detail`, `Hubungi via WhatsApp`, `Simpan properti`.
 - Empty state menjelaskan langkah berikutnya, bukan meminta maaf.
 - Tanggal: `26 Oktober 2026`.
+- Pesan sukses menyebut hasilnya dalam bentuk lampau dan tetap singkat: `Artikel dibuat`, `Perubahan disimpan`, `Developer dihapus`. Tanpa tanda seru.
+- Pesan galat menyebut objeknya, jumlahnya bila ada, dan langkah berikutnya: `Developer Beverly Group masih dipakai 1 listing. Pindahkan atau hapus listing itu dulu.` Jangan menulis `Terjadi kesalahan`, `Gagal`, atau kode teknis.
+- Judul dialog konfirmasi berupa pertanyaan singkat. Tombol destruktif menyebut kata kerja dan objeknya, bukan `Ya` atau `OK`.
 
 ## 10. Anti-pattern
 
@@ -242,6 +277,9 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 | Carousel otomatis | mengganggu, buruk untuk aksesibilitas |
 | Field krem hangat di seluruh halaman | jatuh ke klise krem-plus-emas |
 | Placeholder abu-abu untuk foto kosong | pakai blok `sand` dengan wordmark |
+| `window.confirm()` atau `alert()` | gaya mengikuti browser dan teksnya tidak bisa memuat nama objek |
+| Toast yang menetap sampai halaman dimuat ulang | terlihat seperti error dan menutupi konten |
+| Pesan galat tanpa nama objek (`Terjadi kesalahan`, `Gagal`) | pengguna tidak tahu apa yang rusak dan apa yang harus dilakukan |
 
 ## 11. Peta token
 
