@@ -1,4 +1,4 @@
-﻿@php
+@php
     $check = 'rounded border-line text-gold-700 focus:ring-gold-500/30';
 
     // Sanitizing on the way back in keeps a rejected submit from injecting
