@@ -18,6 +18,9 @@
                 :src="photos[active].src"
                 alt="{{ $photos[0]['alt'] }}"
                 :alt="photos[active].alt"
+                width="1200"
+                height="900"
+                fetchpriority="high"
                 class="aspect-[4/3] w-full cursor-zoom-in object-cover"
                 x-on:click="open(active)"
             >

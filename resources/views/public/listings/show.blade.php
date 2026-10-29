@@ -188,3 +188,10 @@
         </div>
     </section>
 @endsection
+
+@push('head')
+    {{-- The gallery's first photo is the largest paint; fetch it with the document. --}}
+    @if ($listing->images->isNotEmpty())
+        <link rel="preload" as="image" href="{{ asset($listing->images->first()->path) }}" fetchpriority="high">
+    @endif
+@endpush
