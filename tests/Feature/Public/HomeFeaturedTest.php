@@ -108,6 +108,24 @@ class HomeFeaturedTest extends TestCase
             ->assertDontSee('Rumah Draf Galeri');
     }
 
+    public function test_the_hero_gallery_steps_with_arrows(): void
+    {
+        $this->seed(PageContentSeeder::class);
+
+        $listing = $this->listing(['title' => 'Rumah Satu']);
+        $first = $listing->images()->create(['path' => 'images/listings/satu.webp', 'sort_order' => 1]);
+        $second = $listing->images()->create(['path' => 'images/listings/dua.webp', 'sort_order' => 2]);
+
+        HomeGalleryPhoto::create(['listing_image_id' => $first->id, 'sort_order' => 0]);
+        HomeGalleryPhoto::create(['listing_image_id' => $second->id, 'sort_order' => 1]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('aria-label="Foto sebelumnya"', false)
+            ->assertSee('aria-label="Foto berikutnya"', false)
+            ->assertSee('aria-label="Foto 2 dari 2"', false);
+    }
+
     public function test_the_home_page_lists_the_five_most_recent_articles(): void
     {
         $this->seed(PageContentSeeder::class);

@@ -90,7 +90,9 @@
                             },
                             start() { this.stop(); if (this.n > 1 && ! window.matchMedia('(prefers-reduced-motion: reduce)').matches) { this.timer = setInterval(() => this.i = (this.i + 1) % this.n, 5000); } },
                             stop() { clearInterval(this.timer); },
-                            go(index) { this.i = index; }
+                            go(index) { this.i = index; },
+                            prev() { this.i = (this.i - 1 + this.n) % this.n; },
+                            next() { this.i = (this.i + 1) % this.n; }
                         }"
                         x-init="start()"
                         @mouseenter="stop()"
@@ -117,7 +119,16 @@
                         </div>
 
                         @if ($heroSlides->count() > 1)
-                            <div class="-mt-4 flex items-center justify-center gap-1">
+                            <div class="-mt-4 flex items-center justify-center gap-2">
+                                <button
+                                    type="button"
+                                    @click="prev()"
+                                    aria-label="Foto sebelumnya"
+                                    class="inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 transition-colors duration-150 hover:bg-sand hover:text-ink-950"
+                                >
+                                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                </button>
+
                                 @foreach ($heroSlides as $index => $slide)
                                     <button
                                         type="button"
@@ -129,6 +140,15 @@
                                         <span class="h-1 rounded-full transition-all duration-300 motion-reduce:transition-none" :class="i === {{ $index }} ? 'w-5 bg-ink-950' : 'w-2 bg-line'"></span>
                                     </button>
                                 @endforeach
+
+                                <button
+                                    type="button"
+                                    @click="next()"
+                                    aria-label="Foto berikutnya"
+                                    class="inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 transition-colors duration-150 hover:bg-sand hover:text-ink-950"
+                                >
+                                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                </button>
                             </div>
                         @endif
                     </div>
