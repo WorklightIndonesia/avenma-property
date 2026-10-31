@@ -302,7 +302,10 @@ class PageContentTest extends TestCase
         $this->actingAs($this->admin())
             ->get("/admin/pages/{$page->id}/edit")
             ->assertOk()
-            ->assertSee('<input type="hidden" name="gallery[]" value="'.$photo->id.'">', false);
+            ->assertSee('<input type="hidden" name="gallery[]" value="'.$photo->id.'">', false)
+            // The search form and the counter carry the picks before the script runs.
+            ->assertSee('value="'.$photo->id.'" data-picks-field', false)
+            ->assertSee('<span class="font-semibold" data-count>1</span>', false);
 
         // An empty `pilih` means the admin cleared the selection on purpose.
         $this->actingAs($this->admin())
@@ -380,6 +383,93 @@ class PageContentTest extends TestCase
             ->assertDontSee('galeri_page=9', false)
             ->assertSee('aria-label="Mundur 5 halaman"', false)
             ->assertSee('aria-label="Maju 5 halaman"', false);
+    }
+
+    public function test_a_stale_pick_in_the_url_is_dropped_instead_of_blocking_the_save(): void
+    {
+        $this->listingWithPhotos('Rumah Lama');
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?pilih=999999")
+            ->assertOk()
+            ->assertDontSee('value="999999"', false);
+
+        // Nothing stale is posted back, so the page saves like any other.
+        $this->actingAs($this->admin())
+            ->put("/admin/pages/{$page->id}", $this->payload('home'))
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(0, HomeGalleryPhoto::count());
+    }
+
+    public function test_an_array_in_the_search_query_does_not_break_the_page(): void
+    {
+        $this->listingWithPhotos('Rumah Lama');
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?q[]=x&pilih[]=1")
+            ->assertOk();
+    }
+
+    public function test_the_gallery_search_matches_a_title_or_a_photo_label(): void
+    {
+        $matching = $this->listingWithPhotos('Rumah Melati');
+        $this->listingWithPhotos('Rumah Anggrek');
+
+        $matching->images()->first()->update(['alt' => 'Taman belakang luas']);
+
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?q=melati")
+            ->assertOk()
+            ->assertSee('Rumah Melati')
+            ->assertDontSee('Rumah Anggrek');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?q=taman")
+            ->assertOk()
+            ->assertSee('Rumah Melati')
+            ->assertDontSee('Rumah Anggrek');
+    }
+
+    public function test_a_page_number_past_the_end_offers_a_way_back(): void
+    {
+        $this->listingWithPhotos('Rumah Lama');
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?galeri_page=99")
+            ->assertOk()
+            ->assertSee('Kembali ke halaman pertama')
+            ->assertDontSee('Belum ada foto properti');
+    }
+
+    public function test_a_save_that_keeps_the_same_picks_does_not_reorder_the_hero(): void
+    {
+        $listing = $this->listingWithPhotos('Rumah Satu', 2);
+        [$first, $second] = $listing->images()->orderBy('sort_order')->get()->all();
+
+        HomeGalleryPhoto::create(['listing_image_id' => $second->id, 'sort_order' => 0]);
+        HomeGalleryPhoto::create(['listing_image_id' => $first->id, 'sort_order' => 1]);
+
+        $page = $this->page('home');
+
+        // The picker posts this page's photos in display order, not saved order.
+        $this->actingAs($this->admin())
+            ->put("/admin/pages/{$page->id}", $this->payload('home', ['gallery' => [$first->id, $second->id]]))
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(
+            [$second->id, $first->id],
+            HomeGalleryPhoto::query()
+                ->orderBy('sort_order')
+                ->pluck('listing_image_id')
+                ->map(fn ($id) => (int) $id)
+                ->all()
+        );
     }
 
     private function page(string $key): PageContent

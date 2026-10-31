@@ -27,6 +27,7 @@ class PageContentController extends Controller
 {
     /** Slides beyond this are unusable in the hero and slow the home page down. */
     public const MAX_GALLERY = 6;
+
     public function __construct(private readonly ImageService $images) {}
 
     public function index(): View
@@ -60,7 +61,8 @@ class PageContentController extends Controller
      */
     private function gallery(): array
     {
-        $search = trim((string) request()->query('q'));
+        $query = request()->query('q');
+        $search = is_string($query) ? trim($query) : '';
 
         $paginator = Listing::query()
             ->whereHas('images')
@@ -128,25 +130,49 @@ class PageContentController extends Controller
     private function pickedPhotos(): array
     {
         if (old('gallery') !== null) {
-            return collect(old('gallery'))->map(fn ($id) => (int) $id)->unique()->values()->all();
+            return $this->existingPicks(collect(old('gallery'))->map(fn ($id) => (int) $id)->unique()->values()->all());
         }
 
         // No `pilih` means "show what is saved"; an empty one is a selection the
         // admin cleared on purpose.
         if (! request()->query->has('pilih')) {
-            return HomeGalleryPhoto::query()
+            return $this->existingPicks(HomeGalleryPhoto::query()
                 ->orderBy('sort_order')
                 ->pluck('listing_image_id')
                 ->map(fn ($id) => (int) $id)
-                ->all();
+                ->all());
         }
 
-        return collect(explode(',', (string) request()->query('pilih')))
+        $query = request()->query('pilih');
+
+        return $this->existingPicks(collect(explode(',', is_string($query) ? $query : ''))
             ->map(fn ($id) => (int) trim($id))
             ->filter(fn (int $id) => $id > 0)
             ->unique()
             ->values()
+            ->all());
+    }
+
+    /**
+     * Drops picks whose photo is gone, so a stale link cannot post an id that
+     * fails validation with no message on the page.
+     *
+     * @param  list<int>  $picked
+     * @return list<int>
+     */
+    private function existingPicks(array $picked): array
+    {
+        if ($picked === []) {
+            return [];
+        }
+
+        $existing = ListingImage::query()
+            ->whereIn('id', $picked)
+            ->pluck('id')
+            ->map(fn ($id) => (int) $id)
             ->all();
+
+        return array_values(array_intersect($picked, $existing));
     }
 
     public function update(Request $request, PageContent $page): RedirectResponse
@@ -283,6 +309,18 @@ class PageContentController extends Controller
     private function syncGallery(array $ids): void
     {
         $selected = collect($ids)->map(fn ($id) => (int) $id)->unique()->values();
+
+        // A text-only save can post the same picks in another order; leaving
+        // the stored order alone stops the hero from reshuffling.
+        $stored = HomeGalleryPhoto::query()
+            ->orderBy('sort_order')
+            ->pluck('listing_image_id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
+
+        if (collect($stored)->sort()->values()->all() === $selected->sort()->values()->all()) {
+            return;
+        }
 
         // Nothing checked means "use the fallback", so every picked photo goes.
         HomeGalleryPhoto::query()

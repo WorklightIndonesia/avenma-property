@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 
 class ListingRequest extends FormRequest
 {
+    private ?int $uploadSlots = null;
+
     public function authorize(): bool
     {
         return true; // route middleware and ListingPolicy decide access
@@ -19,11 +21,6 @@ class ListingRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Saving adds photos to whatever the listing already has, so the cap
-        // counts the stored rows, not just this upload.
-        $listing = $this->route('listing');
-        $remaining = Listing::MAX_PHOTOS - ($listing instanceof Listing ? $listing->images()->count() : 0);
-
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
@@ -53,7 +50,7 @@ class ListingRequest extends FormRequest
             'show_kpr' => ['boolean'],
 
             // Ten per upload, and never more than the total the listing may hold.
-            'photos' => ['nullable', 'array', 'max:'.max(0, min(10, $remaining))],
+            'photos' => ['nullable', 'array', 'max:'.$this->maxUploads()],
             'photos.*' => ['file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
 
             'images' => ['nullable', 'array'],
@@ -70,8 +67,24 @@ class ListingRequest extends FormRequest
     {
         return [
             'latitude.required' => 'Tandai titik lokasi di peta sebelum listing diterbitkan.',
-            'photos.max' => 'Maksimal '.Listing::MAX_PHOTOS.' foto per listing. Hapus beberapa foto dulu sebelum menambah.',
+            'photos.max' => 'Maksimal '.$this->maxUploads().' foto bisa ditambahkan sekarang; batas tiap listing '.Listing::MAX_PHOTOS.' foto.',
         ];
+    }
+
+    /**
+     * Ten per upload, and never more than the total the listing may still hold.
+     * Saving adds photos to whatever is stored, so the count is the stored rows.
+     */
+    private function maxUploads(): int
+    {
+        if ($this->uploadSlots === null) {
+            $listing = $this->route('listing');
+            $remaining = Listing::MAX_PHOTOS - ($listing instanceof Listing ? $listing->images()->count() : 0);
+
+            $this->uploadSlots = max(0, min(10, $remaining));
+        }
+
+        return $this->uploadSlots;
     }
 
     /**

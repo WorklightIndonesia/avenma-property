@@ -60,7 +60,7 @@
                     Satu properti tampil per halaman. Tanpa centang, hero memakai foto properti terbaru.
                 </p>
 
-                <x-input-error class="mt-2" :messages="$errors->get('gallery')" />
+                <x-input-error class="mt-2" :messages="array_merge($errors->get('gallery'), $errors->get('gallery.*'))" />
 
                 <div class="mt-4" data-gallery-picker x-data="galleryPicker({{ $galleries['max'] }})" x-on:change="sync($event)">
                     <x-input-label for="gallery-search" value="Cari foto properti" />
@@ -73,7 +73,7 @@
                         class="mt-1 block w-full sm:max-w-sm"
                         placeholder="Judul properti atau alt foto"
                     />
-                    <input type="hidden" name="pilih" form="gallery-search-form" data-picks-field>
+                    <input type="hidden" name="pilih" form="gallery-search-form" value="{{ implode(',', $galleries['picked']) }}" data-picks-field>
 
                     <div class="mt-3" data-picked-list>
                         <p class="text-xs font-semibold text-ink-600">Foto yang dipakai sekarang</p>
@@ -105,7 +105,7 @@
                     </div>
 
                     <p class="mt-2 text-sm">
-                        <span class="font-semibold" data-count>0</span> dari {{ $galleries['max'] }} foto dipilih.
+                        <span class="font-semibold" data-count>{{ count($galleries['picked']) }}</span> dari {{ $galleries['max'] }} foto dipilih.
                     </p>
 
                     <p
@@ -154,13 +154,20 @@
                             <x-pagination :paginator="$galleries['paginator']" arrows />
                         </div>
                     @else
-                        <p class="mt-4 text-sm text-ink-500">
-                            @if ($galleries['search'] !== '')
-                                Tidak ada properti yang cocok dengan &ldquo;{{ $galleries['search'] }}&rdquo;.
-                            @else
-                                Belum ada foto properti. Unggah foto di menu Properti lebih dulu.
-                            @endif
-                        </p>
+                        @if ($galleries['paginator']->total() > 0)
+                            <p class="mt-4 text-sm text-ink-500">
+                                Halaman {{ $galleries['paginator']->currentPage() }} tidak ada.
+                                <a href="{{ $galleries['paginator']->url(1) }}" class="font-semibold text-gold-700 hover:underline">Kembali ke halaman pertama</a>.
+                            </p>
+                        @else
+                            <p class="mt-4 text-sm text-ink-500">
+                                @if ($galleries['search'] !== '')
+                                    Tidak ada properti yang cocok dengan &ldquo;{{ $galleries['search'] }}&rdquo;.
+                                @else
+                                    Belum ada foto properti. Unggah foto di menu Properti lebih dulu.
+                                @endif
+                            </p>
+                        @endif
                     @endif
                 </div>
             </section>
