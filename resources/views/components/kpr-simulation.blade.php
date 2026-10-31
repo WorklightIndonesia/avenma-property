@@ -12,7 +12,7 @@
 ])
 
 @php
-    $price = max(1, (int) $price);
+    $price = max(0, (int) $price);
     $minDp = max(0, min(70, (float) $minDp));
     $maxDp = max($minDp, min(90, (float) $maxDp));
     $interest = min(15, max(3, (float) $interest));
@@ -84,13 +84,14 @@
                             type="text"
                             inputmode="numeric"
                             autocomplete="off"
-                            value="{{ number_format($price, 0, ',', '.') }}"
+                            value="{{ $price > 0 ? number_format($price, 0, ',', '.') : '' }}"
                             @input="setPrice($event)"
                             class="tabular w-full min-w-0 border-0 bg-transparent p-0 text-lg font-semibold text-ink-950 focus:outline-none focus:ring-0"
                             aria-describedby="{{ $id }}-price-help"
+                            placeholder="Masukkan harga properti"
                         >
                     </div>
-                    <p id="{{ $id }}-price-help" class="mt-1 text-xs text-ink-500">Terisi dari listing. Ubah untuk mencoba harga lain.</p>
+                    <p id="{{ $id }}-price-help" class="mt-1 text-xs text-ink-500">{{ $price > 0 ? 'Terisi dari listing. Ubah untuk mencoba harga lain.' : 'Masukkan harga properti untuk melihat angsuran.' }}</p>
                 </div>
 
                 <div class="mt-6">
@@ -145,7 +146,7 @@
 
             <div class="bg-ink-950 p-5 text-paper sm:p-6">
                 <p class="text-sm text-paper/60">Angsuran per bulan</p>
-                <p class="tabular mt-2 text-3xl font-semibold leading-none sm:text-4xl" x-text="rp(monthly)">{{ $rupiah($monthly) }}</p>
+                <p class="tabular mt-2 text-3xl font-semibold leading-none sm:text-4xl" x-text="price > 0 ? rp(monthly) : '—'">{{ $price > 0 ? $rupiah($monthly) : '—' }}</p>
                 <p class="mt-2 text-sm text-paper/60"><span x-text="tenor">{{ $tenor }}</span> tahun · <span x-text="rateType === 'fixed' ? 'bunga tetap' : 'bunga mengambang'">bunga tetap</span></p>
 
                 <dl class="mt-6 space-y-3 border-t border-paper/15 pt-5 text-sm">

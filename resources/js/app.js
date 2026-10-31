@@ -630,6 +630,55 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    /* Click-and-drag sideways scrolling for a single row, mouse only so touch
+       keeps its native momentum scroll. A drag swallows the click that follows
+       it, so dragging across a card does not open it. */
+    Alpine.data('dragScroll', () => ({
+        startX: 0,
+        startLeft: 0,
+        moving: false,
+        dragged: false,
+
+        begin(event) {
+            if (event.pointerType !== 'mouse') {
+                return;
+            }
+
+            this.moving = true;
+            this.dragged = false;
+            this.startX = event.clientX;
+            this.startLeft = this.$el.scrollLeft;
+        },
+
+        move(event) {
+            if (! this.moving) {
+                return;
+            }
+
+            const distance = event.clientX - this.startX;
+
+            if (Math.abs(distance) > 4) {
+                this.dragged = true;
+            }
+
+            this.$el.scrollLeft = this.startLeft - distance;
+        },
+
+        end() {
+            this.moving = false;
+        },
+
+        swallowClick(event) {
+            if (! this.dragged) {
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+            this.dragged = false;
+        },
+    }));
+
     /* Property photo viewer. The gallery on the page stays inline; this is the
        fullscreen layer, so it is the only place that reads the keyboard. */
     Alpine.data('photoGallery', (photos = []) => ({

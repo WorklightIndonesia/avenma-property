@@ -1,12 +1,12 @@
 @props(['listing'])
 
 @php
-    $type = ['primary' => 'Primer', 'secondary' => 'Sekunder'][$listing->listing_type] ?? $listing->listing_type;
+    $type = \App\Models\ListingOption::options('listing_type')[$listing->listing_type] ?? $listing->listing_type;
 
     $badge = [
-        'dijual' => 'border border-ink-950 bg-paper text-ink-950',
+        'dijual' => 'bg-gold-300 text-ink-950',
         'disewa' => 'bg-gold-700 text-white',
-    ][$listing->status] ?? 'border border-ink-950 bg-paper text-ink-950';
+    ][$listing->status] ?? 'bg-gold-300 text-ink-950';
 
     $specs = collect([
         $listing->bedrooms ? $listing->bedrooms.' KT' : null,
@@ -16,7 +16,7 @@
     ])->filter()->implode(' · ');
 @endphp
 
-<article class="relative border border-line bg-white transition duration-150 hover:-translate-y-1 hover:border-ink-950 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
+<article class="group relative border border-line bg-white transition duration-150 hover:-translate-y-1 hover:border-ink-950 motion-reduce:transition-none motion-reduce:hover:translate-y-0">
     {{-- shortcut: sample photos stand in until the client sends real ones; listings without photos keep the mark block --}}
     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
         @if ($cover = $listing->images->first())
@@ -27,8 +27,14 @@
 
         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
         @if ($listing->isNew())
-            <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+            <span class="absolute left-3 top-3 rounded bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
         @endif
+
+        <div class="pointer-events-none absolute inset-0 flex items-center justify-center bg-ink-950/55 opacity-0 transition duration-300 ease-out motion-reduce:transition-none group-hover:opacity-100">
+            <span class="-translate-y-2 text-sm font-semibold text-paper transition-transform duration-300 ease-out motion-reduce:transition-none motion-reduce:-translate-y-0 group-hover:translate-y-0">
+                Lihat lebih lanjut <span aria-hidden="true">→</span>
+            </span>
+        </div>
     </div>
 
     <div class="space-y-3 p-4">
