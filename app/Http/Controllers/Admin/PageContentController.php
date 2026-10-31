@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\HomeGalleryPhoto;
-use App\Models\ListingImage;
+use App\Models\Listing;
 use App\Models\PageContent;
 use App\Models\PageSection;
 use App\Services\ImageService;
@@ -24,6 +24,8 @@ use Illuminate\View\View;
  */
 class PageContentController extends Controller
 {
+    /** Slides beyond this are unusable in the hero and slow the home page down. */
+    public const MAX_GALLERY = 6;
     public function __construct(private readonly ImageService $images) {}
 
     public function index(): View
@@ -40,19 +42,80 @@ class PageContentController extends Controller
 
         $page->load('sections');
 
-        $isHome = $page->key === 'home';
-
         return view('admin.pages.edit', [
             'page' => $page,
             'skeleton' => config("pages.{$page->key}.sections"),
             'sections' => $page->sections->keyBy('key'),
-            'galleryImages' => $isHome
-                ? ListingImage::query()->with('listing')->orderBy('listing_id')->orderBy('sort_order')->get()
-                : collect(),
-            'galleryIds' => $isHome
-                ? HomeGalleryPhoto::query()->orderBy('sort_order')->pluck('listing_image_id')->all()
-                : [],
+            'galleries' => $page->key === 'home' ? $this->gallery() : null,
         ]);
+    }
+
+    /**
+     * The hero picker, one listing per page: every photo of every listing at
+     * once was a heavy query and a huge admin page. The picks travel in the
+     * query string, because paging reloads the document.
+     *
+     * @return array<string, mixed>
+     */
+    private function gallery(): array
+    {
+        $search = trim((string) request()->query('q'));
+
+        $paginator = Listing::query()
+            ->whereHas('images')
+            ->when($search !== '', fn ($query) => $query->where(fn ($query) => $query
+                ->where('title', 'like', "%{$search}%")
+                ->orWhereHas('images', fn ($images) => $images
+                    ->where('alt', 'like', "%{$search}%")
+                    ->orWhere('label', 'like', "%{$search}%"))))
+            ->with('images')
+            ->orderByDesc('id')
+            ->paginate(1, ['*'], 'galeri_page')
+            ->withQueryString();
+
+        $listing = $paginator->first();
+        $picked = $this->pickedPhotos();
+
+        return [
+            'listing' => $listing,
+            'paginator' => $paginator,
+            'search' => $search,
+            'max' => self::MAX_GALLERY,
+            // Picks made on other pages, carried as hidden fields so saving this
+            // page does not drop them.
+            'others' => array_values(array_diff($picked, $listing?->images->pluck('id')->map(fn ($id) => (int) $id)->all() ?? [])),
+            'picked' => $picked,
+        ];
+    }
+
+    /**
+     * What the picker starts with. A failed save wins over the URL, so nothing
+     * ticked is lost to the redirect.
+     *
+     * @return list<int>
+     */
+    private function pickedPhotos(): array
+    {
+        if (old('gallery') !== null) {
+            return collect(old('gallery'))->map(fn ($id) => (int) $id)->unique()->values()->all();
+        }
+
+        // No `pilih` means "show what is saved"; an empty one is a selection the
+        // admin cleared on purpose.
+        if (! request()->query->has('pilih')) {
+            return HomeGalleryPhoto::query()
+                ->orderBy('sort_order')
+                ->pluck('listing_image_id')
+                ->map(fn ($id) => (int) $id)
+                ->all();
+        }
+
+        return collect(explode(',', (string) request()->query('pilih')))
+            ->map(fn ($id) => (int) trim($id))
+            ->filter(fn (int $id) => $id > 0)
+            ->unique()
+            ->values()
+            ->all();
     }
 
     public function update(Request $request, PageContent $page): RedirectResponse
@@ -67,6 +130,7 @@ class PageContentController extends Controller
             'sections.*.cta_url_2.regex' => 'Tujuan tombol kedua harus diawali http://, https://, atau / untuk alamat di situs ini.',
             'sections.*.image.mimetypes' => 'Gambar harus JPEG, PNG, atau WebP.',
             'sections.*.image.max' => 'Ukuran gambar maksimal 5 MB.',
+            'gallery.max' => 'Galeri beranda maksimal '.self::MAX_GALLERY.' foto. Lepas beberapa dulu.',
         ]);
 
         $this->requireAltText($request, $page, $imageKeys);
@@ -132,7 +196,7 @@ class PageContentController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:255'],
-            'gallery' => ['nullable', 'array'],
+            'gallery' => ['nullable', 'array', 'max:'.self::MAX_GALLERY],
             'gallery.*' => ['integer', 'exists:listing_images,id'],
         ];
 

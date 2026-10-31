@@ -739,6 +739,57 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    /* Admin hero picker: one listing per page, so the selection has to survive
+       a reload. Ticks stay local and are copied into the pager links and the
+       search form before either is used. */
+    Alpine.data('galleryPicker', (max) => ({
+        get boxes() {
+            return [...this.$el.querySelectorAll('input[type="checkbox"][name="gallery[]"]')];
+        },
+
+        get carried() {
+            return [...this.$el.querySelectorAll('input[type="hidden"][name="gallery[]"]')];
+        },
+
+        get picks() {
+            return [...this.carried, ...this.boxes.filter((box) => box.checked)].map((input) => input.value);
+        },
+
+        init() {
+            this.refresh();
+        },
+
+        sync(event) {
+            // The change already happened, so one over the cap means this tick.
+            if (event.target.checked && this.picks.length > max) {
+                event.target.checked = false;
+            }
+
+            this.refresh();
+        },
+
+        refresh() {
+            const picks = this.picks.join(',');
+            const field = this.$el.querySelector('[data-picks-field]');
+
+            if (field) {
+                field.value = picks;
+            }
+
+            this.$el.querySelectorAll('[data-pager] a').forEach((link) => {
+                const url = new URL(link.getAttribute('href'), window.location.origin);
+                url.searchParams.set('pilih', picks);
+                link.setAttribute('href', url.pathname + url.search);
+            });
+
+            this.$el.querySelector('[data-count]').textContent = String(this.picks.length);
+
+            this.boxes.forEach((box) => {
+                box.disabled = ! box.checked && this.picks.length >= max;
+            });
+        },
+    }));
+
     /* Public filter: server-rendered lists, limited to regions that have a
        published listing. Nothing is applied until Terapkan is pressed. */
     Alpine.data('catalogFilter', (config = {}) => ({

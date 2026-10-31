@@ -11,6 +11,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class PageContentTest extends TestCase
@@ -243,9 +244,113 @@ class PageContentTest extends TestCase
         $this->assertSame(0, HomeGalleryPhoto::count());
     }
 
+    public function test_the_gallery_picker_shows_one_property_per_page(): void
+    {
+        $older = $this->listingWithPhotos('Rumah Lama');
+        $newer = $this->listingWithPhotos('Rumah Baru');
+
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit")
+            ->assertOk()
+            ->assertSee('Properti 1 dari 2')
+            ->assertSee($newer->title)
+            ->assertDontSee($older->title);
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?galeri_page=2")
+            ->assertOk()
+            ->assertSee('Properti 2 dari 2')
+            ->assertSee($older->title)
+            ->assertDontSee($newer->title);
+    }
+
+    public function test_a_pick_carried_in_the_url_survives_the_next_page(): void
+    {
+        $older = $this->listingWithPhotos('Rumah Lama');
+        $this->listingWithPhotos('Rumah Baru');
+        $photo = $older->images()->first();
+
+        $page = $this->page('home');
+
+        // Page 1 shows the newer listing; the older pick rides along as a field.
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?pilih={$photo->id}")
+            ->assertOk()
+            ->assertSee('<input type="hidden" name="gallery[]" value="'.$photo->id.'">', false)
+            // The pager keeps the query string, so the pick survives even
+            // before the script adds the boxes ticked on this page.
+            ->assertSee('pilih='.$photo->id, false);
+    }
+
+    public function test_saved_picks_are_kept_until_the_url_says_they_are_cleared(): void
+    {
+        $older = $this->listingWithPhotos('Rumah Lama');
+        $this->listingWithPhotos('Rumah Baru');
+        $photo = $older->images()->first();
+        HomeGalleryPhoto::create(['listing_image_id' => $photo->id, 'sort_order' => 0]);
+
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit")
+            ->assertOk()
+            ->assertSee('<input type="hidden" name="gallery[]" value="'.$photo->id.'">', false);
+
+        // An empty `pilih` means the admin cleared the selection on purpose.
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?pilih=")
+            ->assertOk()
+            ->assertDontSee('<input type="hidden" name="gallery[]"', false);
+    }
+
+    public function test_the_gallery_is_capped_at_six_photos(): void
+    {
+        $listing = $this->listingWithPhotos('Rumah Galeri', 7);
+        $ids = $listing->images()->pluck('id')->all();
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->put("/admin/pages/{$page->id}", $this->payload('home', ['gallery' => $ids]))
+            ->assertSessionHasErrors('gallery');
+
+        $this->assertSame(0, HomeGalleryPhoto::count());
+
+        $this->actingAs($this->admin())
+            ->put("/admin/pages/{$page->id}", $this->payload('home', ['gallery' => array_slice($ids, 0, 6)]))
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(6, HomeGalleryPhoto::count());
+    }
+
     private function page(string $key): PageContent
     {
         return PageContent::where('key', $key)->firstOrFail();
+    }
+
+    private function listingWithPhotos(string $title, int $photos = 2): Listing
+    {
+        $listing = Listing::create([
+            'location_id' => $this->location()->id,
+            'title' => $title,
+            'slug' => Str::slug($title),
+            'description' => 'Deskripsi.',
+            'listing_type' => 'primary',
+            'property_type' => 'rumah_siap_huni',
+            'status' => 'dijual',
+            'price' => 1_000_000_000,
+        ]);
+
+        foreach (range(1, $photos) as $index) {
+            $listing->images()->create([
+                'path' => 'images/listings/'.Str::slug($title).'-'.$index.'.webp',
+                'alt' => $title.' foto '.$index,
+                'sort_order' => $index,
+            ]);
+        }
+
+        return $listing;
     }
 
     private function payload(string $key, array $overrides = []): array

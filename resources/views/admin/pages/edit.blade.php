@@ -52,46 +52,75 @@
             </div>
         </section>
 
-        @if ($page->key === 'home')
+        @if ($galleries)
             <section class="border border-line bg-white p-5 sm:p-6" aria-labelledby="gallery-heading">
                 <h2 id="gallery-heading" class="text-lg font-semibold text-ink-950">Galeri beranda</h2>
                 <p class="mt-1 text-sm text-ink-500">
-                    Centang foto properti yang bergilir di hero. Urutan mengikuti urutan di daftar ini. Tanpa centang, hero memakai foto properti terbaru.
+                    Centang foto properti yang bergilir di hero, maksimal {{ $galleries['max'] }} foto.
+                    Satu properti tampil per halaman. Tanpa centang, hero memakai foto properti terbaru.
                 </p>
 
-                @error('gallery.*')
-                    <p class="mt-2 text-sm text-danger">{{ $message }}</p>
-                @enderror
+                <x-input-error class="mt-2" :messages="$errors->get('gallery')" />
 
-                <div class="mt-4" x-data="{ q: '', matches(el) { return this.q === '' || el.dataset.search.includes(this.q.toLowerCase()); } }">
+                <div class="mt-4" x-data="galleryPicker({{ $galleries['max'] }})" x-on:change="sync($event)">
                     <x-input-label for="gallery-search" value="Cari foto properti" />
-                    <x-text-input id="gallery-search" type="search" x-model="q" class="mt-1 block w-full sm:max-w-sm" placeholder="Judul properti atau alt foto" />
-                    <p class="mt-1 text-xs text-ink-500" x-show="q !== ''" x-cloak>Centang yang sudah dipilih tetap tersimpan saat daftar disaring.</p>
+                    <x-text-input
+                        id="gallery-search"
+                        type="search"
+                        name="q"
+                        form="gallery-search-form"
+                        :value="$galleries['search']"
+                        class="mt-1 block w-full sm:max-w-sm"
+                        placeholder="Judul properti atau alt foto"
+                    />
+                    <input type="hidden" name="pilih" form="gallery-search-form" data-picks-field>
 
-                    <div class="mt-4 grid max-h-96 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3">
-                        @forelse ($galleryImages as $image)
-                            <label
-                                data-search="{{ Str::lower(trim(($image->listing?->title ?? '').' '.($image->alt ?? '').' '.($image->label ?? ''))) }}"
-                                x-show="matches($el)"
-                                class="flex min-h-11 cursor-pointer items-center gap-3 rounded border border-line p-2 text-sm hover:bg-sand"
-                            >
-                                <input
-                                    type="checkbox"
-                                    name="gallery[]"
-                                    value="{{ $image->id }}"
-                                    class="rounded border-line text-gold-700 focus:ring-gold-500/30"
-                                    @checked(in_array($image->id, old('gallery', $galleryIds)))
-                                >
-                                <img src="{{ asset($image->path) }}" alt="" class="h-14 w-20 shrink-0 border border-line object-cover">
-                                <span class="min-w-0">
-                                    <span class="block truncate font-medium text-ink-950">{{ $image->listing?->title ?? 'Properti terhapus' }}</span>
-                                    <span class="block truncate text-xs text-ink-500">{{ $image->alt ?: 'Tanpa alt text' }}</span>
-                                </span>
-                            </label>
-                        @empty
-                            <p class="text-sm text-ink-500">Belum ada foto properti. Unggah foto di menu Properti lebih dulu.</p>
-                        @endforelse
-                    </div>
+                    <p class="mt-2 text-sm">
+                        <span class="font-semibold" data-count>0</span> dari {{ $galleries['max'] }} foto dipilih.
+                    </p>
+
+                    {{-- Picks made on other pages; hidden fields so this save keeps them. --}}
+                    @foreach ($galleries['others'] as $id)
+                        <input type="hidden" name="gallery[]" value="{{ $id }}">
+                    @endforeach
+
+                    @if ($galleries['listing'])
+                        <div class="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-t border-line pt-4">
+                            <p class="text-sm font-semibold text-ink-950">{{ $galleries['listing']->title }}</p>
+                            <p class="text-xs text-ink-500">
+                                Properti {{ $galleries['paginator']->currentPage() }} dari {{ $galleries['paginator']->total() }}
+                            </p>
+                        </div>
+
+                        <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                            @foreach ($galleries['listing']->images as $image)
+                                <label class="flex min-h-11 cursor-pointer items-center gap-3 rounded border border-line p-2 text-sm hover:bg-sand">
+                                    <input
+                                        type="checkbox"
+                                        name="gallery[]"
+                                        value="{{ $image->id }}"
+                                        class="rounded border-line text-gold-700 focus:ring-gold-500/30"
+                                        @checked(in_array($image->id, $galleries['picked']))
+                                    >
+                                    <img src="{{ asset($image->path) }}" alt="" class="h-14 w-20 shrink-0 border border-line object-cover">
+                                    <span class="min-w-0">
+                                        <span class="block truncate font-medium text-ink-950">{{ $image->label ?: 'Tanpa label' }}</span>
+                                        <span class="block truncate text-xs text-ink-500">{{ $image->alt ?: 'Tanpa alt text' }}</span>
+                                    </span>
+                                </label>
+                            @endforeach
+                        </div>
+
+                        <div class="mt-4" data-pager>{{ $galleries['paginator']->links() }}</div>
+                    @else
+                        <p class="mt-4 text-sm text-ink-500">
+                            @if ($galleries['search'] !== '')
+                                Tidak ada properti yang cocok dengan &ldquo;{{ $galleries['search'] }}&rdquo;.
+                            @else
+                                Belum ada foto properti. Unggah foto di menu Properti lebih dulu.
+                            @endif
+                        </p>
+                    @endif
                 </div>
             </section>
         @endif
@@ -217,6 +246,12 @@
             </a>
         </div>
     </form>
+
+    @if ($galleries)
+        {{-- The picker lives inside the page form, and forms cannot nest, so its
+             search is a GET form of its own that the fields above refer to. --}}
+        <form id="gallery-search-form" method="GET" action="{{ route('admin.pages.edit', $page) }}"></form>
+    @endif
 @endsection
 
 @push('head')
