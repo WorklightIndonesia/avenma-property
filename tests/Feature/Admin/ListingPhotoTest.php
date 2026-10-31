@@ -147,7 +147,7 @@ class ListingPhotoTest extends TestCase
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
         ], $attributes));
@@ -163,9 +163,11 @@ class ListingPhotoTest extends TestCase
             'description' => 'Deskripsi uji.',
             'location_id' => $this->location()->id,
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => '1.250.000.000',
+            'latitude' => '-6.2615',
+            'longitude' => '106.8',
             'is_published' => '1',
         ], $attributes);
     }

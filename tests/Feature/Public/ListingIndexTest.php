@@ -89,10 +89,10 @@ class ListingIndexTest extends TestCase
 
     public function test_type_status_and_price_filters_narrow_the_list(): void
     {
-        $this->listing(['title' => 'Rumah Murah', 'property_type' => 'rumah', 'status' => 'dijual', 'price' => 400_000_000]);
-        $this->listing(['title' => 'Apartemen Mahal', 'property_type' => 'apartemen', 'status' => 'disewa', 'price' => 1_500_000_000]);
+        $this->listing(['title' => 'Rumah Murah', 'property_type' => 'rumah_siap_huni', 'status' => 'dijual', 'price' => 400_000_000]);
+        $this->listing(['title' => 'Apartemen Mahal', 'property_type' => 'apartemen_siap_huni', 'status' => 'disewa', 'price' => 1_500_000_000]);
 
-        $this->get('/properti?tipe=rumah')
+        $this->get('/properti?tipe=rumah_siap_huni')
             ->assertSee('Rumah Murah')
             ->assertDontSee('Apartemen Mahal');
 
@@ -194,9 +194,9 @@ class ListingIndexTest extends TestCase
     {
         $this->listing(['title' => 'Rumah Paling Mahal', 'price' => 2_000_000_000]);
         $this->listing(['title' => 'Rumah Paling Murah', 'price' => 500_000_000]);
-        $this->listing(['title' => 'Apartemen Lain', 'property_type' => 'apartemen', 'price' => 100_000_000]);
+        $this->listing(['title' => 'Apartemen Lain', 'property_type' => 'apartemen_siap_huni', 'price' => 100_000_000]);
 
-        $response = $this->get('/properti?tipe=rumah&urut=termurah')->assertOk();
+        $response = $this->get('/properti?tipe=rumah_siap_huni&urut=termurah')->assertOk();
 
         $response->assertSeeInOrder(['Rumah Paling Murah', 'Rumah Paling Mahal']);
         $response->assertDontSee('Apartemen Lain');
@@ -230,14 +230,14 @@ class ListingIndexTest extends TestCase
 
         // Removing the province drops the levels under it as well.
         $expected = route('public.listings.index', [
-            'tipe' => 'rumah',
+            'tipe' => 'rumah_siap_huni',
             'harga' => '1000-2000',
         ]);
 
         $this->get(route('public.listings.index', [
             'provinsi' => 'Banten',
             'kota' => 'Kota Tangerang Selatan',
-            'tipe' => 'rumah',
+            'tipe' => 'rumah_siap_huni',
             'harga' => '1000-2000',
         ]))
             ->assertOk()
@@ -276,7 +276,7 @@ class ListingIndexTest extends TestCase
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
         ], $attributes));

@@ -36,13 +36,13 @@ class BackLinkTest extends TestCase
             'slug' => 'rumah-uji',
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
         ]);
 
         $developer = Developer::create(['name' => 'Developer Uji', 'slug' => 'developer-uji']);
-        $page = PageContent::create(['key' => 'tentang-kami', 'title' => 'Tentang Kami']);
+        $page = PageContent::create(['key' => 'kontak', 'title' => 'Kontak']);
 
         $screens = [
             ['/admin/blog', 'admin.dashboard'],

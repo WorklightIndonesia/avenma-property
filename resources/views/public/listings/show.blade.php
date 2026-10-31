@@ -9,27 +9,28 @@
 @endsection
 
 @php
-    $type = ['primary' => 'Primer', 'secondary' => 'Sekunder'][$listing->listing_type] ?? $listing->listing_type;
+    $type = \App\Models\ListingOption::options('listing_type')[$listing->listing_type] ?? $listing->listing_type;
     $badge = [
-        'dijual' => 'border border-ink-950 bg-paper text-ink-950',
+        'dijual' => 'bg-gold-300 text-ink-950',
         'disewa' => 'bg-gold-700 text-white',
-    ][$listing->status] ?? 'border border-ink-950 bg-paper text-ink-950';
+    ][$listing->status] ?? 'bg-gold-300 text-ink-950';
 
     // Apartments have no land; a unit's size is its building area.
-    $isHouse = in_array($listing->property_type, ['rumah', 'ruko'], true);
-    $isLand = $listing->property_type === 'tanah';
-    $isApartment = $listing->property_type === 'apartemen';
+    $isHouse = $listing->hasFloors();
+    $isLand = $listing->isLand();
+    $isApartment = $listing->isApartment();
 
     $specs = array_filter([
         'Kamar tidur' => $listing->bedrooms,
         'Kamar mandi' => $listing->bathrooms,
         'Carport' => $listing->carport,
-        'Luas tanah' => ($isHouse || $isLand) && $listing->land_area ? $listing->land_area.' m²' : null,
+        'Kelengkapan surat' => $listing->certificate,
+        'Luas tanah' => ! $isApartment && $listing->land_area ? $listing->land_area.' m²' : null,
         ($isApartment ? 'Luas unit' : 'Luas bangunan') => ! $isLand && $listing->building_area ? $listing->building_area.' m²' : null,
         'Jumlah lantai' => $isHouse && $listing->floors ? $listing->floors.' lantai' : null,
     ], fn ($value) => $value !== null);
 
-    $specCols = [1 => 'grid-cols-1', 2 => 'grid-cols-2', 3 => 'grid-cols-2 sm:grid-cols-3', 4 => 'grid-cols-2 sm:grid-cols-4', 5 => 'grid-cols-2 sm:grid-cols-5', 6 => 'grid-cols-2 sm:grid-cols-3'][count($specs)] ?? 'grid-cols-2';
+    $specCols = [1 => 'grid-cols-1', 2 => 'grid-cols-2', 3 => 'grid-cols-2 sm:grid-cols-3', 4 => 'grid-cols-2 sm:grid-cols-4', 5 => 'grid-cols-2 sm:grid-cols-5', 6 => 'grid-cols-2 sm:grid-cols-3', 7 => 'grid-cols-2 sm:grid-cols-4'][count($specs)] ?? 'grid-cols-2';
 
     $cover = $listing->images->first();
     $photoAlt = $listing->title.($listing->location ? ' di '.$listing->location->name : '');
@@ -44,7 +45,7 @@
 
 @section('content')
     <section class="bg-paper">
-        <div class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div class="mx-auto max-w-[90rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
             <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-ink-500">
                 <nav aria-label="Breadcrumb">
                     <ol class="flex flex-wrap items-center gap-2">
@@ -61,7 +62,7 @@
                 <div>
                     <p class="text-xs">
                         <span class="font-semibold text-ink-950">{{ $type }}</span>
-                        <span class="text-ink-500">· {{ ucfirst($listing->property_type) }}</span>
+                        <span class="text-ink-500">· {{ $listing->typeLabel() }}</span>
                         @if ($listing->developer)
                             <span class="text-ink-500">· {{ $listing->developer->name }}</span>
                         @endif
@@ -89,7 +90,7 @@
                                 <x-photo-gallery :photos="$gallery">
                                     <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
                                     @if ($listing->isNew())
-                                        <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                        <span class="absolute left-3 top-3 rounded bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
                                     @endif
                                 </x-photo-gallery>
                             @else
@@ -97,7 +98,7 @@
                                     <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="80" height="56" class="h-14 w-auto" onerror="this.remove()">
                                     <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
                                     @if ($listing->isNew())
-                                        <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
+                                        <span class="absolute left-3 top-3 rounded bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
                                     @endif
                                 </div>
                             @endif
@@ -115,7 +116,7 @@
                     @endif
 
                     <section class="mt-10 border-t border-line pt-8">
-                        <h2 class="text-lg font-semibold">Deskripsi</h2>
+                        <h2 class="text-lg font-semibold">Deskripsi dan Fasilitas</h2>
                         <p class="mt-3 whitespace-pre-line text-sm leading-7 text-ink-700">{{ $listing->description }}</p>
                     </section>
 
@@ -127,11 +128,22 @@
                                 <p class="mt-2 text-sm text-ink-600">{{ $listing->address }}</p>
                             @endif
 
-                            <iframe src="{{ $mapSrc }}" title="Peta lokasi {{ $listing->title }}" class="mt-4 h-80 w-full border border-line" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                            <div class="relative mt-4">
+                                <iframe src="{{ $mapSrc }}" title="Peta lokasi {{ $listing->title }}" class="h-80 w-full border border-line" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                                @if ($mapsUrl = $listing->mapsUrl())
+                                    <a href="{{ $mapsUrl }}" target="_blank" rel="noopener" class="absolute left-2 top-2 z-10 inline-flex min-h-10 items-center gap-1.5 rounded border border-line bg-white px-3 text-xs font-semibold text-ink-950 shadow-float transition-colors duration-150 hover:bg-sand">
+                                        <svg class="h-4 w-4 text-ink-600" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                                        </svg>
+                                        Buka di Google Maps
+                                    </a>
+                                @endif
+                            </div>
                         </section>
                     @endif
 
-                    @if ($listing->status !== 'disewa')
+                    @if ($listing->show_kpr && $listing->status !== 'disewa')
                         <section id="kpr" class="mt-10 scroll-mt-24 border-t border-line pt-8">
                             <h2 class="text-lg font-semibold">Simulasi KPR</h2>
                             <p class="mt-1 text-sm text-ink-500">Perkiraan cicilan dengan bunga tetap. Bukan penawaran resmi bank.</p>
@@ -161,7 +173,7 @@
                             </a>
                         @endif
 
-                        @if ($listing->status !== 'disewa')
+                        @if ($listing->show_kpr && $listing->status !== 'disewa')
                             <a href="#kpr" class="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded border border-line px-5 text-sm font-semibold text-ink-950 hover:bg-sand">Simulasi KPR</a>
                         @endif
 

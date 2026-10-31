@@ -40,7 +40,7 @@ class LocalizationTest extends TestCase
                 'title' => 'Rumah Uji',
                 'description' => 'Deskripsi uji.',
                 'listing_type' => 'primary',
-                'property_type' => 'rumah',
+                'property_type' => 'rumah_siap_huni',
                 'status' => 'dijual',
                 'price' => '1000000000',
                 'photos' => [UploadedFile::fake()->create('shell.php', 10, 'application/x-php')],

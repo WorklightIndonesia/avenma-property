@@ -31,6 +31,28 @@ class Listing extends Model
 
     public const LISTING_TYPES = ['primary' => 'Primer', 'secondary' => 'Sekunder'];
 
+    public const PROPERTY_TYPES = [
+        'rumah_siap_huni' => 'Rumah Siap Huni',
+        'rumah_kosongan' => 'Rumah Kosongan',
+        'apartemen_siap_huni' => 'Apartemen Siap Huni',
+        'apartemen_kosongan' => 'Apartemen Kosongan',
+        'kios' => 'Kios',
+        'kavling' => 'Kavling',
+        'ruko_usaha' => 'Ruko Usaha',
+        'ruko_siap_huni' => 'Ruko Siap Huni',
+        'rumah_kost' => 'Rumah Kost',
+        'gudang' => 'Gudang',
+    ];
+
+    /** A unit's size is its building area; there is no land to measure. */
+    public const APARTMENT_TYPES = ['apartemen_siap_huni', 'apartemen_kosongan'];
+
+    /** Land only, so there is no building area. */
+    public const LAND_TYPES = ['kavling'];
+
+    /** Building types that can have more than one floor. */
+    public const FLOOR_TYPES = ['rumah_siap_huni', 'rumah_kosongan', 'rumah_kost', 'ruko_usaha', 'ruko_siap_huni'];
+
     public const STATUSES = ['dijual' => 'Dijual', 'disewa' => 'Disewakan'];
 
     public const NEW_DAYS = 30;
@@ -38,7 +60,7 @@ class Listing extends Model
     public const PER_PAGE_OPTIONS = [6, 12, 24];
 
     /** How many listings the home page shows: featured first, then the newest. */
-    public const HOME_LIMIT = 5;
+    public const HOME_LIMIT = 6;
 
     protected $fillable = [
         'location_id',
@@ -51,6 +73,7 @@ class Listing extends Model
         'description_en',
         'listing_type',
         'property_type',
+        'certificate',
         'status',
         'price',
         'bedrooms',
@@ -65,6 +88,7 @@ class Listing extends Model
         'contact_phone',
         'is_featured',
         'is_published',
+        'show_kpr',
     ];
 
     protected function casts(): array
@@ -75,6 +99,7 @@ class Listing extends Model
             'longitude' => 'float',
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
+            'show_kpr' => 'boolean',
         ];
     }
 
@@ -85,7 +110,7 @@ class Listing extends Model
 
     public function statusLabel(): string
     {
-        return self::STATUSES[$this->status] ?? ucfirst($this->status);
+        return ListingOption::options('status')[$this->status] ?? ucfirst($this->status);
     }
 
     public function isNew(): bool
@@ -132,6 +157,21 @@ class Listing extends Model
         $query = trim((string) $this->address);
 
         return $query !== '' ? 'https://maps.google.com/maps?q='.rawurlencode($query).'&output=embed' : null;
+    }
+
+    /**
+     * Opens the same point on Google Maps. Coordinates win; without them the
+     * address is searched.
+     */
+    public function mapsUrl(): ?string
+    {
+        if ($this->latitude !== null && $this->longitude !== null) {
+            return 'https://maps.google.com/?q='.$this->latitude.','.$this->longitude;
+        }
+
+        $query = trim((string) $this->address);
+
+        return $query !== '' ? 'https://maps.google.com/?q='.rawurlencode($query) : null;
     }
 
     /**
@@ -202,12 +242,34 @@ class Listing extends Model
     }
 
     /**
+     * Types in use, so the public filter never offers an empty option.
+     *
      * @return array<string, string> value => label
      */
     public static function typeOptions(): array
     {
-        return static::query()->distinct()->orderBy('property_type')->pluck('property_type')
-            ->mapWithKeys(fn (string $type) => [$type => ucfirst($type)])
-            ->all();
+        $used = static::query()->distinct()->pluck('property_type')->all();
+
+        return array_intersect_key(ListingOption::options('property_type'), array_flip($used));
+    }
+
+    public function typeLabel(): string
+    {
+        return ListingOption::options('property_type')[$this->property_type] ?? ucfirst(str_replace('_', ' ', (string) $this->property_type));
+    }
+
+    public function isApartment(): bool
+    {
+        return in_array($this->property_type, self::APARTMENT_TYPES, true);
+    }
+
+    public function isLand(): bool
+    {
+        return in_array($this->property_type, self::LAND_TYPES, true);
+    }
+
+    public function hasFloors(): bool
+    {
+        return in_array($this->property_type, self::FLOOR_TYPES, true);
     }
 }

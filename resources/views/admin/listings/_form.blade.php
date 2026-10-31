@@ -24,7 +24,7 @@
     ];
 @endphp
 
-<form method="POST" action="{{ $action }}" enctype="multipart/form-data" x-data="{ propertyType: @js(old('property_type', $listing->property_type ?? 'rumah')) }" class="mt-6 space-y-6">
+<form method="POST" action="{{ $action }}" enctype="multipart/form-data" x-data="{ propertyType: @js(old('property_type', $listing->property_type ?? 'rumah_siap_huni')), apartmentTypes: @js(\App\Models\Listing::APARTMENT_TYPES), landOnlyTypes: @js(\App\Models\Listing::LAND_TYPES), floorTypes: @js(\App\Models\Listing::FLOOR_TYPES) }" class="mt-6 space-y-6">
     @csrf
     @if ($method !== 'POST')
         @method($method)
@@ -60,7 +60,7 @@
                     id="property_type"
                     name="property_type"
                     :options="$propertyTypes"
-                    :value="old('property_type', $listing->property_type ?? 'rumah')"
+                    :value="old('property_type', $listing->property_type ?? 'rumah_siap_huni')"
                     aria-label="Tipe properti"
                     class="mt-1"
                     x-on:select="propertyType = $event.detail.value"
@@ -94,8 +94,18 @@
                 <x-input-error class="mt-2" :messages="$errors->get('status')" />
             </div>
 
+            <div>
+                <x-input-label for="certificate" value="Kelengkapan Surat" />
+                <x-text-input id="certificate" name="certificate" type="text" list="certificate-options" class="mt-1 block w-full" :value="old('certificate', $listing->certificate)" placeholder="Contoh: Surat Hak Milik" />
+                <datalist id="certificate-options">
+                    <option value="Surat Hak Milik"></option>
+                    <option value="Surat Balik Nama"></option>
+                </datalist>
+                <x-input-error class="mt-2" :messages="$errors->get('certificate')" />
+            </div>
+
             <div class="sm:col-span-2">
-                <x-input-label for="description" value="Deskripsi" />
+                <x-input-label for="description" value="Deskripsi dan Fasilitas" />
                 <textarea id="description" name="description" rows="6" class="{{ $select }}" required>{{ old('description', $listing->description) }}</textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
             </div>
@@ -109,7 +119,7 @@
         x-on:click.outside="open = ''; suggestOpen = false; suggestActive = -1"
     >
         <h2 class="text-lg font-semibold text-ink-950">Lokasi</h2>
-        <p class="mt-1 text-sm text-ink-500">Ketik alamat, klik saran bila cocok (tidak wajib), lalu lengkapi tiga tingkat wilayah dari daftar resmi.</p>
+        <p class="mt-1 text-sm text-ink-500">Ketik alamat, klik saran bila cocok (tidak wajib), lalu lengkapi tiga tingkat wilayah dari daftar resmi. Tandai titik lokasi sebelum listing diterbitkan.</p>
 
         <div class="mt-4">
             <x-input-label for="address" value="Alamat lengkap" />
@@ -160,6 +170,9 @@
             <span class="text-xs text-ink-500" x-show="pinBusy">Mencari titik…</span>
             <span class="text-xs text-ink-500" x-show="pinNote && !pinBusy" x-text="pinNote"></span>
         </div>
+
+        <x-input-error class="mt-2" :messages="$errors->get('latitude')" />
+        <x-input-error class="mt-2" :messages="$errors->get('longitude')" />
 
         <div x-show="pinSrc" x-cloak class="mt-3">
             <iframe :src="pinSrc" class="h-72 w-full border border-line" loading="lazy" title="Pratinjau pin lokasi"></iframe>
@@ -289,19 +302,19 @@
                 <x-input-error class="mt-2" :messages="$errors->get('carport')" />
             </div>
 
-            <div x-show="propertyType === 'rumah' || propertyType === 'ruko' || propertyType === 'tanah'" x-cloak>
+            <div x-show="!apartmentTypes.includes(propertyType)" x-cloak>
                 <x-input-label for="land_area" value="Luas tanah (m²)" />
                 <x-text-input id="land_area" name="land_area" type="number" min="0" class="mt-1 block w-full" :value="old('land_area', $listing->land_area)" />
                 <x-input-error class="mt-2" :messages="$errors->get('land_area')" />
             </div>
 
-            <div x-show="propertyType === 'rumah' || propertyType === 'ruko'" x-cloak>
+            <div x-show="floorTypes.includes(propertyType)" x-cloak>
                 <x-input-label for="floors" value="Jumlah lantai" />
                 <x-text-input id="floors" name="floors" type="number" min="1" max="99" class="mt-1 block w-full" :value="old('floors', $listing->floors)" />
                 <x-input-error class="mt-2" :messages="$errors->get('floors')" />
             </div>
 
-            <div x-show="propertyType !== 'tanah'" x-cloak>
+            <div x-show="!landOnlyTypes.includes(propertyType)" x-cloak>
                 <x-input-label for="building_area" value="Luas bangunan (m²)" />
                 <x-text-input id="building_area" name="building_area" type="number" min="0" class="mt-1 block w-full" :value="old('building_area', $listing->building_area)" />
                 <x-input-error class="mt-2" :messages="$errors->get('building_area')" />
@@ -325,6 +338,13 @@
                     <input id="is_published" name="is_published" type="checkbox" value="1" class="{{ $check }}" @checked(old('is_published', $listing->is_published ?? true))>
                     Terbitkan di website
                 </label>
+                <p class="text-xs text-ink-500">Listing terbit wajib punya titik lokasi di peta.</p>
+
+                <label for="show_kpr" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">
+                    <input id="show_kpr" name="show_kpr" type="checkbox" value="1" class="{{ $check }}" @checked(old('show_kpr', $listing->show_kpr ?? true))>
+                    Tampilkan simulasi KPR untuk listing ini?
+                </label>
+                <p class="text-xs text-ink-500">Muncul di bawah halaman properti. Listing berstatus disewa tidak menampilkannya.</p>
 
                 @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
                     <label for="is_featured" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">

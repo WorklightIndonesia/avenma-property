@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\BlogPost;
 use App\Models\Listing;
-use App\Models\PageContent;
 use App\Models\User;
 use Database\Seeders\PageContentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -133,7 +132,7 @@ abstract class AccessibilityTestCase extends TestCase
             'slug' => 'rumah-uji',
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
         ]);

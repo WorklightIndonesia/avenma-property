@@ -153,7 +153,7 @@ class ListingShowTest extends TestCase
 
     public function test_a_rented_listing_shows_no_kpr_simulation(): void
     {
-        $this->listing(['slug' => 'rumah-disewa', 'status' => 'disewa']);
+        $this->listing(['slug' => 'rumah-disewa', 'status' => 'disewa', 'show_kpr' => true]);
         $this->listing(['slug' => 'rumah-dijual', 'status' => 'dijual']);
 
         $this->get('/properti/rumah-disewa')
@@ -163,6 +163,27 @@ class ListingShowTest extends TestCase
         $this->get('/properti/rumah-dijual')
             ->assertOk()
             ->assertSee('Simulasi KPR');
+    }
+
+    public function test_the_kpr_switch_hides_the_simulation_and_its_sidebar_link(): void
+    {
+        $this->listing(['slug' => 'rumah-tanpa-kpr', 'show_kpr' => false]);
+
+        $this->get('/properti/rumah-tanpa-kpr')
+            ->assertOk()
+            ->assertDontSee('Simulasi KPR')
+            ->assertDontSee('href="#kpr"', false);
+    }
+
+    public function test_the_status_chips_follow_the_listing_card_design(): void
+    {
+        $this->listing(['slug' => 'rumah-chip', 'status' => 'dijual']);
+
+        $this->get('/properti/rumah-chip')
+            ->assertOk()
+            ->assertSee('bg-gold-300 text-ink-950">Dijual', false)
+            ->assertSee('bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Baru', false)
+            ->assertDontSee('border border-ink-950 bg-paper text-ink-950">Dijual', false);
     }
 
     public function test_gallery_carets_appear_once_there_are_several_photos(): void
@@ -214,7 +235,7 @@ class ListingShowTest extends TestCase
     {
         $this->listing([
             'slug' => 'apartemen-sudirman',
-            'property_type' => 'apartemen',
+            'property_type' => 'apartemen_siap_huni',
             'land_area' => 68,
             'building_area' => 68,
             'floors' => 5,
@@ -232,7 +253,7 @@ class ListingShowTest extends TestCase
     {
         $this->listing([
             'slug' => 'tanah-ciputat',
-            'property_type' => 'tanah',
+            'property_type' => 'kavling',
             'land_area' => 500,
             'building_area' => 100,
         ]);
@@ -244,6 +265,40 @@ class ListingShowTest extends TestCase
             ->assertDontSee('Luas bangunan');
     }
 
+    public function test_the_property_type_shows_its_label(): void
+    {
+        $this->listing(['slug' => 'rumah-kosongan', 'property_type' => 'rumah_kosongan']);
+
+        $this->get('/properti/rumah-kosongan')
+            ->assertOk()
+            ->assertSee('Rumah Kosongan')
+            ->assertDontSee('rumah_kosongan');
+    }
+
+    public function test_the_certificate_is_listed_with_the_specs(): void
+    {
+        $this->listing(['slug' => 'rumah-sertifikat', 'certificate' => 'Surat Balik Nama']);
+
+        $this->get('/properti/rumah-sertifikat')
+            ->assertOk()
+            ->assertSee('Kelengkapan surat')
+            ->assertSee('Surat Balik Nama');
+    }
+
+    public function test_the_map_opens_the_pinned_point_on_google_maps(): void
+    {
+        $this->listing([
+            'slug' => 'rumah-peta',
+            'latitude' => -6.2,
+            'longitude' => 106.8,
+        ]);
+
+        $this->get('/properti/rumah-peta')
+            ->assertOk()
+            ->assertSee('Buka di Google Maps')
+            ->assertSee('href="https://maps.google.com/?q=-6.2,106.8"', false);
+    }
+
     private function listing(array $attributes = []): Listing
     {
         return Listing::create(array_merge([
@@ -252,7 +307,7 @@ class ListingShowTest extends TestCase
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
             'bedrooms' => 3,

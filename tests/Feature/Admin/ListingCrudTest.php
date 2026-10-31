@@ -87,17 +87,54 @@ class ListingCrudTest extends TestCase
             ->assertSee('Tandai sebagai unggulan');
     }
 
-    public function test_the_index_warns_when_more_than_five_are_featured(): void
+    public function test_the_form_offers_every_property_type(): void
     {
-        foreach (range(1, 6) as $index) {
+        $response = $this->actingAs($this->admin())
+            ->get('/admin/listings/create')
+            ->assertOk();
+
+        foreach (Listing::PROPERTY_TYPES as $label) {
+            $response->assertSee($label);
+        }
+
+        $response->assertSee('Tampilkan simulasi KPR untuk listing ini?');
+    }
+
+    public function test_certificate_is_optional_and_saved(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['certificate' => 'Surat Hak Milik']))
+            ->assertRedirect();
+
+        $this->assertSame('Surat Hak Milik', Listing::firstOrFail()->certificate);
+    }
+
+    public function test_the_kpr_switch_is_saved(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['show_kpr' => '1']))
+            ->assertRedirect();
+
+        $this->assertTrue(Listing::firstOrFail()->show_kpr);
+
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['title' => 'Rumah Kedua']))
+            ->assertRedirect();
+
+        $this->assertFalse(Listing::where('title', 'Rumah Kedua')->firstOrFail()->show_kpr);
+    }
+
+    public function test_the_index_warns_when_more_than_six_are_featured(): void
+    {
+        foreach (range(1, 7) as $index) {
             $this->listing(['title' => 'Unggulan '.$index, 'is_featured' => true]);
         }
 
         $this->actingAs($this->admin())
             ->get('/admin/listings')
             ->assertOk()
-            ->assertSee('6 properti ditandai unggulan')
-            ->assertSee('beranda hanya menampilkan 5');
+            ->assertSee('7 properti ditandai unggulan')
+            ->assertSee('beranda hanya menampilkan 6');
     }
 
     public function test_agen_creates_a_listing_under_their_own_name(): void
@@ -232,17 +269,34 @@ class ListingCrudTest extends TestCase
         $this->assertSame(106.8, $listing->longitude);
 
         $this->actingAs($agen)
-            ->put(route('admin.listings.update', $listing), $this->payload(['latitude' => '', 'longitude' => '']))
+            ->put(route('admin.listings.update', $listing), $this->payload(['latitude' => '', 'longitude' => '', 'is_published' => '0']))
             ->assertRedirect();
 
         $this->assertNull($listing->refresh()->latitude);
         $this->assertNull($listing->longitude);
     }
 
+    public function test_a_published_listing_needs_a_map_point(): void
+    {
+        $this->actingAs($this->agen())
+            ->post('/admin/listings', $this->payload(['latitude' => '', 'longitude' => '', 'is_published' => '1']))
+            ->assertSessionHasErrors([
+                'latitude' => 'Tandai titik lokasi di peta sebelum listing diterbitkan.',
+            ]);
+
+        $this->assertDatabaseCount('listings', 0);
+
+        $this->actingAs($this->agen())
+            ->post('/admin/listings', $this->payload(['latitude' => '', 'longitude' => '', 'is_published' => '0']))
+            ->assertRedirect();
+
+        $this->assertDatabaseCount('listings', 1);
+    }
+
     public function test_half_a_point_is_rejected(): void
     {
         $this->actingAs($this->agen())
-            ->post('/admin/listings', $this->payload(['latitude' => '-6.2615']))
+            ->post('/admin/listings', $this->payload(['latitude' => '-6.2615', 'longitude' => '']))
             ->assertSessionHasErrors('longitude');
 
         $this->assertDatabaseCount('listings', 0);
@@ -281,7 +335,7 @@ class ListingCrudTest extends TestCase
             'slug' => Str::random(10),
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
         ], $attributes));
@@ -297,9 +351,11 @@ class ListingCrudTest extends TestCase
             'description' => 'Deskripsi uji.',
             'location_id' => $this->location()->id,
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => '1.250.000.000',
+            'latitude' => '-6.2615',
+            'longitude' => '106.8',
             'is_published' => '1',
         ], $attributes);
     }

@@ -14,7 +14,7 @@ class AccessibilityTest extends AccessibilityTestCase
 
         $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]));
 
-        $page = PageContent::where('key', 'tentang-kami')->firstOrFail();
+        $page = PageContent::where('key', 'kontak')->firstOrFail();
 
         $screens = [
             '/admin/dashboard',

@@ -37,7 +37,7 @@ class FlashMessageTest extends TestCase
             'slug' => 'rumah-uji',
             'description' => 'Deskripsi uji.',
             'listing_type' => 'primary',
-            'property_type' => 'rumah',
+            'property_type' => 'rumah_siap_huni',
             'status' => 'dijual',
             'price' => 1_000_000_000,
         ]);
