@@ -259,7 +259,7 @@ class Listing extends Model
      */
     public static function typeOptions(): array
     {
-        $used = static::query()->distinct()->pluck('property_type')->all();
+        $used = static::query()->published()->distinct()->pluck('property_type')->all();
 
         return array_intersect_key(ListingOption::options('property_type'), array_flip($used));
     }

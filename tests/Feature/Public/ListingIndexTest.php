@@ -87,6 +87,15 @@ class ListingIndexTest extends TestCase
             ->assertDontSee('Cilandak');
     }
 
+    public function test_type_options_only_offer_types_that_are_published(): void
+    {
+        $this->listing(['property_type' => 'rumah_siap_huni']);
+        $this->listing(['title' => 'Gudang Draf', 'property_type' => 'gudang', 'is_published' => false]);
+
+        $this->assertArrayNotHasKey('gudang', Listing::typeOptions());
+        $this->assertArrayHasKey('rumah_siap_huni', Listing::typeOptions());
+    }
+
     public function test_type_status_and_price_filters_narrow_the_list(): void
     {
         $this->listing(['title' => 'Rumah Murah', 'property_type' => 'rumah_siap_huni', 'status' => 'dijual', 'price' => 400_000_000]);
