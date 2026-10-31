@@ -151,7 +151,7 @@
                         </div>
 
                         <div class="mt-4" data-pager>
-                            <x-pagination :paginator="$galleries['paginator']" />
+                            <x-pagination :paginator="$galleries['paginator']" arrows />
                         </div>
                     @else
                         <p class="mt-4 text-sm text-ink-500">

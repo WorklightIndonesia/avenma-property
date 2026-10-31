@@ -255,8 +255,8 @@ class PageContentTest extends TestCase
             ->get("/admin/pages/{$page->id}/edit")
             ->assertOk()
             ->assertSee('Properti 1 dari 2')
-            ->assertSee('Sebelumnya')
-            ->assertSee('Berikutnya')
+            ->assertDontSee('Sebelumnya')
+            ->assertSee('aria-label="Berikutnya"', false)
             ->assertSee('data-limit-warning', false)
             ->assertSee($newer->title)
             ->assertDontSee($older->title);
@@ -265,6 +265,9 @@ class PageContentTest extends TestCase
             ->get("/admin/pages/{$page->id}/edit?galeri_page=2")
             ->assertOk()
             ->assertSee('Properti 2 dari 2')
+            ->assertSee('aria-label="Sebelumnya"', false)
+            // Last page: the next arrow is there but inert, with no label.
+            ->assertDontSee('aria-label="Berikutnya"', false)
             ->assertSee($older->title)
             ->assertDontSee($newer->title);
     }
