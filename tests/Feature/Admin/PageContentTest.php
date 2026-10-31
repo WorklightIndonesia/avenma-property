@@ -353,6 +353,35 @@ class PageContentTest extends TestCase
             ->assertSee('data-picked-id="'.$unpicked->id.'"', false);
     }
 
+    public function test_the_gallery_pager_shows_five_pages_and_jumps_five(): void
+    {
+        foreach (range(1, 12) as $index) {
+            $this->listingWithPhotos('Rumah '.$index, 1);
+        }
+
+        $page = $this->page('home');
+
+        // Five pages from the current one; the double arrow reaches page 6, so
+        // page 7 is out of range on the first page.
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit")
+            ->assertOk()
+            ->assertSee('galeri_page=5', false)
+            ->assertSee('galeri_page=6', false)
+            ->assertDontSee('galeri_page=7', false)
+            ->assertSee('aria-label="Maju 5 halaman"', false)
+            ->assertDontSee('aria-label="Mundur 5 halaman"', false);
+
+        // The window follows the page, one step per arrow.
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit?galeri_page=3")
+            ->assertOk()
+            ->assertSee('galeri_page=7', false)
+            ->assertDontSee('galeri_page=9', false)
+            ->assertSee('aria-label="Mundur 5 halaman"', false)
+            ->assertSee('aria-label="Maju 5 halaman"', false);
+    }
+
     private function page(string $key): PageContent
     {
         return PageContent::where('key', $key)->firstOrFail();
