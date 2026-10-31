@@ -137,12 +137,16 @@ class BlogPostController extends Controller
             return;
         }
 
-        if (filled($post->cover_image)) {
-            Storage::disk('uploads')->delete($post->cover_image);
-        }
+        $previous = $post->cover_image;
 
         $post->cover_image = $file ? $this->images->store($file, 'images/blog') : null;
         $post->save();
+
+        // Deleted only once the new path is saved: a failed write used to take
+        // the old cover with it and leave the article blank.
+        if (filled($previous)) {
+            Storage::disk('uploads')->delete($previous);
+        }
     }
 
     /**

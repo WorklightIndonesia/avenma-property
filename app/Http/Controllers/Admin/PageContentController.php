@@ -99,12 +99,20 @@ class PageContentController extends Controller
                 ]);
 
                 if ($imageKeys->contains($key)) {
-                    $this->storeImage($section, $request->file("sections.$key.image"), $request->boolean("sections.$key.remove_image"));
+                    $previousImage = $this->storeImage($section, $request->file("sections.$key.image"), $request->boolean("sections.$key.remove_image"));
                     $section->image_alt = $input['image_alt'] ?? null;
+                } else {
+                    $previousImage = null;
                 }
 
                 $section->page_content_id = $page->id;
                 $section->save();
+
+                // Deleted only after the new path is saved, so a failed write
+                // cannot leave the section without an image.
+                if ($previousImage !== null && $previousImage !== $section->image) {
+                    Storage::disk('uploads')->delete($previousImage);
+                }
             }
         });
 
@@ -194,16 +202,20 @@ class PageContentController extends Controller
         }
     }
 
-    private function storeImage(PageSection $section, $file, bool $remove): void
+    /**
+     * Stores the new file and reports the path it replaced, which the caller
+     * deletes once the row is saved.
+     */
+    private function storeImage(PageSection $section, $file, bool $remove): ?string
     {
         if ($file === null && ! $remove) {
-            return;
+            return null;
         }
 
-        if (filled($section->image)) {
-            Storage::disk('uploads')->delete($section->image);
-        }
+        $previous = filled($section->image) ? $section->image : null;
 
         $section->image = $file ? $this->images->store($file, 'images/pages/'.$section->page_content_id) : null;
+
+        return $previous;
     }
 }
