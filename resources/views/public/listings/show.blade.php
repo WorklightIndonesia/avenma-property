@@ -105,9 +105,10 @@
                         </div>
 
                     @if ($specs !== [])
-                        <dl class="mt-6 grid gap-px border border-line bg-line {{ $specCols }}">
+                        {{-- Cells draw their own lines; a ragged last row leaves no grey filler. --}}
+                        <dl class="mt-6 grid border-l border-t border-line {{ $specCols }}">
                             @foreach ($specs as $label => $value)
-                                <div class="bg-paper p-4">
+                                <div class="border-b border-r border-line p-4">
                                     <dt class="text-xs text-ink-500">{{ $label }}</dt>
                                     <dd class="mt-1 text-base font-semibold">{{ $value }}</dd>
                                 </div>
