@@ -135,20 +135,20 @@ class ListingShowTest extends TestCase
             ->assertSee('Simulasi KPR')
             ->assertSee('value="1.250.000.000"', false)
             ->assertSee('Tenor (tahun)')
-            ->assertSee('Minimum 20%. Maksimum 70%.');
+            ->assertSee('Minimum 10%. Maksimum 70%.');
     }
 
     public function test_kpr_panel_renders_the_estimate_server_side(): void
     {
         $this->listing(['slug' => 'rumah-kpr', 'price' => 1_000_000_000]);
 
-        $monthly = KprCalculator::monthly(800_000_000, 7.5, 180);
+        $monthly = KprCalculator::monthly(900_000_000, 7.5, 180);
 
         $this->get('/properti/rumah-kpr')
             ->assertOk()
             ->assertSee('Angsuran per bulan')
             ->assertSee('Rp '.number_format($monthly, 0, ',', '.'))
-            ->assertSee('Rp 200.000.000');
+            ->assertSee('Rp 100.000.000');
     }
 
     public function test_a_rented_listing_shows_no_kpr_simulation(): void

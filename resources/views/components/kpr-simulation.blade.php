@@ -1,7 +1,7 @@
 @props([
     'price' => 0,
     'interest' => 7.5,
-    'minDp' => 20,
+    'minDp' => 10,
     'maxDp' => 70,
     'maxTenor' => 20,
     'heading' => 'Hitung angsuran Anda',

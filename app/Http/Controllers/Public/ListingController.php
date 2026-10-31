@@ -120,7 +120,7 @@ class ListingController extends Controller
         return [
             'price' => max(1, (int) $listing->price),
             'rate' => (float) ($settings?->interest_rate ?? 7.5),
-            'minDp' => (float) ($settings?->min_dp_percent ?? 20),
+            'minDp' => (float) ($settings?->min_dp_percent ?? 10),
             'maxDp' => 70,
             'maxTenor' => (int) ($settings?->max_tenor_years ?? 20),
         ];

@@ -12,7 +12,7 @@ class MasterDataSeeder extends Seeder
     {
         KprSetting::firstOrCreate([], [
             'interest_rate' => 7.50,
-            'min_dp_percent' => 20.00,
+            'min_dp_percent' => 10.00,
             'max_tenor_years' => 20,
         ]);
 

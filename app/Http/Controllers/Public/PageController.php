@@ -64,7 +64,7 @@ class PageController extends Controller
         $kpr = [
             'price' => 0,
             'rate' => (float) ($kprSettings?->interest_rate ?? 7.5),
-            'minDp' => (float) ($kprSettings?->min_dp_percent ?? 20),
+            'minDp' => (float) ($kprSettings?->min_dp_percent ?? 10),
             'maxDp' => 70,
             'maxTenor' => (int) ($kprSettings?->max_tenor_years ?? 20),
         ];
