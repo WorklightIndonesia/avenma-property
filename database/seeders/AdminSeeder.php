@@ -18,7 +18,7 @@ class AdminSeeder extends Seeder
                 'email' => 'fellixwl@gmail.com',
                 'phone' => null,
                 'role' => User::ROLE_ADMIN,
-                'password' => $this->passwordFromEnv('ADMIN_PASSWORD'),
+                'password' => $this->password(),
             ],
         ];
 
@@ -33,12 +33,12 @@ class AdminSeeder extends Seeder
     /**
      * Seeded passwords skip the account form, so enforce the same rule here.
      */
-    private function passwordFromEnv(string $key): string
+    private function password(): string
     {
-        $password = (string) env($key);
+        $password = (string) config('seeding.admin_password');
 
         if ($password === '') {
-            throw new RuntimeException("{$key} belum diisi di .env. Seeder berhenti.");
+            throw new RuntimeException('ADMIN_PASSWORD belum diisi di .env. Seeder berhenti.');
         }
 
         $validator = Validator::make(
@@ -48,7 +48,7 @@ class AdminSeeder extends Seeder
 
         if ($validator->fails()) {
             throw new RuntimeException(
-                "{$key} di .env tidak memenuhi aturan password: ".$validator->errors()->first('password')
+                'ADMIN_PASSWORD di .env tidak memenuhi aturan password: '.$validator->errors()->first('password')
             );
         }
 
