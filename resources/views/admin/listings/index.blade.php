@@ -164,8 +164,15 @@
 
                 <h2 class="text-lg font-semibold text-ink-950">Hapus listing?</h2>
                 <p class="mt-2 text-sm text-ink-600">
-                    &ldquo;{{ $listing->title }}&rdquo; akan dihapus permanen, termasuk semua fotonya. Tindakan ini tidak bisa dibatalkan.
+                    &ldquo;{{ $listing->title }}&rdquo; akan dihapus dari daftar dan website.
                 </p>
+
+                @if ($heroListings->contains($listing->id))
+                    <p class="mt-3 border-l-4 border-gold-700 bg-sand px-4 py-3 text-sm text-ink-950">
+                        Salah satu foto listing ini dipakai di galeri beranda. Setelah dihapus, foto itu tidak tampil lagi di beranda.
+                        Ganti dulu di <a href="{{ route('admin.pages.index') }}" class="font-semibold underline hover:text-gold-700">Halaman</a> bila fotonya harus tetap ada.
+                    </p>
+                @endif
 
                 <div class="mt-6 flex flex-wrap justify-end gap-3">
                     <x-secondary-button x-on:click="$dispatch('close')">Batal</x-secondary-button>

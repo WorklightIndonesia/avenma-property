@@ -1,6 +1,7 @@
 @php
     $toasts = array_values(array_filter([
         ['tone' => 'success', 'message' => session('status'), 'duration' => 6000],
+        ['tone' => 'warning', 'message' => session('warning'), 'duration' => 10000],
         ['tone' => 'error', 'message' => $errors->first(), 'duration' => 10000],
     ], fn (array $toast) => filled($toast['message'])));
 @endphp
@@ -10,6 +11,11 @@
         @foreach ($toasts as $toast)
             @php
                 $isError = $toast['tone'] === 'error';
+                $tone = match ($toast['tone']) {
+                    'error' => 'border-l-danger text-danger',
+                    'warning' => 'border-l-gold-700 text-ink-950',
+                    default => 'border-l-success text-success',
+                };
             @endphp
 
             <div
@@ -24,7 +30,7 @@
                 x-transition:leave="transition ease-in duration-200 motion-reduce:transition-none"
                 x-transition:leave-start="opacity-100 translate-y-0"
                 x-transition:leave-end="opacity-0 translate-y-2"
-                class="pointer-events-auto relative border border-line border-l-4 bg-white px-6 py-5 pr-14 text-base leading-6 shadow-float {{ $isError ? 'border-l-danger text-danger' : 'border-l-success text-success' }}"
+                class="pointer-events-auto relative border border-line border-l-4 bg-white px-6 py-5 pr-14 text-base leading-6 shadow-float {{ $tone }}"
             >
                 {{ $toast['message'] }}
 

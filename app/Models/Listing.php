@@ -139,6 +139,17 @@ class Listing extends Model
         return $this->hasMany(ListingImage::class)->orderBy('sort_order');
     }
 
+    /**
+     * True when one of its photos sits in the home hero. A soft delete keeps the
+     * photo row, so the hero would point at a listing that is gone.
+     */
+    public function hasHeroPhoto(): bool
+    {
+        return $this->images()
+            ->whereIn('id', HomeGalleryPhoto::query()->select('listing_image_id'))
+            ->exists();
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);

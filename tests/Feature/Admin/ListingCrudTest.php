@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -241,6 +242,56 @@ class ListingCrudTest extends TestCase
             ->assertForbidden();
 
         $this->assertNotSoftDeleted($listing);
+    }
+
+    public function test_the_delete_dialog_warns_when_a_photo_is_in_the_hero(): void
+    {
+        $listing = $this->listing();
+        $photo = $listing->images()->create(['path' => 'images/listings/hero.webp', 'sort_order' => 1]);
+        HomeGalleryPhoto::create(['listing_image_id' => $photo->id, 'sort_order' => 0]);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/listings')
+            ->assertOk()
+            ->assertSee('Salah satu foto listing ini dipakai di galeri beranda');
+    }
+
+    public function test_the_dialog_stays_plain_without_a_hero_photo(): void
+    {
+        $this->listing();
+        $this->listing(['title' => 'Rumah Lain']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/listings')
+            ->assertOk()
+            ->assertDontSee('dipakai di galeri beranda');
+    }
+
+    public function test_an_agen_is_told_after_deleting_a_listing_used_in_the_hero(): void
+    {
+        $agen = $this->agen();
+        $listing = $this->listing(['created_by' => $agen->id]);
+        $photo = $listing->images()->create(['path' => 'images/listings/hero.webp', 'sort_order' => 1]);
+        HomeGalleryPhoto::create(['listing_image_id' => $photo->id, 'sort_order' => 0]);
+
+        $this->actingAs($agen)
+            ->delete(route('admin.listings.destroy', $listing))
+            ->assertRedirect(route('admin.listings.index'))
+            ->assertSessionHas('warning', 'Salah satu foto di listing ini sedang digunakan pada website, laporkan pada admin agar foto dapat diganti!');
+
+        $this->assertSoftDeleted($listing);
+    }
+
+    public function test_an_admin_deletes_without_the_agen_message(): void
+    {
+        $listing = $this->listing();
+        $photo = $listing->images()->create(['path' => 'images/listings/hero.webp', 'sort_order' => 1]);
+        HomeGalleryPhoto::create(['listing_image_id' => $photo->id, 'sort_order' => 0]);
+
+        $this->actingAs($this->admin())
+            ->delete(route('admin.listings.destroy', $listing))
+            ->assertRedirect(route('admin.listings.index'))
+            ->assertSessionMissing('warning');
     }
 
     public function test_required_fields_are_validated(): void

@@ -79,6 +79,35 @@ class HomeFeaturedTest extends TestCase
         $this->assertStringNotContainsString('images/listings/unggulan.webp', $hero);
     }
 
+    public function test_the_hero_drops_a_photo_whose_listing_was_deleted(): void
+    {
+        $this->seed(PageContentSeeder::class);
+
+        $listing = $this->listing(['title' => 'Rumah Dihapus']);
+        $picked = $listing->images()->create(['path' => 'images/listings/dihapus.webp', 'sort_order' => 1]);
+        HomeGalleryPhoto::create(['listing_image_id' => $picked->id, 'sort_order' => 0]);
+
+        $listing->delete();
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('images/listings/dihapus.webp');
+    }
+
+    public function test_the_hero_drops_a_photo_whose_listing_is_a_draft(): void
+    {
+        $this->seed(PageContentSeeder::class);
+
+        $listing = $this->listing(['title' => 'Rumah Draf Galeri', 'is_published' => false]);
+        $picked = $listing->images()->create(['path' => 'images/listings/draf-galeri.webp', 'sort_order' => 1]);
+        HomeGalleryPhoto::create(['listing_image_id' => $picked->id, 'sort_order' => 0]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('images/listings/draf-galeri.webp')
+            ->assertDontSee('Rumah Draf Galeri');
+    }
+
     public function test_the_home_page_lists_the_five_most_recent_articles(): void
     {
         $this->seed(PageContentSeeder::class);

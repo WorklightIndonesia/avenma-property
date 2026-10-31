@@ -30,8 +30,11 @@ class PageController extends Controller
         // The hero shows the photos the admin picked, in that order. With none
         // picked it falls back to the covers of the listings shown below, so the
         // page stays stable instead of shuffling on every visit.
+        // A picked photo outlives a deleted or unpublished listing, and its
+        // slide could only point at a missing page, so those rows are dropped.
         $heroSlides = HomeGalleryPhoto::query()
             ->with('image.listing')
+            ->whereHas('image.listing', fn ($query) => $query->published())
             ->orderBy('sort_order')
             ->get()
             ->map(fn (HomeGalleryPhoto $photo) => [

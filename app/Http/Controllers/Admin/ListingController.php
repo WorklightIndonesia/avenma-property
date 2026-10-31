@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ListingRequest;
 use App\Models\Developer;
+use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\ListingOption;
@@ -13,6 +14,7 @@ use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +43,27 @@ class ListingController extends Controller
             'filters' => $filters,
             'sort' => $sort,
             'featured' => $request->user()->role === User::ROLE_ADMIN ? $this->featuredSummary() : null,
+            'heroListings' => $this->heroListingIds($listings->getCollection()->pluck('id')->all()),
         ]);
+    }
+
+    /**
+     * Rows on this page whose photo is picked for the home hero, so the delete
+     * dialog can warn before the photo disappears from the front page.
+     *
+     * @param  array<int, int>  $listingIds
+     * @return Collection<int, int>
+     */
+    private function heroListingIds(array $listingIds): Collection
+    {
+        return HomeGalleryPhoto::query()
+            ->whereHas('image', fn ($query) => $query->whereIn('listing_id', $listingIds))
+            ->with('image:id,listing_id')
+            ->get()
+            ->pluck('image.listing_id')
+            ->filter()
+            ->unique()
+            ->values();
     }
 
     /**
@@ -127,15 +149,26 @@ class ListingController extends Controller
             ->with('status', 'Perubahan disimpan.');
     }
 
-    public function destroy(Listing $listing): RedirectResponse
+    public function destroy(Request $request, Listing $listing): RedirectResponse
     {
         Gate::authorize('delete', $listing);
 
+        // The photo row survives a soft delete, so the hero loses the slide.
+        // An agen cannot open the Pages screen, hence the message instead of a
+        // block; an admin is warned in the dialog before pressing delete.
+        $inHero = $listing->hasHeroPhoto();
+
         $listing->delete();
 
-        return redirect()
+        $response = redirect()
             ->route('admin.listings.index')
             ->with('status', 'Listing dihapus.');
+
+        if ($inHero && $request->user()->role !== User::ROLE_ADMIN) {
+            $response->with('warning', 'Salah satu foto di listing ini sedang digunakan pada website, laporkan pada admin agar foto dapat diganti!');
+        }
+
+        return $response;
     }
 
     public function destroyPhoto(Listing $listing, ListingImage $image): RedirectResponse
