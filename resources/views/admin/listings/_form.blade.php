@@ -269,7 +269,6 @@
         <div class="mt-4 grid gap-4 sm:grid-cols-3">
             <div class="sm:col-span-3">
                 <x-input-label for="price" value="Harga (Rp)" />
-                {{-- shortcut: the caret jumps to the end when editing mid-number --}}
                 <x-text-input
                     id="price"
                     name="price"
@@ -279,7 +278,8 @@
                     class="tabular mt-1 block w-full"
                     :value="$priceValue"
                     required
-                    x-on:input="$el.value = $el.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')"
+                    x-data="priceInput"
+                    x-on:input="format()"
                 />
                 <x-input-error class="mt-2" :messages="$errors->get('price')" />
             </div>

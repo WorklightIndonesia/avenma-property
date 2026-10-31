@@ -610,6 +610,22 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    /* Admin/agen form: rewriting the price with thousands dots moves the caret
+       to the end, so it is put back after the same count of digits. */
+    Alpine.data('priceInput', () => ({
+        format() {
+            const el = this.$el;
+            const digitsLeft = el.value.slice(0, el.selectionStart).replace(/\D/g, '').length;
+            el.value = el.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+            let pos = 0;
+            for (let seen = 0; pos < el.value.length && seen < digitsLeft; pos++) {
+                if (/\d/.test(el.value[pos])) seen++;
+            }
+            el.setSelectionRange(pos, pos);
+        },
+    }));
+
     /* Public filter: server-rendered lists, limited to regions that have a
        published listing. Nothing is applied until Terapkan is pressed. */
     Alpine.data('catalogFilter', (config = {}) => ({
