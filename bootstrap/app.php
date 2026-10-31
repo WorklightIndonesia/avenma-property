@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Role;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'role' => \App\Http\Middleware\Role::class,
+            'role' => Role::class,
         ]);
 
         // Someone already signed in who opens /login belongs in the admin area,
