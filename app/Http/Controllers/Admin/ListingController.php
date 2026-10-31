@@ -95,11 +95,10 @@ class ListingController extends Controller
 
         $listing = DB::transaction(function () use ($request, $data) {
             $listing = new Listing($data);
-            $listing->slug = Slug::unique(Listing::class, $data['title'], 'properti');
             $listing->created_by = $request->user()->id;
             // Blank means "use my own number", as agreed for agen-created listings.
             $listing->contact_phone = ($data['contact_phone'] ?? null) ?: $request->user()->phone;
-            $listing->save();
+            Slug::save($listing, $data['title'], 'properti');
 
             $this->storePhotos($listing, (array) $request->file('photos', []));
 
@@ -128,8 +127,7 @@ class ListingController extends Controller
 
         DB::transaction(function () use ($request, $listing, $data) {
             $listing->fill($data);
-            $listing->slug = Slug::unique(Listing::class, $data['title'], 'properti', $listing->id);
-            $listing->save();
+            Slug::save($listing, $data['title'], 'properti');
 
             // Keys are image ids; the query is scoped to this listing, so a
             // posted id from another listing changes nothing.

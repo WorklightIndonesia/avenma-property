@@ -53,11 +53,10 @@ class BlogPostController extends Controller
         $data = $request->validated();
 
         $post = new BlogPost($data);
-        $post->slug = Slug::unique(BlogPost::class, $data['title'], 'artikel');
         $post->content = $this->content($data);
         $post->created_by = $request->user()->id;
         $post->published_at = $data['is_published'] ? now() : null;
-        $post->save();
+        Slug::save($post, $data['title'], 'artikel');
 
         $this->storeCover($post, $request, false);
 
@@ -80,7 +79,6 @@ class BlogPostController extends Controller
         $data = $request->validated();
 
         $post->fill($data);
-        $post->slug = Slug::unique(BlogPost::class, $data['title'], 'artikel', $post->id);
         $post->content = $this->content($data);
 
         // The first publish sets the date; later edits keep it.
@@ -88,7 +86,7 @@ class BlogPostController extends Controller
             $post->published_at = now();
         }
 
-        $post->save();
+        Slug::save($post, $data['title'], 'artikel');
 
         $this->storeCover($post, $request, $data['remove_cover']);
 

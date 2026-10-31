@@ -176,6 +176,42 @@ class ListingCrudTest extends TestCase
         $this->assertSame(['rumah-sama', 'rumah-sama-2'], Listing::orderBy('id')->pluck('slug')->all());
     }
 
+    public function test_a_slug_claimed_at_the_last_moment_is_retried(): void
+    {
+        $stolen = false;
+
+        // Stand in for a second request that passed the same check a moment
+        // before this one inserted its row.
+        Listing::creating(function (Listing $listing) use (&$stolen) {
+            if ($stolen) {
+                return;
+            }
+
+            $stolen = true;
+
+            Listing::withoutEvents(fn () => Listing::forceCreate([
+                'location_id' => $this->location()->id,
+                'title' => 'Rumah Uji',
+                'slug' => $listing->slug,
+                'description' => 'Disimpan request lain.',
+                'listing_type' => 'primary',
+                'property_type' => 'rumah_siap_huni',
+                'status' => 'dijual',
+                'price' => 900_000_000,
+            ]));
+        });
+
+        $this->actingAs($this->agen())
+            ->post('/admin/listings', $this->payload())
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $mine = Listing::where('description', 'Deskripsi uji.')->firstOrFail();
+
+        $this->assertSame('rumah-uji-2', $mine->slug);
+        $this->assertSame(2, Listing::count());
+    }
+
     public function test_agen_can_update_their_own_listing(): void
     {
         $agen = $this->agen();

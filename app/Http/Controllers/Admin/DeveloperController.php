@@ -42,8 +42,7 @@ class DeveloperController extends Controller
     public function store(DeveloperRequest $request): RedirectResponse
     {
         $developer = new Developer($request->validated());
-        $developer->slug = Slug::unique(Developer::class, $request->validated()['name'], 'developer');
-        $developer->save();
+        Slug::save($developer, $request->validated()['name'], 'developer');
 
         return redirect()
             ->route('admin.developers.index')
@@ -58,8 +57,7 @@ class DeveloperController extends Controller
     public function update(DeveloperRequest $request, Developer $developer): RedirectResponse
     {
         $developer->fill($request->validated());
-        $developer->slug = Slug::unique(Developer::class, $request->validated()['name'], 'developer', $developer->id);
-        $developer->save();
+        Slug::save($developer, $request->validated()['name'], 'developer');
 
         return redirect()
             ->route('admin.developers.index')

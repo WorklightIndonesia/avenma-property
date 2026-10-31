@@ -40,8 +40,7 @@ class ListingSettingController extends Controller
         ]);
 
         $developer = new Developer($data);
-        $developer->slug = Slug::unique(Developer::class, $data['name'], 'developer');
-        $developer->save();
+        Slug::save($developer, $data['name'], 'developer');
 
         return back()->with('status', "Developer \"{$developer->name}\" ditambahkan.");
     }
@@ -80,11 +79,12 @@ class ListingSettingController extends Controller
             return back()->withErrors(['label' => "Opsi \"{$data['label']}\" sudah ada."]);
         }
 
-        ListingOption::create([
+        $option = new ListingOption([
             'group' => $data['group'],
             'label' => $data['label'],
-            'slug' => Slug::unique(ListingOption::class, $data['label'], 'opsi', null, ['group' => $data['group']]),
         ]);
+
+        Slug::save($option, $data['label'], 'opsi', ['group' => $data['group']]);
 
         return back()->with('status', "Opsi \"{$data['label']}\" ditambahkan.");
     }
