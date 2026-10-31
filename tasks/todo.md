@@ -163,6 +163,6 @@ Detail plan: `tasks/plan.md`
 - [ ] Semua foto WebP
 - [ ] Sitemap accessible
 - [ ] Switch bahasa berfungsi
-- [ ] Lighthouse > 80
+- [x] Lighthouse > 80 (mobile: beranda 83, katalog 89, detail 82; desktop 97)
 - [ ] Build production sukses
 - [ ] Ready deploy Hostinger

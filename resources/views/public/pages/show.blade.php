@@ -108,7 +108,7 @@
                                     class="absolute top-0 block w-[72%] px-2 transition-all duration-500 ease-out motion-reduce:transition-none"
                                     :style="styleFor({{ $index }})"
                                 >
-                                    <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}" class="aspect-[4/3] w-full border border-line object-cover" :class="pos({{ $index }}) === 0 ? 'shadow-[0_12px_26px_-10px_rgba(20,17,14,0.40)]' : ''" @if ($index > 0) loading="lazy" @endif>
+                                    <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}" class="aspect-[4/3] w-full border border-line object-cover" :class="pos({{ $index }}) === 0 ? 'shadow-[0_12px_26px_-10px_rgba(20,17,14,0.40)]' : ''" @if ($index > 0) loading="lazy" fetchpriority="low" @else fetchpriority="high" @endif>
                                 </a>
                             @endforeach
 

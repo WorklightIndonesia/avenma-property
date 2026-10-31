@@ -14,8 +14,13 @@
         <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/brand/favicon-512.png') }}">
         <link rel="apple-touch-icon" href="{{ asset('images/brand/favicon-512.png') }}">
 
+        {{-- Loaded off the critical path: a blocking third-party stylesheet cost
+             about 0.8s of mobile LCP. media="print" fetches without blocking,
+             then flips to all; the noscript copy covers JavaScript being off. --}}
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet" />
+        <link rel="preload" as="style" href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap">
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+        <noscript><link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet"></noscript>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
