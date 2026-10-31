@@ -9,6 +9,7 @@ use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\ListingOption;
+use App\Models\Location;
 use App\Models\User;
 use App\Services\ImageService;
 use App\Support\Slug;
@@ -86,7 +87,7 @@ class ListingController extends Controller
 
     public function create(): View
     {
-        return view('admin.listings.create', ['listing' => new Listing] + $this->formOptions());
+        return view('admin.listings.create', ['listing' => new Listing, 'currentLocation' => $this->currentLocation(null)] + $this->formOptions());
     }
 
     public function store(ListingRequest $request): RedirectResponse
@@ -116,7 +117,7 @@ class ListingController extends Controller
 
         $listing->load('images');
 
-        return view('admin.listings.edit', ['listing' => $listing] + $this->formOptions());
+        return view('admin.listings.edit', ['listing' => $listing, 'currentLocation' => $this->currentLocation($listing)] + $this->formOptions());
     }
 
     public function update(ListingRequest $request, Listing $listing): RedirectResponse
@@ -214,6 +215,15 @@ class ListingController extends Controller
         }
 
         return $data;
+    }
+
+    /**
+     * The region the form opens on: the one posted back after a failed save,
+     * then the listing's own row. Loaded here so the view holds no queries.
+     */
+    private function currentLocation(?Listing $listing): ?Location
+    {
+        return Location::find(old('location_id', $listing?->location_id));
     }
 
     /**

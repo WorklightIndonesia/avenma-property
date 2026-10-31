@@ -10,7 +10,7 @@
         ->all();
 
     // old('location_id') wins, so a failed save keeps the region the agent picked.
-    $current = \App\Models\Location::find(old('location_id', $listing->location_id));
+    $current = $currentLocation;
     $initial = [
         'address' => (string) old('address', $listing->address),
         'province' => $current?->province,
