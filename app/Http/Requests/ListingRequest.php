@@ -19,6 +19,11 @@ class ListingRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Saving adds photos to whatever the listing already has, so the cap
+        // counts the stored rows, not just this upload.
+        $listing = $this->route('listing');
+        $remaining = Listing::MAX_PHOTOS - ($listing instanceof Listing ? $listing->images()->count() : 0);
+
         return [
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string'],
@@ -47,7 +52,8 @@ class ListingRequest extends FormRequest
             'is_published' => ['boolean'],
             'show_kpr' => ['boolean'],
 
-            'photos' => ['nullable', 'array', 'max:10'],
+            // Ten per upload, and never more than the total the listing may hold.
+            'photos' => ['nullable', 'array', 'max:'.max(0, min(10, $remaining))],
             'photos.*' => ['file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
 
             'images' => ['nullable', 'array'],
@@ -64,6 +70,7 @@ class ListingRequest extends FormRequest
     {
         return [
             'latitude.required' => 'Tandai titik lokasi di peta sebelum listing diterbitkan.',
+            'photos.max' => 'Maksimal '.Listing::MAX_PHOTOS.' foto per listing. Hapus beberapa foto dulu sebelum menambah.',
         ];
     }
 

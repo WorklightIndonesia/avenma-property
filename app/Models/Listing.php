@@ -62,6 +62,9 @@ class Listing extends Model
     /** How many listings the home page shows: featured first, then the newest. */
     public const HOME_LIMIT = 6;
 
+    /** Upper bound on photos, so no detail page grows without a limit. */
+    public const MAX_PHOTOS = 30;
+
     protected $fillable = [
         'location_id',
         'developer_id',

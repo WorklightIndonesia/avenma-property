@@ -140,6 +140,24 @@ class ListingPhotoTest extends TestCase
             ->assertDontSee('aria-label="Urutan foto"', false);
     }
 
+    public function test_a_listing_keeps_a_ceiling_of_thirty_photos(): void
+    {
+        $agen = $this->agen();
+        $listing = $this->listing(['created_by' => $agen->id]);
+
+        foreach (range(1, Listing::MAX_PHOTOS) as $index) {
+            $listing->images()->create(['path' => 'images/properties/foto-'.$index.'.webp', 'sort_order' => $index]);
+        }
+
+        $this->actingAs($agen)
+            ->put(route('admin.listings.update', $listing), $this->payload([
+                'photos' => [UploadedFile::fake()->create('lebih.jpg', 40, 'image/jpeg')],
+            ]))
+            ->assertSessionHasErrors('photos');
+
+        $this->assertSame(Listing::MAX_PHOTOS, $listing->images()->count());
+    }
+
     public function test_a_non_image_upload_is_rejected(): void
     {
         $this->actingAs($this->agen())

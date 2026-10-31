@@ -421,7 +421,7 @@
         <div class="mt-4 border-t border-line pt-4">
             <x-input-label for="photos" value="Tambah foto" />
             <input id="photos" name="photos[]" type="file" multiple accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-ink-600 file:mr-3 file:rounded file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-ink-950 hover:file:bg-line">
-            <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB per foto, 10 foto sekali unggah.</p>
+            <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB per foto, 10 foto sekali unggah, {{ \App\Models\Listing::MAX_PHOTOS }} foto per listing.</p>
             <x-input-error class="mt-2" :messages="$photoErrors" />
         </div>
     </section>
