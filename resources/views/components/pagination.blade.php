@@ -17,21 +17,21 @@
     @if ($arrows)
         @if ($current <= 1)
             <span class="{{ $off }}" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M13 5l-7 7 7 7M20 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="left" double />
             </span>
         @else
             <a href="{{ $paginator->url(max(1, $current - 5)) }}" class="{{ $link }}" aria-label="Mundur 5 halaman">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M13 5l-7 7 7 7M20 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="left" double />
             </a>
         @endif
 
         @if ($paginator->onFirstPage())
             <span class="{{ $off }}" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="left" />
             </span>
         @else
             <a href="{{ $paginator->previousPageUrl() }}" class="{{ $link }}" aria-label="Sebelumnya">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="left" />
             </a>
         @endif
     @else
@@ -53,21 +53,21 @@
     @if ($arrows)
         @if ($paginator->hasMorePages())
             <a href="{{ $paginator->nextPageUrl() }}" class="{{ $link }}" aria-label="Berikutnya">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="right" />
             </a>
         @else
             <span class="{{ $off }}" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="right" />
             </span>
         @endif
 
         @if ($current >= $last)
             <span class="{{ $off }}" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M4 5l7 7-7 7M11 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="right" double />
             </span>
         @else
             <a href="{{ $paginator->url(min($last, $current + 5)) }}" class="{{ $link }}" aria-label="Maju 5 halaman">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M4 5l7 7-7 7M11 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                <x-icon-chevron direction="right" double />
             </a>
         @endif
     @else

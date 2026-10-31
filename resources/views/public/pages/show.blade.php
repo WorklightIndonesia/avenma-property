@@ -126,7 +126,7 @@
                                     aria-label="Foto sebelumnya"
                                     class="inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 transition-colors duration-150 hover:bg-sand hover:text-ink-950"
                                 >
-                                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M15 5l-7 7 7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    <x-icon-chevron direction="left" />
                                 </button>
 
                                 @foreach ($heroSlides as $index => $slide)
@@ -147,7 +147,7 @@
                                     aria-label="Foto berikutnya"
                                     class="inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 transition-colors duration-150 hover:bg-sand hover:text-ink-950"
                                 >
-                                    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-5 w-5"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    <x-icon-chevron direction="right" />
                                 </button>
                             </div>
                         @endif
