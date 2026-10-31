@@ -56,6 +56,22 @@ class ImageConversionTest extends TestCase
         Storage::disk('uploads')->assertExists($path);
     }
 
+    public function test_a_photo_too_wide_to_decode_safely_is_stored_unchanged(): void
+    {
+        $path = $this->images()->store($this->jpeg(ImageService::MAX_INPUT_EDGE + 1, 1), 'images/blog');
+
+        $this->assertStringEndsWith('.jpg', $path);
+        Storage::disk('uploads')->assertExists($path);
+    }
+
+    public function test_a_stored_photo_stays_under_the_size_cap(): void
+    {
+        $path = $this->images()->store($this->jpeg(3000, 2000), 'images/blog');
+
+        $this->assertStringEndsWith('.webp', $path);
+        $this->assertLessThanOrEqual(ImageService::MAX_BYTES, strlen(Storage::disk('uploads')->get($path)));
+    }
+
     public function test_a_blog_cover_is_converted_through_the_service(): void
     {
         $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]))

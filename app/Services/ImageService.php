@@ -18,9 +18,25 @@ class ImageService
 
     public const QUALITY = 82;
 
+    /** Quality floor when a file has to be squeezed under the size cap. */
+    public const MIN_QUALITY = 50;
+
+    /** Quality step while squeezing, so the best quality that fits is kept. */
+    public const QUALITY_STEP = 4;
+
+    /** Matches the upload rule: nothing larger than this is stored. */
+    public const MAX_BYTES = 5 * 1024 * 1024;
+
     /**
-     * Returns the stored path. A file that cannot be decoded is stored as it
-     * arrived, so an upload never fails the request.
+     * Decoding costs about 4 bytes per pixel, so a 12000x9000 phone shot would
+     * need ~430 MB and kill the request. The header says enough to refuse it.
+     */
+    public const MAX_INPUT_EDGE = 8000;
+
+    /**
+     * Returns the stored path. A file that cannot be decoded — or is too large
+     * to decode safely — is stored as it arrived, so an upload never fails the
+     * request.
      */
     public function store(UploadedFile $file, string $directory, string $disk = 'uploads'): string
     {
@@ -40,6 +56,12 @@ class ImageService
     private function toWebp(string $path): ?string
     {
         if (! function_exists('imagecreatefromstring') || ! function_exists('imagewebp')) {
+            return null;
+        }
+
+        $size = @getimagesize($path);
+
+        if ($size === false || max($size[0], $size[1]) > self::MAX_INPUT_EDGE) {
             return null;
         }
 
@@ -65,20 +87,46 @@ class ImageService
         imagealphablending($image, false);
         imagesavealpha($image, true);
 
-        $temp = tempnam(sys_get_temp_dir(), 'webp');
-        $written = $temp !== false && @imagewebp($image, $temp, self::QUALITY);
+        $webp = $this->encode($image);
 
         imagedestroy($image);
 
-        if ($temp === false) {
-            return null;
+        return $webp;
+    }
+
+    /**
+     * The best quality that still fits the cap: the normal quality first, then
+     * small steps down, so only a file that is genuinely too big is degraded.
+     * Null means "nothing fit", and the caller keeps the original upload.
+     */
+    private function encode(GdImage $image): ?string
+    {
+        for ($quality = self::QUALITY; $quality >= self::MIN_QUALITY; $quality -= self::QUALITY_STEP) {
+            $bytes = $this->webp($image, $quality);
+
+            if ($bytes === null) {
+                return null;
+            }
+
+            if (strlen($bytes) <= self::MAX_BYTES) {
+                return $bytes;
+            }
         }
 
-        $webp = $written ? file_get_contents($temp) : false;
+        return null;
+    }
 
-        @unlink($temp);
+    /**
+     * Encoded straight into a buffer; a temp file would have to be written and
+     * read once per attempt.
+     */
+    private function webp(GdImage $image, int $quality): ?string
+    {
+        ob_start();
+        $written = @imagewebp($image, null, $quality);
+        $bytes = ob_get_clean();
 
-        return $webp === false ? null : $webp;
+        return $written && is_string($bytes) && $bytes !== '' ? $bytes : null;
     }
 
     /**
