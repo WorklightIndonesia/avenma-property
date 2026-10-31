@@ -39,8 +39,8 @@ Detail plan: `tasks/plan.md`
 ## Phase 2: Property Catalog
 
 - [x] **Task 5: Seeder master data + sample listings**
-  - Acceptance: seeder membuat akun `admin` (Fellix) dan `agen` (Budi, nomor `089630999996`), data wilayah resmi (7.285 kecamatan Kemendagri), developer, satu baris `site_settings`, dan 20 listing contoh dengan foto. Password dibaca dari `ADMIN_PASSWORD` / `AGEN_PASSWORD` di `.env`; seeder gagal bila kosong atau tidak memenuhi aturan password.
-  - Verification: `php artisan migrate:fresh --seed`; cek dua akun, 20 listing, data wilayah, dan `site_settings` di database.
+  - Acceptance: seeder membuat satu akun `admin` (Fellix), data wilayah resmi (7.285 kecamatan Kemendagri), satu baris `site_settings` (WhatsApp, alamat, Instagram, email), dan 20 listing contoh dengan foto untuk lokal. Developer tidak lagi di-seed: dikelola dari panel admin. Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder gagal bila kosong atau tidak memenuhi aturan password.
+  - Verification: `php artisan migrate:fresh --seed`; cek satu akun, 20 listing, data wilayah, dan `site_settings` di database.
   - Files: `database/seeders/*`
   - Depends: Task 4
   - Scope: Small
@@ -96,7 +96,7 @@ Detail plan: `tasks/plan.md`
   - Scope: Small
 
 - [x] **Task 12: Static pages**
-  - Acceptance: Home, Tentang Kami, Kontak, Syarat & Ketentuan tampil; konten dari `page_contents` dan `page_sections`; beranda menampilkan lima listing (unggulan dulu).
+  - Acceptance: Home dan Kontak tampil; konten dari `page_contents` dan `page_sections`; beranda menampilkan lima listing (unggulan dulu). Halaman Syarat & Ketentuan dihentikan (route, tautan footer, skeleton, dan seeder dihapus) dan dapat dihidupkan lagi bila naskahnya tersedia.
   - Verification: feature test tiap route; manual cek.
   - Files: `app/Http/Controllers/Public/PageController.php`, `config/pages.php`, `resources/views/public/pages/show.blade.php`
   - Depends: Task 4

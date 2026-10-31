@@ -76,7 +76,7 @@ class SeoTest extends TestCase
 
         $this->assertStringContainsString('<loc>'.route('public.listings.show', 'rumah-terbit').'</loc>', $content);
         $this->assertStringNotContainsString('rumah-draf', $content);
-        $this->assertStringContainsString('<loc>'.url('/syarat-ketentuan').'</loc>', $content);
+        $this->assertStringContainsString('<loc>'.url('/kontak').'</loc>', $content);
         $this->assertStringContainsString('<loc>'.route('public.blog.index').'</loc>', $content);
         $this->assertStringContainsString('<loc>'.route('public.blog.show', 'artikel-terbit').'</loc>', $content);
         $this->assertStringNotContainsString('artikel-draf', $content);
@@ -89,8 +89,7 @@ class SeoTest extends TestCase
 
         $this->get('/sitemap.xml')
             ->assertOk()
-            ->assertDontSee(url('/kontak'))
-            ->assertSee(url('/syarat-ketentuan'));
+            ->assertDontSee(url('/kontak'));
     }
 
     public function test_robots_points_at_the_sitemap_and_keeps_the_admin_out(): void

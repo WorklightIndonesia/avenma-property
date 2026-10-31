@@ -89,11 +89,6 @@ class PageController extends Controller
         return $this->render('kontak');
     }
 
-    public function terms(): View
-    {
-        return $this->render('syarat-ketentuan');
-    }
-
     /**
      * @param  array<string, mixed>  $extra
      */

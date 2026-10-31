@@ -199,7 +199,7 @@ Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commi
    php artisan db:seed
    ```
 
-   Seeder membuat dua akun: `fellixwl@gmail.com` (role `admin`) dan `agenbudi@gmail.com` (role `agen`). Password dibaca dari `ADMIN_PASSWORD` dan `AGEN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar, angka, simbol). Registrasi publik dimatikan, jadi akun baru dibuat lewat panel admin.
+   Seeder membuat satu akun: `fellixwl@gmail.com` (role `admin`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
 
 ## Menjalankan Proyek Secara Lokal
 

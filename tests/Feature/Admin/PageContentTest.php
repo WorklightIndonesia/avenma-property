@@ -42,8 +42,7 @@ class PageContentTest extends TestCase
             ->get('/admin/pages')
             ->assertOk()
             ->assertSee('Beranda')
-            ->assertSee('Kontak')
-            ->assertSee('Syarat &amp; Ketentuan', false);
+            ->assertSee('Kontak');
     }
 
     public function test_saved_copy_is_sanitised_before_it_reaches_the_database(): void

@@ -130,7 +130,6 @@
                             <li><a href="{{ url('/properti') }}" class="hover:text-paper">Properti</a></li>
                             <li><a href="{{ url('/blog') }}" class="hover:text-paper">Blog</a></li>
                             <li><a href="{{ url('/kontak') }}" class="hover:text-paper">Kontak</a></li>
-                            <li><a href="{{ url('/syarat-ketentuan') }}" class="hover:text-paper">Syarat &amp; Ketentuan</a></li>
                         </ul>
                     </div>
                 </div>

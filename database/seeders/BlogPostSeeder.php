@@ -31,11 +31,7 @@ class BlogPostSeeder extends Seeder
             'menyewa-atau-membeli-hitungan-sederhana',
         ])->delete();
 
-        $authors = User::whereIn('email', ['fellixwl@gmail.com', 'agenbudi@gmail.com'])->get();
-
-        if ($authors->isEmpty()) {
-            $authors = User::where('email', 'agenbudi@gmail.com')->get();
-        }
+        $authors = User::query()->get();
 
         foreach ($this->articles() as $article) {
             BlogPost::updateOrCreate(

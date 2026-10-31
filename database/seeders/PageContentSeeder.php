@@ -64,32 +64,6 @@ class PageContentSeeder extends Seeder
                     ],
                 ],
             ],
-
-            [
-                'key' => 'syarat-ketentuan',
-                'title' => 'Syarat & Ketentuan',
-                'meta_title' => 'Syarat dan Ketentuan - Avenma Properti',
-                'meta_description' => 'Ketentuan penggunaan situs dan informasi properti Avenma Properti.',
-                'sections' => [
-                    'hero' => [
-                        'heading' => 'Syarat dan ketentuan.',
-                        'body' => '<p>Ketentuan ini berlaku saat Anda menggunakan situs Avenma Properti dan informasi di dalamnya.</p>',
-                        'image_alt' => 'Dokumen dan meja kerja',
-                    ],
-                    'ketentuan' => [
-                        'body' => '<h2>Informasi properti</h2>'
-                            .'<p>Kami menyusun informasi properti dengan teliti, tetapi harga, ketersediaan, dan spesifikasi dapat berubah tanpa pemberitahuan. Angka pada simulasi KPR adalah perkiraan dan bukan penawaran bank; biaya provisi, asuransi, dan pajak tidak termasuk.</p>'
-                            .'<h2>Penggunaan situs</h2>'
-                            .'<ol><li>Anda tidak menyalahgunakan situs, termasuk mengambil data secara otomatis dalam jumlah besar.</li>'
-                            .'<li>Anda tidak mengirimkan informasi palsu saat menghubungi kami.</li>'
-                            .'<li>Tautan ke situs lain di luar kendali kami dan tunduk pada ketentuan situs tersebut.</li></ol>'
-                            .'<h2>Hak cipta</h2>'
-                            .'<p>Foto, teks, dan materi promosi di situs ini milik Avenma Properti atau pihak pemberi lisensi. Penggunaan ulang untuk keperluan komersial memerlukan izin tertulis.</p>'
-                            .'<h2>Perubahan</h2>'
-                            .'<p>Ketentuan dapat diperbarui sewaktu-waktu. Versi yang berlaku adalah yang tampil di halaman ini.</p>',
-                    ],
-                ],
-            ],
         ];
     }
 }

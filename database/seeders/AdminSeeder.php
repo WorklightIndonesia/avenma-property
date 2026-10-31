@@ -20,13 +20,6 @@ class AdminSeeder extends Seeder
                 'role' => User::ROLE_ADMIN,
                 'password' => $this->passwordFromEnv('ADMIN_PASSWORD'),
             ],
-            [
-                'name' => 'Budi',
-                'email' => 'agenbudi@gmail.com',
-                'phone' => '089630999996',
-                'role' => User::ROLE_AGEN,
-                'password' => $this->passwordFromEnv('AGEN_PASSWORD'),
-            ],
         ];
 
         foreach ($accounts as $account) {

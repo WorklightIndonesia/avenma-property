@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('public.pages.home');
 Route::get('/kontak', [PageController::class, 'contact'])->name('public.pages.contact');
-Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('public.pages.terms');
 
 // Every "Hubungi Kami" button points here, so the number lives only in Settings.
 Route::get('/hubungi-kami', fn () => redirect(SiteSetting::current()->whatsappUrl() ?? route('public.pages.contact')))

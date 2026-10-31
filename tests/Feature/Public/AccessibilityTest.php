@@ -13,7 +13,6 @@ class AccessibilityTest extends AccessibilityTestCase
         $screens = [
             '/',
             '/kontak',
-            '/syarat-ketentuan',
             '/properti',
             '/properti/rumah-uji',
             '/blog',

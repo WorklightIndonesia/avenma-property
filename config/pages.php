@@ -28,14 +28,4 @@ return [
             'kontak' => ['label' => 'Keterangan kontak'],
         ],
     ],
-
-    'syarat-ketentuan' => [
-        'label' => 'Syarat & Ketentuan',
-        'path' => '/syarat-ketentuan',
-        'route' => 'public.pages.terms',
-        'sections' => [
-            'hero' => ['label' => 'Hero', 'image' => true, 'cta' => 2],
-            'ketentuan' => ['label' => 'Isi ketentuan'],
-        ],
-    ],
 ];

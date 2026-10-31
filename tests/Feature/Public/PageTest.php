@@ -14,20 +14,16 @@ class PageTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_all_three_pages_render_from_the_database(): void
+    public function test_every_page_renders_from_the_database(): void
     {
         $this->seed(PageContentSeeder::class);
 
-        foreach (['/', '/kontak', '/syarat-ketentuan'] as $path) {
+        foreach (['/', '/kontak'] as $path) {
             $this->get($path)->assertOk();
         }
 
         $this->get('/')
             ->assertSee('Temukan properti yang tepat untuk Anda.');
-
-        $this->get('/syarat-ketentuan')
-            ->assertSee('Informasi properti')
-            ->assertSee('Hak cipta');
     }
 
     public function test_a_page_without_a_row_is_not_found(): void

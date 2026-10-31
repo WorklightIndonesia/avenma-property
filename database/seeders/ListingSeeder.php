@@ -13,7 +13,7 @@ class ListingSeeder extends Seeder
 {
     public function run(): void
     {
-        $owner = User::where('email', 'agenbudi@gmail.com')->firstOrFail();
+        $owner = User::query()->firstOrFail();
 
         $listings = [
             [
