@@ -121,6 +121,19 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Error: border `danger`, pesan error 14 px `danger` di bawah field, dihubungkan lewat `aria-describedby`. Tambahkan `border-danger focus:border-danger focus:ring-danger/30` pada input yang error.
 - Label selalu terlihat; placeholder bukan pengganti label.
 
+**Checkbox**
+
+- Satu komponen: `<x-checkbox>`. Teks label masuk ke dalam slot, dan input berada di dalam elemen `label`, sehingga nama yang terbaca layar pembaca berasal dari teks itu.
+- Kotak 16 px, radius 4 px, border `line`, tercentang `gold-700`, fokus ring `gold-500/30`.
+- Tinggi baris minimum 44 px. Klik pada teks ikut mencentang.
+- Kotak yang membungkus konten kaya (misalnya pemilih foto galeri) memakai komponen yang sama dengan kelas tata letak tambahan, bukan input tulis tangan.
+
+**File input**
+
+- Satu komponen: `<x-file-input>`. Tombolnya memakai modifier `file:`: latar `sand`, teks `ink-950`, radius 6 px.
+- Teks tombol dan nama berkas berasal dari browser dan mengikuti bahasa browser pengguna. Itu diterima; yang diatur hanya bentuk dan warnanya. Menggantinya dengan pemilih buatan sendiri akan kehilangan perilaku bawaan saat JavaScript mati.
+- Field yang gagal validasi tetap ditandai `aria-invalid`, sama seperti `<x-text-input>`.
+
 **Simulasi KPR**
 
 - Satu komponen untuk semua tempat: `resources/views/components/kpr-simulation.blade.php`, dipakai halaman detail properti dan `/design-system`. Jangan salin markup-nya ke view lain; perbaikan di satu tempat harus sampai ke keduanya.
@@ -206,7 +219,9 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Empty state**
 
-- Satu kalimat penjelas, satu aksi. Tanpa ilustrasi dekoratif.
+- Satu komponen: `<x-empty-state>` dengan `title`, `description` opsional, dan slot `action`. Satu kalimat penjelas, satu aksi. Tanpa ilustrasi dekoratif.
+- Aksi mengisi kekosongan, bukan mengulang tombol yang sudah ada di kepala halaman: `Tambah listing` saat tabel masih kosong, `Reset filter` saat filter tidak menghasilkan apa pun.
+- Pesan yang hanya menandai satu baris tabel, bukan seluruh daftar, tetap ditulis di sel itu sendiri dan tidak memakai komponen ini.
 
 **Galeri foto (lightbox)**
 
@@ -244,6 +259,16 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - `Batal` menerima fokus awal, sehingga Enter tidak langsung menghapus.
 - Wajib untuk aksi yang menghapus atau tidak bisa dibatalkan. Simpan, terbitkan, dan navigasi tidak meminta konfirmasi.
 - Jangan memakai `window.confirm()` atau `alert()`: gayanya mengikuti browser, teksnya tidak bisa memuat nama objek, dan tidak mengikuti aturan di dokumen ini.
+
+**Halaman galat**
+
+- Satu layout untuk seluruh kode galat: `resources/views/errors/layout.blade.php`, dengan satu view per kode di folder yang sama: `403`, `404`, `419`, `429`, `500`, `503`. Laravel memilih view dari kode status, jadi tidak ada controller yang perlu ditambah.
+- Layout ini tidak boleh membaca database, session, atau `SiteSetting`. Halaman 500 harus tetap tampil ketika penyebabnya koneksi database mati; memakai `layouts/public.blade.php` hanya menghasilkan galat kedua.
+- Isi: label `Galat {kode}` 12 px `ink-500`, satu `h1` 36 px, satu paragraf 16 px `ink-600` selebar `max-w-prose`, lalu aksi.
+- Aksi hanya ditampilkan bila aksi itu bisa berhasil dari halaman tersebut. Halaman 503 tidak punya aksi karena seluruh situs sedang mati.
+- Nada mengikuti §9: sebut apa yang terjadi dan langkah berikutnya. Jangan menulis "Terjadi kesalahan" atau kode teknis.
+- `meta robots` selalu `noindex`. Halaman galat tidak boleh masuk indeks.
+- Skip link ke `#main` tetap ada, karena tes aksesibilitas memeriksanya di setiap layar.
 
 ## 7. Motion
 

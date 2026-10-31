@@ -86,12 +86,19 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="px-4 py-10 text-center text-ink-500">
+                        <td colspan="3" class="px-4 py-2">
                             @if ($name !== '')
-                                Tidak ada developer yang cocok.
-                                <a href="{{ route('admin.developers.index') }}" class="font-medium text-ink-950 underline hover:text-gold-700">Reset filter</a>
+                                <x-empty-state title="Tidak ada developer yang cocok." description="Ubah kata kunci atau hapus filter.">
+                                    <x-slot:action>
+                                        <a href="{{ route('admin.developers.index') }}" class="inline-flex min-h-11 items-center rounded border border-line px-5 text-sm font-semibold text-ink-950 hover:bg-sand">Reset filter</a>
+                                    </x-slot:action>
+                                </x-empty-state>
                             @else
-                                Belum ada developer.
+                                <x-empty-state title="Belum ada developer." description="Developer yang Anda catat bisa ditautkan ke listing.">
+                                    <x-slot:action>
+                                        <a href="{{ route('admin.developers.create') }}" class="inline-flex min-h-11 items-center rounded bg-gold-500 px-5 text-sm font-semibold text-ink-950 hover:bg-gold-700 hover:text-white">Tambah developer</a>
+                                    </x-slot:action>
+                                </x-empty-state>
                             @endif
                         </td>
                     </tr>
@@ -101,7 +108,7 @@
     </div>
 
     <div class="mt-4">
-        {{ $developers->links() }}
+        <x-pagination :paginator="$developers" />
     </div>
 
     {{-- One dialog per row, placed outside the table so nothing clips it. --}}

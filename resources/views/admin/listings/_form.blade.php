@@ -1,6 +1,5 @@
 @php
     $select = 'mt-1 block w-full rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
-    $check = 'rounded border-line text-gold-700 focus:ring-gold-500/30';
     $priceOld = old('price', $listing->price);
     $priceValue = is_numeric($priceOld) && (int) $priceOld > 0 ? number_format((int) $priceOld, 0, ',', '.') : '';
     // The error bag has no wildcard lookup, so collect the per-file messages by hand.
@@ -334,23 +333,20 @@
             </div>
 
             <div class="space-y-3 sm:pt-7">
-                <label for="is_published" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">
-                    <input id="is_published" name="is_published" type="checkbox" value="1" class="{{ $check }}" @checked(old('is_published', $listing->is_published ?? true))>
+                <x-checkbox id="is_published" name="is_published" :checked="old('is_published', $listing->is_published ?? true)">
                     Terbitkan di website
-                </label>
+                </x-checkbox>
                 <p class="text-xs text-ink-500">Listing terbit wajib punya titik lokasi di peta.</p>
 
-                <label for="show_kpr" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">
-                    <input id="show_kpr" name="show_kpr" type="checkbox" value="1" class="{{ $check }}" @checked(old('show_kpr', $listing->show_kpr ?? true))>
+                <x-checkbox id="show_kpr" name="show_kpr" :checked="old('show_kpr', $listing->show_kpr ?? true)">
                     Tampilkan simulasi KPR untuk listing ini?
-                </label>
+                </x-checkbox>
                 <p class="text-xs text-ink-500">Muncul di bawah halaman properti. Listing berstatus disewa tidak menampilkannya.</p>
 
                 @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
-                    <label for="is_featured" class="flex min-h-11 items-center gap-3 text-sm font-medium text-ink-950">
-                        <input id="is_featured" name="is_featured" type="checkbox" value="1" class="{{ $check }}" @checked(old('is_featured', $listing->is_featured ?? false))>
+                    <x-checkbox id="is_featured" name="is_featured" :checked="old('is_featured', $listing->is_featured ?? false)">
                         Tandai sebagai unggulan
-                    </label>
+                    </x-checkbox>
                     <p class="text-xs text-ink-500">Unggulan tampil lebih dulu di beranda. Hanya admin yang dapat menandainya.</p>
                 @endif
             </div>
@@ -421,7 +417,7 @@
 
         <div class="mt-4 border-t border-line pt-4">
             <x-input-label for="photos" value="Tambah foto" />
-            <input id="photos" name="photos[]" type="file" multiple accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-ink-600 file:mr-3 file:rounded file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-ink-950 hover:file:bg-line">
+            <x-file-input id="photos" name="photos[]" multiple accept="image/jpeg,image/png,image/webp" />
             <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB per foto, 10 foto sekali unggah, {{ \App\Models\Listing::MAX_PHOTOS }} foto per listing.</p>
             <x-input-error class="mt-2" :messages="$photoErrors" />
         </div>

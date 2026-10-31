@@ -45,7 +45,13 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="5" class="px-4 py-10 text-center text-ink-500">Belum ada akun.</td>
+                        <td colspan="5" class="px-4 py-2">
+                            <x-empty-state title="Belum ada akun." description="Akun admin dan agen muncul di sini.">
+                                <x-slot:action>
+                                    <a href="{{ route('admin.users.create') }}" class="inline-flex min-h-11 items-center rounded bg-gold-500 px-5 text-sm font-semibold text-ink-950 hover:bg-gold-700 hover:text-white">Tambah akun</a>
+                                </x-slot:action>
+                            </x-empty-state>
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
@@ -53,7 +59,7 @@
     </div>
 
     <div class="mt-4">
-        {{ $users->links() }}
+        <x-pagination :paginator="$users" />
     </div>
 
     {{-- One dialog per row. Your own account has no dialog because it cannot be deleted. --}}

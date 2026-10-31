@@ -20,11 +20,11 @@
 
                 <div>
                     @if ($listings->isEmpty())
-                        <div class="border border-line p-10 text-center">
-                            <p class="font-semibold">Belum ada properti yang cocok.</p>
-                            <p class="mt-2 text-sm text-ink-600">Ubah atau hapus filter, lalu coba lagi.</p>
-                            <a href="{{ route('public.listings.index') }}" class="mt-6 inline-flex items-center rounded border border-line px-5 py-3 text-sm font-semibold text-ink-950 hover:bg-sand">Hapus semua filter</a>
-                        </div>
+                        <x-empty-state class="border border-line" title="Belum ada properti yang cocok." description="Ubah atau hapus filter, lalu coba lagi.">
+                            <x-slot:action>
+                                <a href="{{ route('public.listings.index') }}" class="inline-flex items-center rounded border border-line px-5 py-3 text-sm font-semibold text-ink-950 hover:bg-sand">Hapus semua filter</a>
+                            </x-slot:action>
+                        </x-empty-state>
                     @else
                         <h2 class="sr-only">Hasil pencarian properti</h2>
 

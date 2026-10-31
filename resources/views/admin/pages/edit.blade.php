@@ -133,20 +133,18 @@
 
                         <div class="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                             @foreach ($galleries['listing']->images as $image)
-                                <label class="flex min-h-11 cursor-pointer items-center gap-3 rounded border border-line p-2 text-sm hover:bg-sand">
-                                    <input
-                                        type="checkbox"
-                                        name="gallery[]"
-                                        value="{{ $image->id }}"
-                                        class="rounded border-line text-gold-700 focus:ring-gold-500/30"
-                                        @checked(in_array($image->id, $galleries['picked']))
-                                    >
+                                <x-checkbox
+                                    name="gallery[]"
+                                    :value="$image->id"
+                                    :checked="in_array($image->id, $galleries['picked'])"
+                                    class="min-h-11 cursor-pointer rounded border border-line p-2 hover:bg-sand"
+                                >
                                     <img src="{{ asset($image->path) }}" alt="" class="h-14 w-20 shrink-0 border border-line object-cover">
                                     <span class="min-w-0">
                                         <span class="block truncate font-medium text-ink-950">{{ $image->label ?: 'Tanpa label' }}</span>
                                         <span class="block truncate text-xs text-ink-500">{{ $image->alt ?: 'Tanpa alt text' }}</span>
                                     </span>
-                                </label>
+                                </x-checkbox>
                             @endforeach
                         </div>
 
@@ -215,16 +213,15 @@
 
                             @if ($section?->image)
                                 <img src="{{ asset($section->image) }}" alt="{{ $section->image_alt }}" class="mt-2 h-40 w-full max-w-sm border border-line object-cover">
-                                <label for="remove-{{ $key }}" class="mt-3 flex min-h-11 items-center gap-3 text-sm text-ink-950">
-                                    <input type="checkbox" id="remove-{{ $key }}" name="{{ $field }}[remove_image]" value="1" class="rounded border-line text-gold-700 focus:ring-gold-500/30">
+                                <x-checkbox :id="'remove-'.$key" :name="$field.'[remove_image]'" class="mt-3">
                                     Hapus gambar ini
-                                </label>
+                                </x-checkbox>
                             @endif
 
                             <div class="mt-3 grid gap-4 sm:grid-cols-2">
                                 <div>
                                     <x-input-label :for="'image-'.$key" value="{{ $section?->image ? 'Ganti gambar' : 'Unggah gambar' }}" />
-                                    <input type="file" id="image-{{ $key }}" name="{{ $field }}[image]" accept="image/jpeg,image/png,image/webp" class="mt-1 block w-full text-sm text-ink-950 file:mr-3 file:rounded file:border-0 file:bg-sand file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-ink-950">
+                                    <x-file-input id="image-{{ $key }}" name="{{ $field }}[image]" accept="image/jpeg,image/png,image/webp" />
                                     <p class="mt-1 text-xs text-ink-500">JPEG, PNG, atau WebP, maksimal 5 MB. Disimpan sebagai WebP, lebar maksimal 1920 px.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get($path.'.image')" />
                                 </div>

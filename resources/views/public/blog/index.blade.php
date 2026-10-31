@@ -38,10 +38,11 @@
             </form>
 
             @if ($posts->isEmpty())
-                <div class="mt-8 border border-line p-10 text-center">
-                    <p class="font-semibold">{{ $search !== '' ? 'Tidak ada artikel yang cocok.' : 'Belum ada artikel.' }}</p>
-                    <p class="mt-2 text-sm text-ink-600">{{ $search !== '' ? 'Coba kata kunci lain atau lihat semua artikel.' : 'Artikel baru akan tampil di sini.' }}</p>
-                </div>
+                <x-empty-state
+                    class="mt-8 border border-line"
+                    :title="$search !== '' ? 'Tidak ada artikel yang cocok.' : 'Belum ada artikel.'"
+                    :description="$search !== '' ? 'Coba kata kunci lain atau lihat semua artikel.' : 'Artikel baru akan tampil di sini.'"
+                />
             @else
                 @php($items = collect($posts->items()))
 
