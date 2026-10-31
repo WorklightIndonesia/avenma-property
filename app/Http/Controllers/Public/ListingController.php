@@ -9,6 +9,7 @@ use App\Models\Listing;
 use App\Models\ListingOption;
 use App\Models\Location;
 use App\Models\SiteSetting;
+use App\Support\WhatsApp;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -120,19 +121,9 @@ class ListingController extends Controller
 
     private function whatsappUrl(?string $phone, Listing $listing): ?string
     {
-        $digits = preg_replace('/\D+/', '', (string) $phone);
-
-        if (str_starts_with($digits, '0')) {
-            $digits = '62'.substr($digits, 1);
-        }
-
-        if (strlen($digits) < 10) {
-            return null;
-        }
-
         $message = 'Halo, saya tertarik dengan properti "'.$listing->title.'" ('.route('public.listings.show', $listing).'). Mohon informasi lebih lanjut.';
 
-        return 'https://wa.me/'.$digits.'?text='.rawurlencode($message);
+        return WhatsApp::url($phone, $message);
     }
 
     /**

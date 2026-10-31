@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\WhatsApp;
 use Illuminate\Database\Eloquent\Model;
 
 class SiteSetting extends Model
@@ -44,13 +45,7 @@ class SiteSetting extends Model
 
     public function whatsappUrl(): ?string
     {
-        $digits = preg_replace('/\D+/', '', (string) $this->whatsapp);
-
-        if (str_starts_with($digits, '0')) {
-            $digits = '62'.substr($digits, 1);
-        }
-
-        return strlen($digits) >= 10 ? 'https://wa.me/'.$digits : null;
+        return WhatsApp::url($this->whatsapp);
     }
 
     public function instagramUrl(): ?string
