@@ -50,8 +50,8 @@
                     <a href="{{ route('admin.listings.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listings.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Listing
                     </a>
-                    <a href="{{ route('admin.developers.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.developers.*') ? 'bg-paper/10 text-paper' : '' }}">
-                        Developer
+                    <a href="{{ route('admin.listing-settings.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listing-settings.*') || request()->routeIs('admin.developers.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Pengaturan Listing
                     </a>
                     <a href="{{ route('admin.blog.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.blog.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Blog

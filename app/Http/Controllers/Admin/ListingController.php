@@ -7,6 +7,7 @@ use App\Http\Requests\ListingRequest;
 use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\ListingImage;
+use App\Models\ListingOption;
 use App\Models\User;
 use App\Services\ImageService;
 use Illuminate\Http\RedirectResponse;
@@ -44,8 +45,8 @@ class ListingController extends Controller
     }
 
     /**
-     * The home page shows five listings, featured ones first. When more than
-     * five are flagged the oldest ones never appear, so the admin needs to see
+     * The home page shows six listings, featured ones first. When more than
+     * six are flagged the oldest ones never appear, so the admin needs to see
      * which ones to release.
      *
      * @return array{count: int, shown: int, oldest: ?Listing}
@@ -210,9 +211,9 @@ class ListingController extends Controller
     {
         return [
             'developers' => Developer::orderBy('name')->pluck('name', 'id'),
-            'listingTypes' => Listing::LISTING_TYPES,
-            'propertyTypes' => ['rumah' => 'Rumah', 'apartemen' => 'Apartemen', 'townhouse' => 'Townhouse', 'ruko' => 'Ruko', 'tanah' => 'Tanah'],
-            'statuses' => Listing::STATUSES,
+            'listingTypes' => ListingOption::options('listing_type'),
+            'propertyTypes' => ListingOption::options('property_type'),
+            'statuses' => ListingOption::options('status'),
         ];
     }
 }

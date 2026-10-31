@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Developer;
 use App\Models\KprSetting;
 use App\Models\Listing;
+use App\Models\ListingOption;
 use App\Models\Location;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
@@ -29,12 +30,15 @@ class ListingController extends Controller
         $kota = $this->allowed($regions['cities'][$provinsi] ?? [], $request->query('kota'));
         $kecamatan = $this->allowed($regions['districts'][$provinsi.'|'.$kota] ?? [], $request->query('kecamatan'));
 
+        $listingTypes = ListingOption::options('listing_type');
+        $statuses = ListingOption::options('status');
+
         $filters = [
             'provinsi' => $provinsi,
             'kota' => $kota,
             'kecamatan' => $kecamatan,
             'tipe' => (string) $request->query('tipe', ''),
-            'penawaran' => array_key_exists((string) $request->query('penawaran'), Listing::LISTING_TYPES)
+            'penawaran' => array_key_exists((string) $request->query('penawaran'), $listingTypes)
                 ? (string) $request->query('penawaran')
                 : '',
             'harga' => (string) $request->query('harga', ''),
@@ -68,8 +72,8 @@ class ListingController extends Controller
             'listings' => $listings,
             'regions' => $regions,
             'typeOptions' => Listing::typeOptions(),
-            'listingTypeOptions' => Listing::LISTING_TYPES,
-            'statusOptions' => Listing::STATUSES,
+            'listingTypeOptions' => $listingTypes,
+            'statusOptions' => $statuses,
             'developerOptions' => $developerOptions,
             'filters' => $filters,
             'sort' => $sort,
@@ -216,15 +220,15 @@ class ListingController extends Controller
         }
 
         if ($filters['tipe'] !== '') {
-            $chips[] = ['key' => 'tipe', 'label' => ucfirst($filters['tipe'])];
+            $chips[] = ['key' => 'tipe', 'label' => ListingOption::options('property_type')[$filters['tipe']] ?? ucfirst($filters['tipe'])];
         }
 
         if ($filters['status'] !== '') {
-            $chips[] = ['key' => 'status', 'label' => Listing::STATUSES[$filters['status']] ?? ucfirst($filters['status'])];
+            $chips[] = ['key' => 'status', 'label' => ListingOption::options('status')[$filters['status']] ?? ucfirst($filters['status'])];
         }
 
         if ($filters['penawaran'] !== '') {
-            $chips[] = ['key' => 'penawaran', 'label' => Listing::LISTING_TYPES[$filters['penawaran']]];
+            $chips[] = ['key' => 'penawaran', 'label' => ListingOption::options('listing_type')[$filters['penawaran']]];
         }
 
         if ($filters['kamar'] !== '') {

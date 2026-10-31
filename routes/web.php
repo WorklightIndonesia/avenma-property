@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\DeveloperController;
+use App\Http\Controllers\Admin\ListingSettingController;
 use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\UserController;
@@ -11,13 +12,17 @@ use App\Http\Controllers\Public\BlogController;
 use App\Http\Controllers\Public\ListingController;
 use App\Http\Controllers\Public\PageController;
 use App\Http\Controllers\Public\SitemapController;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('public.pages.home');
-Route::get('/tentang-kami', [PageController::class, 'about'])->name('public.pages.about');
 Route::get('/kontak', [PageController::class, 'contact'])->name('public.pages.contact');
 Route::get('/syarat-ketentuan', [PageController::class, 'terms'])->name('public.pages.terms');
+
+// Every "Hubungi Kami" button points here, so the number lives only in Settings.
+Route::get('/hubungi-kami', fn () => redirect(SiteSetting::current()->whatsappUrl() ?? route('public.pages.contact')))
+    ->name('public.hubungi-kami');
 
 Route::get('/properti', [ListingController::class, 'index'])->name('public.listings.index');
 Route::get('/properti/{listing}', [ListingController::class, 'show'])->name('public.listings.show');
@@ -65,6 +70,17 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
     Route::resource('/admin/developers', DeveloperController::class)
         ->except('show')
         ->names('admin.developers');
+
+    Route::get('/admin/pengaturan-listing', [ListingSettingController::class, 'index'])
+        ->name('admin.listing-settings.index');
+    Route::post('/admin/pengaturan-listing/developer', [ListingSettingController::class, 'storeDeveloper'])
+        ->name('admin.listing-settings.developers.store');
+    Route::delete('/admin/pengaturan-listing/developer/{developer}', [ListingSettingController::class, 'destroyDeveloper'])
+        ->name('admin.listing-settings.developers.destroy');
+    Route::post('/admin/pengaturan-listing/opsi', [ListingSettingController::class, 'storeOption'])
+        ->name('admin.listing-settings.options.store');
+    Route::delete('/admin/pengaturan-listing/opsi/{option}', [ListingSettingController::class, 'destroyOption'])
+        ->name('admin.listing-settings.options.destroy');
 
     Route::middleware('role:'.User::ROLE_ADMIN)->group(function () {
         Route::resource('/admin/users', UserController::class)
