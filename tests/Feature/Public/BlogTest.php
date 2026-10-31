@@ -70,6 +70,40 @@ class BlogTest extends TestCase
         $this->get('/blog/artikel-bersampul')->assertOk()->assertSee('/images/blog/sampul.jpg', false);
     }
 
+    public function test_every_card_names_the_author(): void
+    {
+        $penulis = User::factory()->create(['name' => 'Agen Penulis', 'role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+
+        $this->article(['title' => 'Artikel Berpenulis', 'slug' => 'artikel-berpenulis', 'created_by' => $penulis->id]);
+
+        $this->get('/blog')->assertOk()->assertSee('Agen Penulis');
+    }
+
+    public function test_the_search_box_narrows_the_list(): void
+    {
+        $this->article(['title' => 'Panduan KPR untuk Keluarga Muda', 'slug' => 'panduan-kpr', 'excerpt' => 'Cicilan dan bunga.']);
+        $this->article(['title' => 'Memilih Cluster', 'slug' => 'memilih-cluster', 'excerpt' => 'Keamanan dan lokasi.']);
+
+        $this->get('/blog?q=kpr')
+            ->assertOk()
+            ->assertSee('Panduan KPR untuk Keluarga Muda')
+            ->assertDontSee('Memilih Cluster');
+
+        $this->get('/blog?q=tidak-ada')
+            ->assertOk()
+            ->assertSee('Tidak ada artikel yang cocok');
+    }
+
+    public function test_an_article_without_a_cover_shows_no_image_at_all(): void
+    {
+        $this->article(['title' => 'Tanpa Sampul', 'slug' => 'tanpa-sampul']);
+
+        $this->get('/blog')
+            ->assertOk()
+            ->assertSee('Tanpa Sampul')
+            ->assertDontSee('images/blog', false);
+    }
+
     public function test_the_paginator_matches_the_listing_one(): void
     {
         foreach (range(1, 10) as $number) {

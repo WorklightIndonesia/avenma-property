@@ -28,6 +28,25 @@
 
             editor.root.setAttribute('aria-label', host.dataset.label);
 
+            // Quill renders icon-only buttons without labels; give each a tooltip.
+            // The toolbar sits beside the editor, so read it from the module.
+            const toolbar = editor.getModule('toolbar').container;
+            const tooltips = { bold: 'Tebal', italic: 'Miring', underline: 'Garis bawah', blockquote: 'Kutipan', link: 'Tautan', clean: 'Hapus format' };
+
+            toolbar.querySelectorAll('button').forEach((button) => {
+                const name = [...button.classList].find((cls) => cls.startsWith('ql-'))?.slice(3);
+
+                button.title = name === 'list'
+                    ? (button.getAttribute('value') === 'ordered' ? 'Daftar bernomor' : 'Daftar poin')
+                    : (tooltips[name] ?? button.title);
+            });
+
+            const headerPicker = toolbar.querySelector('.ql-header');
+
+            if (headerPicker) {
+                headerPicker.title = 'Judul bagian';
+            }
+
             const sync = () => {
                 input.value = editor.root.innerHTML;
             };

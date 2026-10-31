@@ -187,6 +187,16 @@ class BlogPostCrudTest extends TestCase
             ->assertSeeInOrder(['vendor/quill/quill.snow.css', '<body']);
     }
 
+    public function test_the_editor_toolbar_carries_tooltips(): void
+    {
+        $this->actingAs($this->admin())->get('/admin/blog/create')
+            ->assertOk()
+            ->assertSee("bold: 'Tebal'", false)
+            ->assertSee("italic: 'Miring'", false)
+            ->assertSee("getModule('toolbar').container", false)
+            ->assertSee('Daftar bernomor');
+    }
+
     /**
      * @param  array<string, mixed>  $overrides
      * @return array<string, mixed>
