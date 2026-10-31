@@ -127,12 +127,12 @@
 
     {{-- One dialog per row, placed outside the table so nothing clips it. --}}
     @foreach ($posts as $post)
-        <x-modal name="delete-post-{{ $post->id }}" max-width="md" focusable>
+        <x-modal name="delete-post-{{ $post->id }}" labelledby="delete-post-title-{{ $post->id }}" max-width="md" focusable>
             <form method="POST" action="{{ route('admin.blog.destroy', $post) }}" class="p-6">
                 @csrf
                 @method('DELETE')
 
-                <h2 class="text-lg font-semibold text-ink-950">Hapus artikel?</h2>
+                <h2 id="delete-post-title-{{ $post->id }}" class="text-lg font-semibold text-ink-950">Hapus artikel?</h2>
                 <p class="mt-2 text-sm text-ink-600">
                     &ldquo;{{ $post->title }}&rdquo; akan dihapus permanen, termasuk gambar sampulnya. Tindakan ini tidak bisa dibatalkan.
                 </p>

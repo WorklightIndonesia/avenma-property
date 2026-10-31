@@ -332,7 +332,7 @@
 
                                 <div>
                                     <x-input-label for="contact-message" value="Pesan" />
-                                    <textarea id="contact-message" name="message" rows="5" x-model="message" class="mt-1 block w-full rounded border-line bg-white py-2 text-sm text-ink-950 placeholder:text-ink-500 focus:border-gold-700 focus:ring-gold-500/30" required></textarea>
+                                    <x-textarea id="contact-message" name="message" rows="5" x-model="message" required />
                                 </div>
 
                                 <button type="submit" class="inline-flex min-h-12 w-full items-center justify-center rounded bg-gold-500 px-5 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white">Kirim pesan</button>

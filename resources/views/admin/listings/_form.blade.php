@@ -1,5 +1,4 @@
 @php
-    $select = 'mt-1 block w-full rounded border-line bg-white py-2 text-sm text-ink-950 focus:border-gold-700 focus:ring-gold-500/30';
     $priceOld = old('price', $listing->price);
     $priceValue = is_numeric($priceOld) && (int) $priceOld > 0 ? number_format((int) $priceOld, 0, ',', '.') : '';
     // The error bag has no wildcard lookup, so collect the per-file messages by hand.
@@ -105,7 +104,7 @@
 
             <div class="sm:col-span-2">
                 <x-input-label for="description" value="Deskripsi dan Fasilitas" />
-                <textarea id="description" name="description" rows="6" class="{{ $select }}" required>{{ old('description', $listing->description) }}</textarea>
+                <x-textarea id="description" name="description" rows="6" required>{{ old('description', $listing->description) }}</x-textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
             </div>
         </div>
@@ -432,12 +431,12 @@
  {{-- Each photo dialog lives outside the main form: form elements cannot nest. --}}
 @if ($listing->exists)
     @foreach ($listing->images as $image)
-        <x-modal name="delete-photo-{{ $image->id }}" max-width="md" focusable>
+        <x-modal name="delete-photo-{{ $image->id }}" labelledby="delete-photo-title-{{ $image->id }}" max-width="md" focusable>
             <form method="POST" action="{{ route('admin.listings.photos.destroy', [$listing, $image]) }}" class="p-6">
                 @csrf
                 @method('DELETE')
 
-                <h2 class="text-lg font-semibold text-ink-950">Hapus foto?</h2>
+                <h2 id="delete-photo-title-{{ $image->id }}" class="text-lg font-semibold text-ink-950">Hapus foto?</h2>
                 <p class="mt-2 text-sm text-ink-600">
                     Foto &ldquo;{{ $image->label ?: 'tanpa label' }}&rdquo; akan dihapus dari galeri listing ini. Tindakan ini tidak bisa dibatalkan.
                 </p>

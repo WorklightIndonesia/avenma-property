@@ -164,14 +164,14 @@
 
     {{-- One dialog per row, placed outside the table so nothing clips it. --}}
     @foreach ($listings as $listing)
-        <x-modal name="delete-listing-{{ $listing->id }}" max-width="md" focusable>
+        <x-modal name="delete-listing-{{ $listing->id }}" labelledby="delete-listing-title-{{ $listing->id }}" max-width="md" focusable>
             <form method="POST" action="{{ route('admin.listings.destroy', $listing) }}" class="p-6">
                 @csrf
                 @method('DELETE')
 
-                <h2 class="text-lg font-semibold text-ink-950">Hapus listing?</h2>
+                <h2 id="delete-listing-title-{{ $listing->id }}" class="text-lg font-semibold text-ink-950">Hapus listing?</h2>
                 <p class="mt-2 text-sm text-ink-600">
-                    &ldquo;{{ $listing->title }}&rdquo; akan dihapus dari daftar dan website.
+                    &ldquo;{{ $listing->title }}&rdquo; akan dihapus dari daftar dan website. Tindakan ini tidak bisa dibatalkan.
                 </p>
 
                 @if ($heroListings->contains($listing->id))

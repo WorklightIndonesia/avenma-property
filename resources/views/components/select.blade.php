@@ -46,7 +46,6 @@
         x-ref="button"
         @if ($id) id="{{ $id }}" @endif
         aria-haspopup="listbox"
-        aria-label="{{ $ariaLabel ?? $placeholder ?? $name }}"
         @if ($errors->has($name)) aria-invalid="true" @endif
         :aria-expanded="open ? 'true' : 'false'"
         class="{{ $trigger }}"
@@ -54,6 +53,7 @@
         x-on:keydown="keydown($event)"
         x-bind:class="open && ! header ? 'border-gold-700 ring-1 ring-gold-500/30' : ''"
     >
+        <span class="sr-only">{{ $ariaLabel ?? $placeholder ?? $name }}</span>
         <span class="truncate" x-text="label"></span>
 
         <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4 shrink-0 text-ink-500">

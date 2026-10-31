@@ -66,12 +66,12 @@
     @foreach ($users as $user)
         @continue($user->is(auth()->user()))
 
-        <x-modal name="delete-user-{{ $user->id }}" max-width="md" focusable>
+        <x-modal name="delete-user-{{ $user->id }}" labelledby="delete-user-title-{{ $user->id }}" max-width="md" focusable>
             <form method="POST" action="{{ route('admin.users.destroy', $user) }}" class="p-6">
                 @csrf
                 @method('DELETE')
 
-                <h2 class="text-lg font-semibold text-ink-950">Hapus akun?</h2>
+                <h2 id="delete-user-title-{{ $user->id }}" class="text-lg font-semibold text-ink-950">Hapus akun?</h2>
                 <p class="mt-2 text-sm text-ink-600">
                     Akun &ldquo;{{ $user->name }}&rdquo; ({{ $user->email }}) akan dihapus permanen. Listing dan artikel yang dibuat akun ini tetap tampil, atas nama Avenma Properti.
                 </p>

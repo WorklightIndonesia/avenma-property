@@ -32,7 +32,7 @@
 
                 <div>
                     <x-input-label for="address" value="Alamat kantor" />
-                    <textarea id="address" name="address" rows="3" data-autogrow class="mt-1 block w-full resize-none overflow-hidden rounded border-line bg-white px-3 py-2 text-sm leading-5 text-ink-950 focus:border-gold-700 focus:ring-gold-500/30">{{ old('address', $setting->address) }}</textarea>
+                    <x-textarea id="address" name="address" rows="3" data-autogrow class="resize-none overflow-hidden leading-5">{{ old('address', $setting->address) }}</x-textarea>
                     <p class="mt-1 text-xs text-ink-500">Tampil publik dan dipakai sebagai titik pencarian peta di halaman Kontak.</p>
                     <x-input-error class="mt-2" :messages="$errors->get('address')" />
                 </div>

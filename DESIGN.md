@@ -134,6 +134,11 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Teks tombol dan nama berkas berasal dari browser dan mengikuti bahasa browser pengguna. Itu diterima; yang diatur hanya bentuk dan warnanya. Menggantinya dengan pemilih buatan sendiri akan kehilangan perilaku bawaan saat JavaScript mati.
 - Field yang gagal validasi tetap ditandai `aria-invalid`, sama seperti `<x-text-input>`.
 
+**Textarea**
+
+- Satu komponen: `<x-textarea>`. Kelas dasarnya sama dengan input; tinggi baris ditentukan pemanggil (`leading-5` atau `leading-6`) supaya field panjang tidak berubah tanpa alasan.
+- Field yang menera sendiri tinggi kotaknya memakai `data-autogrow` plus `resize-none overflow-hidden` dari pemanggil.
+
 **Simulasi KPR**
 
 - Satu komponen untuk semua tempat: `resources/views/components/kpr-simulation.blade.php`, dipakai halaman detail properti dan `/design-system`. Jangan salin markup-nya ke view lain; perbaikan di satu tempat harus sampai ke keduanya.
@@ -194,11 +199,13 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 **Form (admin)**
 
 - Satu kartu per kelompok isian: `border-line` di atas `paper`, padding 20–24 px, judul 18 px.
-- Isian memakai `<x-text-input>`, `<x-input-label>`, dan `<x-input-error>`; select dan textarea memakai kelas yang sama dengan input.
+- Isian memakai `<x-text-input>`, `<x-textarea>`, `<x-input-label>`, dan `<x-input-error>`; select memakai `<x-select>`.
+- `Kelengkapan Surat` adalah pengecualian: isinya terbuka (SHM, HGB, AJB, girik), jadi tetap `<x-text-input>` dengan `<datalist>` sebagai saran. Aturan "semua pilihan memakai `<x-select>`" hanya berlaku untuk pilihan tertutup.
 
 **Dropdown**
 
-- Semua pilihan memakai `<x-select>`: tombol 44 px dengan border `line`, panel `absolute` bergaris `line` dan `shadow-float`, butir 44 px dengan garis kiri 2 px `gold-700` serta latar `gold-500/20` untuk pilihan aktif.
+- Semua pilihan tertutup memakai `<x-select>`: tombol 44 px dengan border `line`, panel `absolute` bergaris `line` dan `shadow-float`, butir 44 px dengan garis kiri 2 px `gold-700` serta latar `gold-500/20` untuk pilihan aktif.
+- Pemilih wilayah dan filter lokasi bukan `<x-select>`: keduanya combobox berjenjang yang menyaring daftar sambil mengetik, dengan `location_id` hanya terisi lewat pilihan dari daftar. Jangan diganti `<x-select>`; alurnya diuji `PhotonAddressTest`.
 - Panah keyboard, Enter, Escape, Home, dan End bekerja; panel menutup saat klik di luar.
 - Tanpa JavaScript, komponen merender `<select>` biasa di dalam `<noscript>` supaya formulir tetap bisa dikirim.
 - Grid dua kolom mulai `sm`; judul, deskripsi, dan peta memakai lebar penuh.
@@ -247,10 +254,12 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Error per field tetap tampil di bawah field lewat `<x-input-error>`; toast tidak menggantikannya.
 - Durasi mengikuti panjang baca: 6 detik untuk sukses satu baris, 10 detik untuk galat yang bisa dua baris. Jangan memendekkannya tanpa mengukur ulang.
 - Hanya untuk hasil aksi atau kegagalan aksi. Bukan untuk ajakan bertindak, dan bukan pengganti teks yang memang ada di dalam halaman.
+- Nada `warning` khusus untuk satu kasus: agen menghapus foto listing yang sedang dipakai di hero beranda. Aksi tetap boleh dilanjutkan supaya agen tidak tertahan, tetapi hero akan kehilangan fotonya sampai diganti. Jangan memakai nada ini untuk hal lain.
 
 **Dialog konfirmasi**
 
 - Pakai `<x-modal>` yang sudah ada: latar `ink-950/60`, panel `paper` bergaris `line`, `shadow-float`, lebar maksimum `md` (448 px). Esc, klik latar, scroll terkunci, dan fokus terkurung sudah ditangani komponen.
+- Kirim prop `labelledby` dan pasang id yang sama pada `h2` di dalam dialog. Komponen merender `role="dialog"` dan `aria-modal`; tanpa `labelledby` pembaca layar tidak menyebutkan dialog apa yang terbuka.
 - Render di luar tabel, karena bingkai `overflow-x-auto` memotong elemen bersarang.
 - Dipakai untuk setiap aksi hapus di dashboard: listing, foto listing, developer, akun, dan artikel. Hapus akun sendiri di halaman profil memakai dialog yang sama, ditambah kolom password.
 - Judul 18 px bobot 600 berupa pertanyaan: `Hapus artikel?`.

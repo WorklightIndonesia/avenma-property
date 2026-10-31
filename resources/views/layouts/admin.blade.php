@@ -44,30 +44,30 @@
                 </div>
 
                 <nav class="mt-4 flex-1 space-y-1 overflow-y-auto px-3 text-sm">
-                    <a href="{{ route('admin.dashboard') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.dashboard') ? 'bg-paper/10 text-paper' : '' }}">
+                    <a href="{{ route('admin.dashboard') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.dashboard') ? 'bg-paper/10 text-paper' : '' }}">
                         Dashboard
                     </a>
-                    <a href="{{ route('admin.listings.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listings.*') ? 'bg-paper/10 text-paper' : '' }}">
+                    <a href="{{ route('admin.listings.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listings.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Listing
                     </a>
-                    <a href="{{ route('admin.listing-settings.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listing-settings.*') || request()->routeIs('admin.developers.*') ? 'bg-paper/10 text-paper' : '' }}">
+                    <a href="{{ route('admin.listing-settings.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listing-settings.*') || request()->routeIs('admin.developers.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Pengaturan Listing
                     </a>
-                    <a href="{{ route('admin.blog.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.blog.*') ? 'bg-paper/10 text-paper' : '' }}">
+                    <a href="{{ route('admin.blog.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.blog.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Blog
                     </a>
                     @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
-                        <a href="{{ route('admin.pages.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.pages.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        <a href="{{ route('admin.pages.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.pages.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Halaman
                         </a>
-                        <a href="{{ route('admin.users.index') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.users.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        <a href="{{ route('admin.users.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.users.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Akun
                         </a>
-                        <a href="{{ route('admin.settings.edit') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.settings.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        <a href="{{ route('admin.settings.edit') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.settings.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Kontak Avenma
                         </a>
                     @endif
-                    <a href="{{ url('/') }}" class="flex items-center rounded px-3 py-2 hover:bg-paper/10 hover:text-paper">
+                    <a href="{{ url('/') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 hover:text-paper">
                         Lihat Website
                     </a>
                 </nav>

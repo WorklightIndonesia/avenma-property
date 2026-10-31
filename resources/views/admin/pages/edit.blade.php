@@ -45,7 +45,7 @@
 
                 <div class="sm:col-span-2">
                     <x-input-label for="meta_description" value="Deskripsi untuk Google (opsional)" />
-                    <textarea id="meta_description" name="meta_description" rows="2" data-autogrow class="mt-1 block w-full resize-none overflow-hidden rounded border-line bg-white px-3 py-2 text-sm leading-5 text-ink-950 focus:border-gold-700 focus:ring-gold-500/30">{{ old('meta_description', $page->meta_description) }}</textarea>
+                    <x-textarea id="meta_description" name="meta_description" rows="2" data-autogrow class="resize-none overflow-hidden leading-5">{{ old('meta_description', $page->meta_description) }}</x-textarea>
                     <p class="mt-1 text-xs text-ink-500">Satu atau dua kalimat. Panjang ideal 150–160 karakter.</p>
                     <x-input-error class="mt-2" :messages="$errors->get('meta_description')" />
                 </div>

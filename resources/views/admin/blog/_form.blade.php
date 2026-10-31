@@ -22,7 +22,7 @@
 
             <div>
                 <x-input-label for="excerpt" value="Ringkasan (opsional)" />
-                <textarea id="excerpt" name="excerpt" rows="3" data-autogrow class="mt-1 block w-full resize-none overflow-hidden rounded border-line bg-white px-3 py-2 text-sm leading-6 text-ink-950 focus:border-gold-700 focus:ring-gold-500/30">{{ old('excerpt', $post->excerpt) }}</textarea>
+                <x-textarea id="excerpt" name="excerpt" rows="3" data-autogrow class="resize-none overflow-hidden leading-6">{{ old('excerpt', $post->excerpt) }}</x-textarea>
                 <p class="mt-1 text-xs text-ink-500">Tampil di daftar artikel dan di bawah judul halaman baca.</p>
                 <x-input-error class="mt-2" :messages="$errors->get('excerpt')" />
             </div>

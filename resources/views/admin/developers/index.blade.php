@@ -113,12 +113,12 @@
 
     {{-- One dialog per row, placed outside the table so nothing clips it. --}}
     @foreach ($developers as $developer)
-        <x-modal name="delete-developer-{{ $developer->id }}" max-width="md" focusable>
+        <x-modal name="delete-developer-{{ $developer->id }}" labelledby="delete-developer-title-{{ $developer->id }}" max-width="md" focusable>
             <form method="POST" action="{{ route('admin.developers.destroy', $developer) }}" class="p-6">
                 @csrf
                 @method('DELETE')
 
-                <h2 class="text-lg font-semibold text-ink-950">Hapus developer?</h2>
+                <h2 id="delete-developer-title-{{ $developer->id }}" class="text-lg font-semibold text-ink-950">Hapus developer?</h2>
                 <p class="mt-2 text-sm text-ink-600">
                     &ldquo;{{ $developer->name }}&rdquo; akan dihapus. Developer yang masih dipakai listing tidak bisa dihapus, jadi pindahkan listingnya lebih dulu.
                 </p>
