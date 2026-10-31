@@ -136,7 +136,7 @@ class Listing extends Model
 
     public function images(): HasMany
     {
-        return $this->hasMany(ListingImage::class)->orderBy('sort_order');
+        return $this->hasMany(ListingImage::class)->orderBy('sort_order')->orderBy('id');
     }
 
     /**

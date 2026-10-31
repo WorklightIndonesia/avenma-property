@@ -359,42 +359,63 @@
 
     <section class="border border-line bg-white p-5 sm:p-6">
         <h2 class="text-lg font-semibold text-ink-950">Foto</h2>
-        <p class="mt-1 text-sm text-ink-500">Label tampil sebagai chip di galeri. Alt menjelaskan foto untuk pembaca layar. Urutan kecil tampil lebih dulu.</p>
+        <p id="photo-order-help" class="mt-1 text-sm text-ink-500">
+            Label tampil sebagai chip di galeri. Alt menjelaskan foto untuk pembaca layar.
+            Tarik ikon titik enam, atau pakai tombol panah di atasnya, untuk mengubah urutan: foto paling atas menjadi sampul.
+        </p>
 
         @if ($listing->exists)
-            @foreach ($listing->images as $image)
-                <div class="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-[88px_minmax(0,1fr)_minmax(0,1fr)_72px_auto] sm:items-end">
-                    <img src="{{ asset($image->path) }}" alt="" class="aspect-[4/3] w-32 rounded border border-line object-cover sm:w-full">
+            <div
+                x-data="photoOrder"
+                x-on:dragstart="begin($event)"
+                x-on:dragover.prevent="over($event)"
+                x-on:drop.prevent="end()"
+                x-on:dragend="end()"
+                x-on:mouseup="release()"
+            >
+                @foreach ($listing->images as $image)
+                    <div data-sort-row class="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-[40px_88px_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">
+                        <div class="flex items-center gap-2 sm:w-full sm:flex-col sm:justify-center">
+                            <button
+                                type="button"
+                                data-sort-handle
+                                aria-label="Ubah urutan foto"
+                                aria-describedby="photo-order-help"
+                                class="inline-flex h-11 w-11 cursor-grab items-center justify-center rounded text-ink-500 transition-colors duration-150 hover:bg-sand hover:text-ink-950 active:cursor-grabbing"
+                                x-on:mousedown="grab($event)"
+                                x-on:keydown="keys($event)"
+                            >
+                                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+                                    <circle cx="9" cy="5" r="1.6" /><circle cx="15" cy="5" r="1.6" />
+                                    <circle cx="9" cy="12" r="1.6" /><circle cx="15" cy="12" r="1.6" />
+                                    <circle cx="9" cy="19" r="1.6" /><circle cx="15" cy="19" r="1.6" />
+                                </svg>
+                            </button>
 
-                    <div>
-                        <x-input-label for="label-{{ $image->id }}" value="Label" />
-                        <x-text-input id="label-{{ $image->id }}" name="images[{{ $image->id }}][label]" type="text" maxlength="60" class="mt-1 block w-full" :value="old('images.'.$image->id.'.label', $image->label)" placeholder="Tampak depan" />
+                            <span data-sort-index class="tabular text-xs text-ink-500">{{ $loop->iteration }}</span>
+                            <input type="hidden" data-sort-input name="images[{{ $image->id }}][sort_order]" value="{{ $loop->iteration }}">
+                        </div>
+
+                        <img src="{{ asset($image->path) }}" alt="" class="aspect-[4/3] w-32 rounded border border-line object-cover sm:w-full">
+
+                        <div>
+                            <x-input-label for="label-{{ $image->id }}" value="Label" />
+                            <x-text-input id="label-{{ $image->id }}" name="images[{{ $image->id }}][label]" type="text" maxlength="60" class="mt-1 block w-full" :value="old('images.'.$image->id.'.label', $image->label)" placeholder="Tampak depan" />
+                        </div>
+
+                        <div>
+                            <x-input-label for="alt-{{ $image->id }}" value="Alt" />
+                            <x-text-input id="alt-{{ $image->id }}" name="images[{{ $image->id }}][alt]" type="text" maxlength="255" class="mt-1 block w-full" :value="old('images.'.$image->id.'.alt', $image->alt)" />
+                        </div>
+
+                        <button
+                            type="button"
+                            x-on:click="$dispatch('open-modal', 'delete-photo-{{ $image->id }}')"
+                            class="inline-flex h-11 items-center justify-center rounded border border-line px-4 text-sm font-medium text-danger hover:bg-sand"
+                        >Hapus</button>
                     </div>
-
-                    <div>
-                        <x-input-label for="alt-{{ $image->id }}" value="Alt" />
-                        <x-text-input id="alt-{{ $image->id }}" name="images[{{ $image->id }}][alt]" type="text" maxlength="255" class="mt-1 block w-full" :value="old('images.'.$image->id.'.alt', $image->alt)" />
-                    </div>
-
-                    <div>
-                        <x-input-label for="sort-{{ $image->id }}" value="Urutan" />
-                        <x-select
-                            :id="'sort-'.$image->id"
-                            :name="'images['.$image->id.'][sort_order]'"
-                            :options="collect(range(1, $listing->images->count()))->mapWithKeys(fn (int $position) => [$position => (string) $position])->all()"
-                            :value="old('images.'.$image->id.'.sort_order', $image->sort_order)"
-                            aria-label="Urutan foto"
-                            class="mt-1"
-                        />
-                    </div>
-
-                    <button
-                        type="button"
-                        x-on:click="$dispatch('open-modal', 'delete-photo-{{ $image->id }}')"
-                        class="inline-flex h-11 items-center justify-center rounded border border-line px-4 text-sm font-medium text-danger hover:bg-sand"
-                    >Hapus</button>
-                </div>
-            @endforeach
+                @endforeach
+            </div>
         @endif
 
         <div class="mt-4 border-t border-line pt-4">

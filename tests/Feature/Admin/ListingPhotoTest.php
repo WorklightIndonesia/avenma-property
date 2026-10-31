@@ -123,6 +123,23 @@ class ListingPhotoTest extends TestCase
         $this->assertModelExists($image);
     }
 
+    public function test_the_edit_form_offers_a_drag_handle_instead_of_an_order_dropdown(): void
+    {
+        $agen = $this->agen();
+        $listing = $this->listing(['created_by' => $agen->id]);
+
+        $first = $listing->images()->create(['path' => 'images/properties/foto-1.webp', 'sort_order' => 1]);
+        $second = $listing->images()->create(['path' => 'images/properties/foto-2.webp', 'sort_order' => 2]);
+
+        $this->actingAs($agen)
+            ->get(route('admin.listings.edit', $listing))
+            ->assertOk()
+            ->assertSee('data-sort-handle', false)
+            ->assertSee('name="images['.$first->id.'][sort_order]"', false)
+            ->assertSee('name="images['.$second->id.'][sort_order]"', false)
+            ->assertDontSee('aria-label="Urutan foto"', false);
+    }
+
     public function test_a_non_image_upload_is_rejected(): void
     {
         $this->actingAs($this->agen())

@@ -624,6 +624,106 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
+    /* Admin photo list: reorder by dragging the six-dot handle, or with the
+       arrow keys on it. Only the handle makes a row draggable, so selecting
+       text inside the label and alt fields still behaves. */
+    Alpine.data('photoOrder', () => ({
+        row: null,
+
+        grab(event) {
+            const row = event.target.closest('[data-sort-row]');
+
+            if (row) {
+                row.draggable = true;
+            }
+        },
+
+        begin(event) {
+            const row = event.target.closest('[data-sort-row]');
+
+            if (!row) {
+                return;
+            }
+
+            this.row = row;
+            row.classList.add('opacity-60');
+            event.dataTransfer.effectAllowed = 'move';
+            event.dataTransfer.setData('text/plain', '');
+        },
+
+        over(event) {
+            const target = event.target.closest('[data-sort-row]');
+
+            if (!this.row || !target || target === this.row) {
+                return;
+            }
+
+            const box = target.getBoundingClientRect();
+            const after = event.clientY > box.top + box.height / 2;
+            target.parentNode.insertBefore(this.row, after ? target.nextSibling : target);
+        },
+
+        end() {
+            if (!this.row) {
+                return;
+            }
+
+            this.row.draggable = false;
+            this.row.classList.remove('opacity-60');
+            this.row = null;
+            this.renumber();
+        },
+
+        // A click on the handle leaves the row draggable; clear it so a later
+        // text selection cannot drag the whole row. A running drag is cleaned
+        // up by dragend instead.
+        release() {
+            if (this.row) {
+                return;
+            }
+
+            this.$el.querySelectorAll('[data-sort-row][draggable="true"]').forEach((row) => {
+                row.draggable = false;
+            });
+        },
+
+        keys(event) {
+            if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') {
+                return;
+            }
+
+            const row = event.target.closest('[data-sort-row]');
+
+            if (!row) {
+                return;
+            }
+
+            const sibling = event.key === 'ArrowUp' ? row.previousElementSibling : row.nextElementSibling;
+
+            if (!sibling) {
+                return;
+            }
+
+            event.preventDefault();
+
+            if (event.key === 'ArrowUp') {
+                row.parentNode.insertBefore(row, sibling);
+            } else {
+                row.parentNode.insertBefore(sibling, row);
+            }
+
+            this.renumber();
+            event.target.focus();
+        },
+
+        renumber() {
+            [...this.$el.querySelectorAll('[data-sort-row]')].forEach((row, index) => {
+                row.querySelector('[data-sort-input]').value = index + 1;
+                row.querySelector('[data-sort-index]').textContent = index + 1;
+            });
+        },
+    }));
+
     /* Public filter: server-rendered lists, limited to regions that have a
        published listing. Nothing is applied until Terapkan is pressed. */
     Alpine.data('catalogFilter', (config = {}) => ({
