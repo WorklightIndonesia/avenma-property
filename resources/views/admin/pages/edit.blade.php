@@ -78,7 +78,7 @@
                     <div class="mt-3" data-picked-list>
                         <p class="text-xs font-semibold text-ink-600">Foto yang dipakai sekarang</p>
                         <p class="mt-1 text-xs text-ink-500" data-picked-empty @if ($galleries['picked'] !== []) hidden @endif>
-                            Belum ada foto terpilih.
+                            Belum ada foto terpilih, jadi hero memakai foto properti terbaru.
                         </p>
 
                         <ul class="mt-2 flex flex-wrap gap-2">

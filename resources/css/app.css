@@ -7,6 +7,12 @@
         display: none !important;
     }
 
+    /* The attribute loses to any display utility, so a flex row stays visible
+       even when the script sets hidden. */
+    [hidden] {
+        display: none !important;
+    }
+
     ::selection {
         @apply bg-gold-300 text-ink-950;
     }
