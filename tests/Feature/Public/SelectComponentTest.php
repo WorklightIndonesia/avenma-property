@@ -33,9 +33,9 @@ class SelectComponentTest extends TestCase
     {
         $this->seed(PageContentSeeder::class);
 
-        $this->get('/properti?tipe=rumah&status=dijual')
+        $this->get('/properti?tipe=rumah_siap_huni&status=dijual')
             ->assertOk()
-            ->assertSee('data-name="tipe" value="rumah"', false)
+            ->assertSee('data-name="tipe" value="rumah_siap_huni"', false)
             ->assertSee('data-name="status" value="dijual"', false);
     }
 

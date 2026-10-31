@@ -201,7 +201,7 @@
                             class="mt-1 border border-line bg-white"
                             data-quill="{{ $key }}"
                             data-label="Isi {{ $meta['label'] }}"
-                        >{!! $bodyHtml !!}</div>
+                        ></div>
                         <input type="hidden" id="input-{{ $key }}" name="{{ $field }}[body]" value="{{ $bodyHtml }}">
                         <p class="mt-1 text-xs text-ink-500">
                             Sub-judul, tebal, miring, daftar, dan tautan tersedia di bilah atas. Tempelan dari Word dibersihkan otomatis.
@@ -349,6 +349,12 @@
 
             if (headerPicker) {
                 headerPicker.title = 'Judul bagian';
+            }
+
+            // Seeded from the hidden field so posted HTML is parsed by Quill
+            // instead of being written into the page as-is.
+            if (input.value.trim() !== '') {
+                editor.clipboard.dangerouslyPasteHTML(input.value, 'silent');
             }
 
             const sync = () => {

@@ -56,6 +56,18 @@ class BlogPostCrudTest extends TestCase
         $this->assertSame(0, BlogPost::count());
     }
 
+    public function test_the_editor_is_seeded_from_the_hidden_field(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/blog', $this->payload(['title' => '', 'content' => '<p>Isi tersimpan</p>']))
+            ->assertSessionHasErrors('title');
+
+        $html = $this->get('/admin/blog/create')->assertOk()->getContent();
+
+        $this->assertMatchesRegularExpression('/data-quill="content"\s*data-label="[^"]*"\s*><\/div>/', $html);
+        $this->assertStringContainsString('value="&lt;p&gt;Isi tersimpan&lt;/p&gt;"', $html);
+    }
+
     public function test_a_draft_stays_off_the_site_until_published(): void
     {
         $this->actingAs($this->admin())

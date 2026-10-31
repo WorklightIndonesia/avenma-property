@@ -47,6 +47,12 @@
                 headerPicker.title = 'Judul bagian';
             }
 
+            // Seeded from the hidden field so posted HTML is parsed by Quill
+            // instead of being written into the page as-is.
+            if (input.value.trim() !== '') {
+                editor.clipboard.dangerouslyPasteHTML(input.value, 'silent');
+            }
+
             const sync = () => {
                 input.value = editor.root.innerHTML;
             };

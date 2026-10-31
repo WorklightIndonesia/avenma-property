@@ -36,7 +36,7 @@
                     class="mt-1 border border-line bg-white"
                     data-quill="content"
                     data-label="Isi artikel"
-                >{!! $content !!}</div>
+                ></div>
                 <input type="hidden" id="input-content" name="content" value="{{ $content }}">
                 <p class="mt-1 text-xs text-ink-500">
                     Sub-judul, tebal, miring, daftar, dan tautan tersedia di bilah atas. Tempelan dari Word dibersihkan otomatis.

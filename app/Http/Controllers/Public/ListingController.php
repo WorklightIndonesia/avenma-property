@@ -32,18 +32,25 @@ class ListingController extends Controller
         $kecamatan = $this->allowed($regions['districts'][$provinsi.'|'.$kota] ?? [], $request->query('kecamatan'));
 
         $listingTypes = ListingOption::options('listing_type');
+        $propertyTypes = ListingOption::options('property_type');
         $statuses = ListingOption::options('status');
 
         $filters = [
             'provinsi' => $provinsi,
             'kota' => $kota,
             'kecamatan' => $kecamatan,
-            'tipe' => (string) $request->query('tipe', ''),
+            'tipe' => array_key_exists((string) $request->query('tipe'), $propertyTypes)
+                ? (string) $request->query('tipe')
+                : '',
             'penawaran' => array_key_exists((string) $request->query('penawaran'), $listingTypes)
                 ? (string) $request->query('penawaran')
                 : '',
-            'harga' => (string) $request->query('harga', ''),
-            'status' => (string) $request->query('status', ''),
+            'harga' => array_key_exists((string) $request->query('harga'), Listing::PRICE_BUCKETS)
+                ? (string) $request->query('harga')
+                : '',
+            'status' => array_key_exists((string) $request->query('status'), $statuses)
+                ? (string) $request->query('status')
+                : '',
             'kamar' => $this->minimum($request->query('kamar')),
             'mandi' => $this->minimum($request->query('mandi')),
             'carport' => $this->minimum($request->query('carport')),

@@ -176,6 +176,17 @@ class ListingIndexTest extends TestCase
             ->assertSee('2+ lantai');
     }
 
+    public function test_filter_values_outside_the_options_are_ignored(): void
+    {
+        $this->listing(['title' => 'Rumah Uji', 'property_type' => 'rumah_siap_huni', 'status' => 'dijual']);
+
+        $this->get('/properti?tipe=rumah_siap_huni&status=hilang&harga=bebas')
+            ->assertOk()
+            ->assertSee('Rumah Uji')
+            ->assertDontSee('Hilang')
+            ->assertDontSee('Bebas');
+    }
+
     public function test_each_card_shows_its_sale_or_rent_chip(): void
     {
         $this->listing(['title' => 'Rumah Jual', 'status' => 'dijual']);
