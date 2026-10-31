@@ -32,7 +32,7 @@ class MasterDataSeeder extends Seeder
 
         // shortcut: placeholder office number, replace through the settings panel before hosting
         SiteSetting::firstOrCreate([], [
-            'whatsapp' => '087736786969',
+            'whatsapp' => '081299900387',
             'maps_url' => 'https://maps.app.goo.gl/yvhXuc3mnWkUjua56',
         ]);
     }
