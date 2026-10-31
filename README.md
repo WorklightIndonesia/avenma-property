@@ -287,4 +287,6 @@ npm run build
    php artisan view:cache
    ```
 
+   Jalankan ketiganya di server. Cache rute yang dibuat di lokal ikut membawa rute `/design-system`, yang seharusnya hanya ada di luar produksi.
+
 4. Arahkan document root Hostinger ke folder `public/`.

@@ -9,6 +9,7 @@ use App\Models\KprSetting;
 use App\Models\Listing;
 use App\Models\PageContent;
 use App\Models\SiteSetting;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 /**
@@ -87,6 +88,14 @@ class PageController extends Controller
     public function contact(): View
     {
         return $this->render('kontak');
+    }
+
+    /**
+     * Every "Hubungi Kami" button points here, so the number lives only in Settings.
+     */
+    public function hubungiKami(): RedirectResponse
+    {
+        return redirect(SiteSetting::current()->whatsappUrl() ?? route('public.pages.contact'));
     }
 
     /**

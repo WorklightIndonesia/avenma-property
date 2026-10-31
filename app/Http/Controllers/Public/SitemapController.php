@@ -57,4 +57,15 @@ class SitemapController extends Controller
             ->view('public.sitemap', ['urls' => $urls])
             ->header('Content-Type', 'application/xml; charset=UTF-8');
     }
+
+    /**
+     * Generated instead of a static file because APP_URL is still open; the
+     * Sitemap line must be absolute.
+     */
+    public function robots(): Response
+    {
+        return response(
+            "User-agent: *\nDisallow: /admin\n\nSitemap: ".route('public.sitemap')."\n",
+        )->header('Content-Type', 'text/plain; charset=UTF-8');
+    }
 }
