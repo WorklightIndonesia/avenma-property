@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
+use App\Models\ListingImage;
 use App\Models\PageContent;
 use App\Models\PageSection;
 use App\Services\ImageService;
@@ -75,6 +76,20 @@ class PageContentController extends Controller
 
         $listing = $paginator->first();
         $picked = $this->pickedPhotos();
+        $onPage = $listing?->images->pluck('id')->map(fn ($id) => (int) $id)->all() ?? [];
+        $others = array_values(array_diff($picked, $onPage));
+
+        // Picks made on other pages come first, then every photo of this page:
+        // a chip exists for all of them, hidden until it is ticked, so the strip
+        // can show a pick without the script building markup.
+        $carried = ListingImage::query()
+            ->with('listing:id,title')
+            ->whereIn('id', $others)
+            ->get()
+            ->sortBy(fn (ListingImage $image) => array_search($image->id, $others, true))
+            ->map(fn (ListingImage $image) => $this->chip($image))
+            // Plain collection: merging an Eloquent one walks the models by key.
+            ->toBase();
 
         return [
             'listing' => $listing,
@@ -83,8 +98,24 @@ class PageContentController extends Controller
             'max' => self::MAX_GALLERY,
             // Picks made on other pages, carried as hidden fields so saving this
             // page does not drop them.
-            'others' => array_values(array_diff($picked, $listing?->images->pluck('id')->map(fn ($id) => (int) $id)->all() ?? [])),
+            'others' => $others,
             'picked' => $picked,
+            'chips' => $carried
+                ->merge(($listing?->images ?? collect())->map(fn (ListingImage $image) => $this->chip($image, $listing)))
+                ->values(),
+        ];
+    }
+
+    /**
+     * @return array{id: int, src: string, title: string, label: string}
+     */
+    private function chip(ListingImage $image, ?Listing $listing = null): array
+    {
+        return [
+            'id' => (int) $image->id,
+            'src' => $image->path,
+            'title' => $listing?->title ?? $image->listing?->title ?? 'Properti',
+            'label' => $image->label ?: ($image->alt ?: 'Tanpa label'),
         ];
     }
 

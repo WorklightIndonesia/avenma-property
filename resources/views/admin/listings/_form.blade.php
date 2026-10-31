@@ -367,11 +367,12 @@
         @if ($listing->exists)
             <div
                 x-data="photoOrder"
+                data-photo-order
                 x-on:dragstart="begin($event)"
                 x-on:dragover.prevent="over($event)"
                 x-on:drop.prevent="end()"
                 x-on:dragend="end()"
-                x-on:mouseup="release()"
+                x-on:mouseup="release($event)"
             >
                 @foreach ($listing->images as $image)
                     <div data-sort-row class="mt-4 grid gap-3 border-t border-line pt-4 sm:grid-cols-[40px_88px_minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end">

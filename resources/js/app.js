@@ -679,25 +679,29 @@ document.addEventListener('alpine:init', () => {
         },
 
         end() {
-            if (!this.row) {
+            const row = this.row;
+
+            if (!row) {
                 return;
             }
 
-            this.row.draggable = false;
-            this.row.classList.remove('opacity-60');
+            row.draggable = false;
+            row.classList.remove('opacity-60');
             this.row = null;
-            this.renumber();
+            this.renumber(row.parentElement);
         },
 
         // A click on the handle leaves the row draggable; clear it so a later
         // text selection cannot drag the whole row. A running drag is cleaned
         // up by dragend instead.
-        release() {
+        release(event) {
             if (this.row) {
                 return;
             }
 
-            this.$el.querySelectorAll('[data-sort-row][draggable="true"]').forEach((row) => {
+            const root = event.currentTarget.closest('[data-photo-order]');
+
+            root.querySelectorAll('[data-sort-row][draggable="true"]').forEach((row) => {
                 row.draggable = false;
             });
         },
@@ -727,12 +731,12 @@ document.addEventListener('alpine:init', () => {
                 row.parentNode.insertBefore(sibling, row);
             }
 
-            this.renumber();
+            this.renumber(row.parentElement);
             event.target.focus();
         },
 
-        renumber() {
-            [...this.$el.querySelectorAll('[data-sort-row]')].forEach((row, index) => {
+        renumber(root) {
+            [...root.querySelectorAll('[data-sort-row]')].forEach((row, index) => {
                 row.querySelector('[data-sort-input]').value = index + 1;
                 row.querySelector('[data-sort-index]').textContent = index + 1;
             });
@@ -741,40 +745,55 @@ document.addEventListener('alpine:init', () => {
 
     /* Admin hero picker: one listing per page, so the selection has to survive
        a reload. Ticks stay local and are copied into the pager links and the
-       search form before either is used. */
+       search form before either is used. Every lookup starts from the root
+       found through the event: inside a handler $el is that element, not the
+       component. */
     Alpine.data('galleryPicker', (max) => ({
         timer: null,
 
-        get boxes() {
-            return [...this.$el.querySelectorAll('input[type="checkbox"][name="gallery[]"]')];
-        },
-
-        get carried() {
-            return [...this.$el.querySelectorAll('input[type="hidden"][name="gallery[]"]')];
-        },
-
-        get picks() {
-            return [...this.carried, ...this.boxes.filter((box) => box.checked)].map((input) => input.value);
-        },
-
         init() {
-            this.refresh();
+            this.refresh(this.$el);
         },
 
         sync(event) {
+            const root = event.currentTarget.closest('[data-gallery-picker]');
+
             // The change already happened, so one over the cap means this tick.
-            if (event.target.checked && this.picks.length > max) {
+            if (event.target.checked && this.picked(root).length > max) {
                 event.target.checked = false;
-                this.warn();
+                this.warn(root);
 
                 return;
             }
 
-            this.refresh();
+            this.refresh(root);
         },
 
-        warn() {
-            const warning = this.$el.querySelector('[data-limit-warning]');
+        unpick(event, id) {
+            const root = event.currentTarget.closest('[data-gallery-picker]');
+            const box = root.querySelector(`input[type="checkbox"][name="gallery[]"][value="${id}"]`);
+
+            if (box) {
+                box.checked = false;
+            }
+
+            // A pick from another page has no box here, only its hidden field.
+            root.querySelector(`input[type="hidden"][name="gallery[]"][value="${id}"]`)?.remove();
+
+            this.refresh(root);
+        },
+
+        /** Carried picks first, then the boxes ticked on this page. */
+        picked(root) {
+            const carried = [...root.querySelectorAll('input[type="hidden"][name="gallery[]"]')];
+            const ticked = [...root.querySelectorAll('input[type="checkbox"][name="gallery[]"]')]
+                .filter((box) => box.checked);
+
+            return [...carried, ...ticked].map((input) => input.value);
+        },
+
+        warn(root) {
+            const warning = root.querySelector('[data-limit-warning]');
 
             if (!warning) {
                 return;
@@ -787,21 +806,32 @@ document.addEventListener('alpine:init', () => {
             }, 3000);
         },
 
-        refresh() {
-            const picks = this.picks.join(',');
-            const field = this.$el.querySelector('[data-picks-field]');
+        refresh(root) {
+            const picked = this.picked(root);
+            const field = root.querySelector('[data-picks-field]');
 
             if (field) {
-                field.value = picks;
+                field.value = picked.join(',');
             }
 
-            this.$el.querySelectorAll('[data-pager] a').forEach((link) => {
+            root.querySelectorAll('[data-pager] a').forEach((link) => {
                 const url = new URL(link.getAttribute('href'), window.location.origin);
-                url.searchParams.set('pilih', picks);
+                url.searchParams.set('pilih', picked.join(','));
                 link.setAttribute('href', url.pathname + url.search);
             });
 
-            this.$el.querySelector('[data-count]').textContent = String(this.picks.length);
+            root.querySelector('[data-count]').textContent = String(picked.length);
+
+            // Every chip is already in the markup; the strip only shows picks.
+            root.querySelectorAll('[data-picked-id]').forEach((chip) => {
+                chip.hidden = ! picked.includes(chip.dataset.pickedId);
+            });
+
+            const empty = root.querySelector('[data-picked-empty]');
+
+            if (empty) {
+                empty.hidden = picked.length > 0;
+            }
         },
     }));
 

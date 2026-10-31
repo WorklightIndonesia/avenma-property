@@ -62,7 +62,7 @@
 
                 <x-input-error class="mt-2" :messages="$errors->get('gallery')" />
 
-                <div class="mt-4" x-data="galleryPicker({{ $galleries['max'] }})" x-on:change="sync($event)">
+                <div class="mt-4" data-gallery-picker x-data="galleryPicker({{ $galleries['max'] }})" x-on:change="sync($event)">
                     <x-input-label for="gallery-search" value="Cari foto properti" />
                     <x-text-input
                         id="gallery-search"
@@ -74,6 +74,35 @@
                         placeholder="Judul properti atau alt foto"
                     />
                     <input type="hidden" name="pilih" form="gallery-search-form" data-picks-field>
+
+                    <div class="mt-3" data-picked-list>
+                        <p class="text-xs font-semibold text-ink-600">Foto yang dipakai sekarang</p>
+                        <p class="mt-1 text-xs text-ink-500" data-picked-empty @if ($galleries['picked'] !== []) hidden @endif>
+                            Belum ada foto terpilih.
+                        </p>
+
+                        <ul class="mt-2 flex flex-wrap gap-2">
+                            @foreach ($galleries['chips'] as $chip)
+                                <li
+                                    data-picked-id="{{ $chip['id'] }}"
+                                    @if (! in_array($chip['id'], $galleries['picked'], true)) hidden @endif
+                                    class="flex items-center gap-2 border border-line bg-sand p-1 pr-2"
+                                >
+                                    <img src="{{ asset($chip['src']) }}" alt="" class="h-10 w-14 border border-line object-cover">
+                                    <span class="max-w-[9rem] text-xs">
+                                        <span class="block truncate font-medium text-ink-950">{{ $chip['title'] }}</span>
+                                        <span class="block truncate text-ink-500">{{ $chip['label'] }}</span>
+                                    </span>
+                                    <button
+                                        type="button"
+                                        aria-label="Lepas foto {{ $chip['label'] }}"
+                                        class="inline-flex h-8 w-8 items-center justify-center rounded text-ink-500 hover:bg-white hover:text-danger"
+                                        x-on:click="unpick($event, '{{ $chip['id'] }}')"
+                                    >&times;</button>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </div>
 
                     <p class="mt-2 text-sm">
                         <span class="font-semibold" data-count>0</span> dari {{ $galleries['max'] }} foto dipilih.

@@ -327,6 +327,29 @@ class PageContentTest extends TestCase
         $this->assertSame(6, HomeGalleryPhoto::count());
     }
 
+    public function test_the_selected_photos_are_listed_above_the_counter(): void
+    {
+        $older = $this->listingWithPhotos('Rumah Lama');
+        $newer = $this->listingWithPhotos('Rumah Baru');
+
+        // Page 1 is the newer property, so the older pick is a carried one.
+        $picked = $older->images()->first();
+        $unpicked = $newer->images()->first();
+        HomeGalleryPhoto::create(['listing_image_id' => $picked->id, 'sort_order' => 0]);
+
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit")
+            ->assertOk()
+            ->assertSee('Foto yang dipakai sekarang')
+            // A pick from another page shows up straight away, with a way out.
+            ->assertSee('data-picked-id="'.$picked->id.'"', false)
+            ->assertSee("unpick(\$event, '".$picked->id."')", false)
+            // Photos of this page carry a chip too, hidden until ticked.
+            ->assertSee('data-picked-id="'.$unpicked->id.'"', false);
+    }
+
     private function page(string $key): PageContent
     {
         return PageContent::where('key', $key)->firstOrFail();
