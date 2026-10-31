@@ -10,8 +10,19 @@ class SiteSetting extends Model
         'whatsapp',
         'email',
         'address',
+        'maps_url',
+        'maps_lat',
+        'maps_lng',
         'instagram',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'maps_lat' => 'float',
+            'maps_lng' => 'float',
+        ];
+    }
 
     /**
      * One row per site. A new instance is returned before the first save so

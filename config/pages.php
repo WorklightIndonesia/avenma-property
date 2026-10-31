@@ -20,24 +20,11 @@ return [
         ],
     ],
 
-    'tentang-kami' => [
-        'label' => 'Tentang Kami',
-        'path' => '/tentang-kami',
-        'route' => 'public.pages.about',
-        'sections' => [
-            'hero' => ['label' => 'Hero', 'image' => true, 'cta' => 2],
-            'cerita' => ['label' => 'Cerita Avenma'],
-            'nilai' => ['label' => 'Yang kami pegang'],
-            'cta' => ['label' => 'Ajakan di akhir halaman', 'cta' => 1],
-        ],
-    ],
-
     'kontak' => [
         'label' => 'Kontak',
         'path' => '/kontak',
         'route' => 'public.pages.contact',
         'sections' => [
-            'hero' => ['label' => 'Hero', 'image' => true, 'cta' => 2],
             'kontak' => ['label' => 'Keterangan kontak'],
         ],
     ],

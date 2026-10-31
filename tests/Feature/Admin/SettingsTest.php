@@ -5,11 +5,20 @@ namespace Tests\Feature\Admin;
 use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class SettingsTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // A short Maps link is resolved with an HTTP call; never reach the network.
+        Http::fake();
+    }
 
     public function test_guests_are_redirected_from_the_settings_screen(): void
     {
@@ -29,7 +38,8 @@ class SettingsTest extends TestCase
         $this->actingAs($this->admin())
             ->get('/admin/settings')
             ->assertOk()
-            ->assertSee('087736786969');
+            ->assertSee('087736786969')
+            ->assertSee('name="maps_url"', false);
     }
 
     public function test_admin_saves_a_local_number(): void
@@ -82,6 +92,7 @@ class SettingsTest extends TestCase
                 'whatsapp' => '087736786969',
                 'email' => 'halo@avenma.id',
                 'address' => 'Jl. Contoh No. 1, Jakarta Selatan',
+                'maps_url' => 'https://maps.app.goo.gl/yvhXuc3mnWkUjua56',
                 'instagram' => 'avenma.properti',
             ])
             ->assertRedirect(route('admin.settings.edit'));
@@ -90,8 +101,39 @@ class SettingsTest extends TestCase
 
         $this->assertSame('halo@avenma.id', $setting->email);
         $this->assertSame('Jl. Contoh No. 1, Jakarta Selatan', $setting->address);
+        $this->assertSame('https://maps.app.goo.gl/yvhXuc3mnWkUjua56', $setting->maps_url);
         $this->assertSame('avenma.properti', $setting->instagram);
         $this->assertSame('https://instagram.com/avenma.properti', $setting->instagramUrl());
+    }
+
+    public function test_a_map_link_must_be_an_https_google_maps_address(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'maps_url' => 'bukan tautan'])
+            ->assertSessionHasErrors('maps_url');
+
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'maps_url' => 'http://maps.google.com/?q=x'])
+            ->assertSessionHasErrors('maps_url');
+
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'maps_url' => 'https://example.com/maps/place/@-6.1,106.9'])
+            ->assertSessionHasErrors('maps_url');
+    }
+
+    public function test_the_place_coordinates_are_read_from_the_map_link(): void
+    {
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'whatsapp' => '087736786969',
+                'maps_url' => 'https://www.google.com/maps/place/Avenma+Properti/@-6.1638,106.9073,17z',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $setting = SiteSetting::current();
+
+        $this->assertSame(-6.1638, $setting->maps_lat);
+        $this->assertSame(106.9073, $setting->maps_lng);
     }
 
     public function test_invalid_contacts_are_rejected(): void
@@ -117,11 +159,12 @@ class SettingsTest extends TestCase
     public function test_empty_contact_fields_stay_empty(): void
     {
         $this->actingAs($this->admin())
-            ->put('/admin/settings', ['whatsapp' => '087736786969', 'email' => '', 'address' => '', 'instagram' => ''])
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'email' => '', 'address' => '', 'maps_url' => '', 'instagram' => ''])
             ->assertSessionHasNoErrors();
 
         $this->assertNull(SiteSetting::current()->email);
         $this->assertNull(SiteSetting::current()->address);
+        $this->assertNull(SiteSetting::current()->maps_url);
         $this->assertNull(SiteSetting::current()->instagramUrl());
     }
 
