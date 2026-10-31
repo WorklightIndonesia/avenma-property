@@ -16,8 +16,9 @@ class SettingsTest extends TestCase
     {
         parent::setUp();
 
-        // A short Maps link is resolved with an HTTP call; never reach the network.
-        Http::fake();
+        // A short Maps link is resolved with an HTTP call; never reach the
+        // network. Tests that expect a hop register their own stub.
+        Http::preventStrayRequests();
     }
 
     public function test_guests_are_redirected_from_the_settings_screen(): void
@@ -87,6 +88,8 @@ class SettingsTest extends TestCase
 
     public function test_the_contact_details_are_saved_and_validated(): void
     {
+        Http::fake(['maps.app.goo.gl/*' => Http::response('', 200)]);
+
         $this->actingAs($this->admin())
             ->put('/admin/settings', [
                 'whatsapp' => '087736786969',
@@ -119,6 +122,49 @@ class SettingsTest extends TestCase
         $this->actingAs($this->admin())
             ->put('/admin/settings', ['whatsapp' => '087736786969', 'maps_url' => 'https://example.com/maps/place/@-6.1,106.9'])
             ->assertSessionHasErrors('maps_url');
+
+        // A lookalike host used to slip through the old pattern.
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'maps_url' => 'https://google.evil.com/maps/place/@-6.1,106.9'])
+            ->assertSessionHasErrors('maps_url');
+    }
+
+    public function test_a_short_link_is_read_one_hop_without_following_it(): void
+    {
+        Http::fake([
+            '*' => Http::response('', 302, ['Location' => 'https://www.google.com/maps/place/Avenma+Properti/@-6.1638,106.9073,17z']),
+        ]);
+
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'whatsapp' => '087736786969',
+                'maps_url' => 'https://maps.app.goo.gl/yvhXuc3mnWkUjua56',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $setting = SiteSetting::current();
+
+        $this->assertSame(-6.1638, $setting->maps_lat);
+        $this->assertSame(106.9073, $setting->maps_lng);
+    }
+
+    public function test_a_short_link_that_leaves_google_yields_no_coordinates(): void
+    {
+        Http::fake([
+            '*' => Http::response('', 302, ['Location' => 'http://169.254.169.254/latest/meta-data']),
+        ]);
+
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', [
+                'whatsapp' => '087736786969',
+                'maps_url' => 'https://maps.app.goo.gl/yvhXuc3mnWkUjua56',
+            ])
+            ->assertSessionHasNoErrors();
+
+        $setting = SiteSetting::current();
+
+        $this->assertNull($setting->maps_lat);
+        $this->assertNull($setting->maps_lng);
     }
 
     public function test_the_place_coordinates_are_read_from_the_map_link(): void

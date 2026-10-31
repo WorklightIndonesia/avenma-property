@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\SiteSetting;
+use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -37,12 +38,15 @@ class SiteSettingController extends Controller
             'address' => ['nullable', 'string', 'max:255'],
             // A share link cannot be embedded; only Google Maps links are fetched
             // server-side to read the place coordinates for the contact map.
-            'maps_url' => ['nullable', 'url:https', 'max:2048', 'regex:/^https:\/\/(maps\.app\.goo\.gl\/|goo\.gl\/maps\/|maps\.google\.[a-z.]+\/|(www\.)?google\.[a-z.]+\/maps\/)/i'],
+            'maps_url' => ['nullable', 'url:https', 'max:2048', function (string $attribute, mixed $value, Closure $fail) {
+                if (! $this->isMapsHost((string) $value)) {
+                    $fail('Tautan harus dari Google Maps, misalnya https://maps.app.goo.gl/…');
+                }
+            }],
             'instagram' => ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9._]+$/'],
         ], [
             'whatsapp.regex' => 'Nomor WhatsApp harus diawali 08 dan berisi 9–14 angka.',
             'maps_url.url' => 'Tautan Google Maps harus alamat https:// yang valid.',
-            'maps_url.regex' => 'Tautan harus dari Google Maps, misalnya https://maps.app.goo.gl/…',
             'instagram.regex' => 'Isi nama pengguna Instagram saja, misalnya avenma.properti.',
         ]);
 
@@ -82,12 +86,37 @@ class SiteSettingController extends Controller
         }
 
         try {
-            $final = (string) Http::timeout(5)->get($url)->effectiveUri();
+            // One hop, no redirect following: the short link already points at
+            // the full Maps URL, and a blind follow would let a link bounce the
+            // server anywhere it likes.
+            $response = Http::timeout(5)->withoutRedirecting()->get($url);
+            $next = (string) $response->header('Location');
         } catch (Throwable) {
             return [null, null];
         }
 
-        return $this->parseCoordinates($final) ?? [null, null];
+        if (! $this->isMapsHost($next)) {
+            return [null, null];
+        }
+
+        return $this->parseCoordinates($next) ?? [null, null];
+    }
+
+    /**
+     * Checked on the parsed host, not the raw URL: a pattern over the whole
+     * string lets "google.evil.com" pass as a Google link.
+     */
+    private function isMapsHost(string $url): bool
+    {
+        $host = strtolower((string) parse_url($url, PHP_URL_HOST));
+
+        if ($host === '') {
+            return false;
+        }
+
+        return $host === 'goo.gl'
+            || str_ends_with($host, '.goo.gl')
+            || preg_match('/^(?:(?:maps|www)\.)?google\.[a-z]{2,3}(?:\.[a-z]{2})?$/', $host) === 1;
     }
 
     /**
