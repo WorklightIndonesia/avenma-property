@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\DeveloperRequest;
 use App\Models\Developer;
+use App\Support\Slug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class DeveloperController extends Controller
@@ -42,7 +42,7 @@ class DeveloperController extends Controller
     public function store(DeveloperRequest $request): RedirectResponse
     {
         $developer = new Developer($request->validated());
-        $developer->slug = $this->slug($request->validated()['name']);
+        $developer->slug = Slug::unique(Developer::class, $request->validated()['name'], 'developer');
         $developer->save();
 
         return redirect()
@@ -58,7 +58,7 @@ class DeveloperController extends Controller
     public function update(DeveloperRequest $request, Developer $developer): RedirectResponse
     {
         $developer->fill($request->validated());
-        $developer->slug = $this->slug($request->validated()['name'], $developer);
+        $developer->slug = Slug::unique(Developer::class, $request->validated()['name'], 'developer', $developer->id);
         $developer->save();
 
         return redirect()
@@ -83,24 +83,5 @@ class DeveloperController extends Controller
         return redirect()
             ->route('admin.developers.index')
             ->with('status', 'Developer dihapus.');
-    }
-
-    /**
-     * Regenerated on every save; duplicates get -2, -3, and so on.
-     */
-    private function slug(string $name, ?Developer $developer = null): string
-    {
-        $base = Str::slug($name) ?: 'developer';
-        $slug = $base;
-        $suffix = 2;
-
-        while (Developer::query()
-            ->where('slug', $slug)
-            ->when($developer, fn ($query) => $query->whereKeyNot($developer->getKey()))
-            ->exists()) {
-            $slug = $base.'-'.$suffix++;
-        }
-
-        return $slug;
     }
 }

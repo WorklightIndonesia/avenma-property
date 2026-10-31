@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\ListingOption;
+use App\Support\Slug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -39,7 +40,7 @@ class ListingSettingController extends Controller
         ]);
 
         $developer = new Developer($data);
-        $developer->slug = $this->developerSlug($data['name']);
+        $developer->slug = Slug::unique(Developer::class, $data['name'], 'developer');
         $developer->save();
 
         return back()->with('status', "Developer \"{$developer->name}\" ditambahkan.");
@@ -82,7 +83,7 @@ class ListingSettingController extends Controller
         ListingOption::create([
             'group' => $data['group'],
             'label' => $data['label'],
-            'slug' => $slug,
+            'slug' => Slug::unique(ListingOption::class, $data['label'], 'opsi', null, ['group' => $data['group']]),
         ]);
 
         return back()->with('status', "Opsi \"{$data['label']}\" ditambahkan.");
@@ -103,21 +104,5 @@ class ListingSettingController extends Controller
         $option->delete();
 
         return back()->with('status', 'Opsi dihapus.');
-    }
-
-    /**
-     * Regenerated on every save; duplicates get -2, -3, and so on.
-     */
-    private function developerSlug(string $name): string
-    {
-        $base = Str::slug($name) ?: 'developer';
-        $slug = $base;
-        $suffix = 2;
-
-        while (Developer::query()->where('slug', $slug)->exists()) {
-            $slug = $base.'-'.$suffix++;
-        }
-
-        return $slug;
     }
 }

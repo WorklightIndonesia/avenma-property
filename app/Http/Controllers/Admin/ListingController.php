@@ -11,6 +11,7 @@ use App\Models\ListingImage;
 use App\Models\ListingOption;
 use App\Models\User;
 use App\Services\ImageService;
+use App\Support\Slug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -18,7 +19,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ListingController extends Controller
@@ -95,7 +95,7 @@ class ListingController extends Controller
 
         $listing = DB::transaction(function () use ($request, $data) {
             $listing = new Listing($data);
-            $listing->slug = $this->slug($data['title']);
+            $listing->slug = Slug::unique(Listing::class, $data['title'], 'properti');
             $listing->created_by = $request->user()->id;
             // Blank means "use my own number", as agreed for agen-created listings.
             $listing->contact_phone = ($data['contact_phone'] ?? null) ?: $request->user()->phone;
@@ -128,7 +128,7 @@ class ListingController extends Controller
 
         DB::transaction(function () use ($request, $listing, $data) {
             $listing->fill($data);
-            $listing->slug = $this->slug($data['title'], $listing);
+            $listing->slug = Slug::unique(Listing::class, $data['title'], 'properti', $listing->id);
             $listing->save();
 
             // Keys are image ids; the query is scoped to this listing, so a
@@ -216,25 +216,6 @@ class ListingController extends Controller
         }
 
         return $data;
-    }
-
-    /**
-     * Regenerated on every save; duplicates get -2, -3, and so on.
-     */
-    private function slug(string $title, ?Listing $listing = null): string
-    {
-        $base = Str::slug($title) ?: 'properti';
-        $slug = $base;
-        $suffix = 2;
-
-        while (Listing::withTrashed()
-            ->where('slug', $slug)
-            ->when($listing, fn ($query) => $query->whereKeyNot($listing->getKey()))
-            ->exists()) {
-            $slug = $base.'-'.$suffix++;
-        }
-
-        return $slug;
     }
 
     /**

@@ -8,11 +8,11 @@ use App\Models\BlogPost;
 use App\Models\User;
 use App\Services\ImageService;
 use App\Support\HtmlSanitizer;
+use App\Support\Slug;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -53,7 +53,7 @@ class BlogPostController extends Controller
         $data = $request->validated();
 
         $post = new BlogPost($data);
-        $post->slug = $this->slug($data['title']);
+        $post->slug = Slug::unique(BlogPost::class, $data['title'], 'artikel');
         $post->content = $this->content($data);
         $post->created_by = $request->user()->id;
         $post->published_at = $data['is_published'] ? now() : null;
@@ -80,7 +80,7 @@ class BlogPostController extends Controller
         $data = $request->validated();
 
         $post->fill($data);
-        $post->slug = $this->slug($data['title'], $post);
+        $post->slug = Slug::unique(BlogPost::class, $data['title'], 'artikel', $post->id);
         $post->content = $this->content($data);
 
         // The first publish sets the date; later edits keep it.
@@ -147,24 +147,5 @@ class BlogPostController extends Controller
         if (filled($previous)) {
             Storage::disk('uploads')->delete($previous);
         }
-    }
-
-    /**
-     * Regenerated on every save; duplicates get -2, -3, and so on.
-     */
-    private function slug(string $title, ?BlogPost $post = null): string
-    {
-        $base = Str::slug($title) ?: 'artikel';
-        $slug = $base;
-        $suffix = 2;
-
-        while (BlogPost::query()
-            ->where('slug', $slug)
-            ->when($post, fn ($query) => $query->whereKeyNot($post->getKey()))
-            ->exists()) {
-            $slug = $base.'-'.$suffix++;
-        }
-
-        return $slug;
     }
 }
