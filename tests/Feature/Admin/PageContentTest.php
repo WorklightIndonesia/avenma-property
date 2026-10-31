@@ -255,6 +255,9 @@ class PageContentTest extends TestCase
             ->get("/admin/pages/{$page->id}/edit")
             ->assertOk()
             ->assertSee('Properti 1 dari 2')
+            ->assertSee('Sebelumnya')
+            ->assertSee('Berikutnya')
+            ->assertSee('data-limit-warning', false)
             ->assertSee($newer->title)
             ->assertDontSee($older->title);
 

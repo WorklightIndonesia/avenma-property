@@ -743,6 +743,8 @@ document.addEventListener('alpine:init', () => {
        a reload. Ticks stay local and are copied into the pager links and the
        search form before either is used. */
     Alpine.data('galleryPicker', (max) => ({
+        timer: null,
+
         get boxes() {
             return [...this.$el.querySelectorAll('input[type="checkbox"][name="gallery[]"]')];
         },
@@ -763,9 +765,26 @@ document.addEventListener('alpine:init', () => {
             // The change already happened, so one over the cap means this tick.
             if (event.target.checked && this.picks.length > max) {
                 event.target.checked = false;
+                this.warn();
+
+                return;
             }
 
             this.refresh();
+        },
+
+        warn() {
+            const warning = this.$el.querySelector('[data-limit-warning]');
+
+            if (!warning) {
+                return;
+            }
+
+            window.clearTimeout(this.timer);
+            warning.hidden = false;
+            this.timer = window.setTimeout(() => {
+                warning.hidden = true;
+            }, 3000);
         },
 
         refresh() {
@@ -783,10 +802,6 @@ document.addEventListener('alpine:init', () => {
             });
 
             this.$el.querySelector('[data-count]').textContent = String(this.picks.length);
-
-            this.boxes.forEach((box) => {
-                box.disabled = ! box.checked && this.picks.length >= max;
-            });
         },
     }));
 

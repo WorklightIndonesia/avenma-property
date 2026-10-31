@@ -79,6 +79,16 @@
                         <span class="font-semibold" data-count>0</span> dari {{ $galleries['max'] }} foto dipilih.
                     </p>
 
+                    <p
+                        data-limit-warning
+                        role="status"
+                        aria-live="polite"
+                        class="mt-2 border-l-4 border-gold-700 bg-sand px-4 py-2 text-sm text-ink-950"
+                        hidden
+                    >
+                        Galeri beranda maksimal {{ $galleries['max'] }} foto. Lepas salah satu dulu sebelum menambah.
+                    </p>
+
                     {{-- Picks made on other pages; hidden fields so this save keeps them. --}}
                     @foreach ($galleries['others'] as $id)
                         <input type="hidden" name="gallery[]" value="{{ $id }}">
@@ -111,7 +121,9 @@
                             @endforeach
                         </div>
 
-                        <div class="mt-4" data-pager>{{ $galleries['paginator']->links() }}</div>
+                        <div class="mt-4" data-pager>
+                            <x-pagination :paginator="$galleries['paginator']" />
+                        </div>
                     @else
                         <p class="mt-4 text-sm text-ink-500">
                             @if ($galleries['search'] !== '')
