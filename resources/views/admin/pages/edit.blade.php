@@ -52,6 +52,50 @@
             </div>
         </section>
 
+        @if ($page->key === 'home')
+            <section class="border border-line bg-white p-5 sm:p-6" aria-labelledby="gallery-heading">
+                <h2 id="gallery-heading" class="text-lg font-semibold text-ink-950">Galeri beranda</h2>
+                <p class="mt-1 text-sm text-ink-500">
+                    Centang foto properti yang bergilir di hero. Urutan mengikuti urutan di daftar ini. Tanpa centang, hero memakai foto properti terbaru.
+                </p>
+
+                @error('gallery.*')
+                    <p class="mt-2 text-sm text-danger">{{ $message }}</p>
+                @enderror
+
+                <div class="mt-4" x-data="{ q: '', matches(el) { return this.q === '' || el.dataset.search.includes(this.q.toLowerCase()); } }">
+                    <x-input-label for="gallery-search" value="Cari foto properti" />
+                    <x-text-input id="gallery-search" type="search" x-model="q" class="mt-1 block w-full sm:max-w-sm" placeholder="Judul properti atau alt foto" />
+                    <p class="mt-1 text-xs text-ink-500" x-show="q !== ''" x-cloak>Centang yang sudah dipilih tetap tersimpan saat daftar disaring.</p>
+
+                    <div class="mt-4 grid max-h-96 gap-3 overflow-y-auto pr-1 sm:grid-cols-2 lg:grid-cols-3">
+                        @forelse ($galleryImages as $image)
+                            <label
+                                data-search="{{ Str::lower(trim(($image->listing?->title ?? '').' '.($image->alt ?? '').' '.($image->label ?? ''))) }}"
+                                x-show="matches($el)"
+                                class="flex min-h-11 cursor-pointer items-center gap-3 rounded border border-line p-2 text-sm hover:bg-sand"
+                            >
+                                <input
+                                    type="checkbox"
+                                    name="gallery[]"
+                                    value="{{ $image->id }}"
+                                    class="rounded border-line text-gold-700 focus:ring-gold-500/30"
+                                    @checked(in_array($image->id, old('gallery', $galleryIds)))
+                                >
+                                <img src="{{ asset($image->path) }}" alt="" class="h-14 w-20 shrink-0 border border-line object-cover">
+                                <span class="min-w-0">
+                                    <span class="block truncate font-medium text-ink-950">{{ $image->listing?->title ?? 'Properti terhapus' }}</span>
+                                    <span class="block truncate text-xs text-ink-500">{{ $image->alt ?: 'Tanpa alt text' }}</span>
+                                </span>
+                            </label>
+                        @empty
+                            <p class="text-sm text-ink-500">Belum ada foto properti. Unggah foto di menu Properti lebih dulu.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </section>
+        @endif
+
         @foreach ($skeleton as $key => $meta)
             @php
                 $section = $sections->get($key);
@@ -204,6 +248,25 @@
             });
 
             editor.root.setAttribute('aria-label', host.dataset.label);
+
+            // Quill renders icon-only buttons without labels; give each a tooltip.
+            // The toolbar sits beside the editor, so read it from the module.
+            const toolbar = editor.getModule('toolbar').container;
+            const tooltips = { bold: 'Tebal', italic: 'Miring', underline: 'Garis bawah', blockquote: 'Kutipan', link: 'Tautan', clean: 'Hapus format' };
+
+            toolbar.querySelectorAll('button').forEach((button) => {
+                const name = [...button.classList].find((cls) => cls.startsWith('ql-'))?.slice(3);
+
+                button.title = name === 'list'
+                    ? (button.getAttribute('value') === 'ordered' ? 'Daftar bernomor' : 'Daftar poin')
+                    : (tooltips[name] ?? button.title);
+            });
+
+            const headerPicker = toolbar.querySelector('.ql-header');
+
+            if (headerPicker) {
+                headerPicker.title = 'Judul bagian';
+            }
 
             const sync = () => {
                 input.value = editor.root.innerHTML;

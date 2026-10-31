@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\HomeGalleryPhoto;
+use App\Models\Listing;
 use App\Models\PageContent;
 use App\Models\User;
 use Database\Seeders\PageContentSeeder;
@@ -26,11 +28,11 @@ class PageContentTest extends TestCase
     public function test_agen_cannot_open_or_save_pages(): void
     {
         $agen = $this->agen();
-        $page = $this->page('tentang-kami');
+        $page = $this->page('kontak');
 
         $this->actingAs($agen)->get('/admin/pages')->assertForbidden();
         $this->actingAs($agen)->get("/admin/pages/{$page->id}/edit")->assertForbidden();
-        $this->actingAs($agen)->put("/admin/pages/{$page->id}", $this->payload('tentang-kami'))->assertForbidden();
+        $this->actingAs($agen)->put("/admin/pages/{$page->id}", $this->payload('kontak'))->assertForbidden();
     }
 
     public function test_admin_sees_every_page_in_the_skeleton(): void
@@ -39,37 +41,36 @@ class PageContentTest extends TestCase
             ->get('/admin/pages')
             ->assertOk()
             ->assertSee('Beranda')
-            ->assertSee('Tentang Kami')
             ->assertSee('Kontak')
             ->assertSee('Syarat &amp; Ketentuan', false);
     }
 
     public function test_saved_copy_is_sanitised_before_it_reaches_the_database(): void
     {
-        $page = $this->page('tentang-kami');
+        $page = $this->page('kontak');
 
         $this->actingAs($this->admin())
-            ->put("/admin/pages/{$page->id}", $this->payload('tentang-kami', [
-                'sections.cerita.body' => '<h1>Judul</h1><ol><li data-list="bullet">Satu</li></ol><script>alert(1)</script><p style="color:red">Dua</p>',
+            ->put("/admin/pages/{$page->id}", $this->payload('kontak', [
+                'sections.kontak.body' => '<h1>Judul</h1><ol><li data-list="bullet">Satu</li></ol><script>alert(1)</script><p style="color:red">Dua</p>',
             ]))
             ->assertRedirect(route('admin.pages.edit', $page));
 
         $this->assertDatabaseHas('page_sections', [
             'page_content_id' => $page->id,
-            'key' => 'cerita',
+            'key' => 'kontak',
             'body' => '<h2>Judul</h2><ul><li>Satu</li></ul><p>Dua</p>',
         ]);
     }
 
     public function test_sections_are_saved_in_the_order_the_skeleton_defines(): void
     {
-        $page = $this->page('tentang-kami');
+        $page = $this->page('kontak');
 
         $this->actingAs($this->admin())
-            ->put("/admin/pages/{$page->id}", $this->payload('tentang-kami'));
+            ->put("/admin/pages/{$page->id}", $this->payload('kontak'));
 
         $this->assertSame(
-            ['hero', 'cerita', 'nilai', 'cta'],
+            ['kontak'],
             $page->sections()->orderBy('sort_order')->pluck('key')->all(),
         );
     }
@@ -158,27 +159,37 @@ class PageContentTest extends TestCase
 
     public function test_button_fields_follow_the_skeleton(): void
     {
-        $page = $this->page('tentang-kami');
+        $home = $this->page('home');
 
         $content = $this->actingAs($this->admin())
-            ->get("/admin/pages/{$page->id}/edit")
+            ->get("/admin/pages/{$home->id}/edit")
             ->assertOk()
             ->getContent();
 
-        // Hero has two buttons, the closing section one; cerita and nilai none.
-        $this->assertSame(2, substr_count($content, 'Teks tombol utama (opsional)'));
+        // The hero is the only section with buttons.
+        $this->assertSame(1, substr_count($content, 'Teks tombol utama (opsional)'));
         $this->assertSame(1, substr_count($content, 'Teks tombol kedua (opsional)'));
+
+        $contact = $this->page('kontak');
+
+        $content = $this->actingAs($this->admin())
+            ->get("/admin/pages/{$contact->id}/edit")
+            ->assertOk()
+            ->getContent();
+
+        $this->assertSame(0, substr_count($content, 'Teks tombol utama (opsional)'));
     }
 
     public function test_a_button_target_must_be_a_web_address(): void
-    {        $page = $this->page('tentang-kami');
+    {
+        $page = $this->page('home');
 
         $this->actingAs($this->admin())
-            ->put("/admin/pages/{$page->id}", $this->payload('tentang-kami', [
-                'sections.cta.cta_label' => 'Klik',
-                'sections.cta.cta_url' => 'javascript:alert(1)',
+            ->put("/admin/pages/{$page->id}", $this->payload('home', [
+                'sections.hero.cta_label' => 'Klik',
+                'sections.hero.cta_url' => 'javascript:alert(1)',
             ]))
-            ->assertSessionHasErrors('sections.cta.cta_url');
+            ->assertSessionHasErrors('sections.hero.cta_url');
     }
 
     public function test_a_page_outside_the_skeleton_is_not_found(): void
@@ -186,6 +197,50 @@ class PageContentTest extends TestCase
         $stray = PageContent::create(['key' => 'halaman-lain', 'title' => 'Lain']);
 
         $this->actingAs($this->admin())->get("/admin/pages/{$stray->id}/edit")->assertNotFound();
+    }
+
+    public function test_the_admin_picks_the_home_gallery_photos(): void
+    {
+        $listing = Listing::create([
+            'location_id' => $this->location()->id,
+            'title' => 'Rumah Galeri',
+            'slug' => 'rumah-galeri',
+            'description' => 'Deskripsi.',
+            'listing_type' => 'primary',
+            'property_type' => 'rumah',
+            'status' => 'dijual',
+            'price' => 1_000_000_000,
+        ]);
+
+        $first = $listing->images()->create(['path' => 'images/listings/satu.webp', 'alt' => 'Depan', 'sort_order' => 0]);
+        $second = $listing->images()->create(['path' => 'images/listings/dua.webp', 'alt' => 'Dapur', 'sort_order' => 1]);
+
+        $page = $this->page('home');
+
+        $this->actingAs($this->admin())
+            ->get("/admin/pages/{$page->id}/edit")
+            ->assertOk()
+            ->assertSee('Galeri beranda')
+            ->assertSee('Cari foto properti')
+            ->assertSee('id="gallery-search"', false)
+            ->assertSee('Rumah Galeri')
+            ->assertSee('images/listings/dua.webp', false);
+
+        $this->actingAs($this->admin())
+            ->put("/admin/pages/{$page->id}", $this->payload('home', ['gallery' => [$second->id, $first->id]]))
+            ->assertRedirect();
+
+        $this->assertSame(
+            [$second->id, $first->id],
+            HomeGalleryPhoto::orderBy('sort_order')->pluck('listing_image_id')->all(),
+        );
+
+        // Unchecking everything clears the selection and the hero falls back.
+        $this->actingAs($this->admin())
+            ->put("/admin/pages/{$page->id}", $this->payload('home', ['gallery' => []]))
+            ->assertRedirect();
+
+        $this->assertSame(0, HomeGalleryPhoto::count());
     }
 
     private function page(string $key): PageContent

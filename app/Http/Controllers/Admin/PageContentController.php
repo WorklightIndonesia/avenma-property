@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\HomeGalleryPhoto;
+use App\Models\ListingImage;
 use App\Models\PageContent;
 use App\Models\PageSection;
 use App\Services\ImageService;
 use App\Support\HtmlSanitizer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -37,10 +40,18 @@ class PageContentController extends Controller
 
         $page->load('sections');
 
+        $isHome = $page->key === 'home';
+
         return view('admin.pages.edit', [
             'page' => $page,
             'skeleton' => config("pages.{$page->key}.sections"),
             'sections' => $page->sections->keyBy('key'),
+            'galleryImages' => $isHome
+                ? ListingImage::query()->with('listing')->orderBy('listing_id')->orderBy('sort_order')->get()
+                : collect(),
+            'galleryIds' => $isHome
+                ? HomeGalleryPhoto::query()->orderBy('sort_order')->pluck('listing_image_id')->all()
+                : [],
         ]);
     }
 
@@ -66,6 +77,10 @@ class PageContentController extends Controller
                 'meta_title' => $data['meta_title'] ?? null,
                 'meta_description' => $data['meta_description'] ?? null,
             ])->save();
+
+            if ($page->key === 'home') {
+                $this->syncGallery($data['gallery'] ?? []);
+            }
 
             $order = 0;
 
@@ -100,7 +115,7 @@ class PageContentController extends Controller
 
     /**
      * @param  array<string, array<string, mixed>>  $skeleton
-     * @param  \Illuminate\Support\Collection<int, string>  $imageKeys
+     * @param  Collection<int, string>  $imageKeys
      * @return array<string, mixed>
      */
     private function rules(array $skeleton, $imageKeys): array
@@ -109,6 +124,8 @@ class PageContentController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'meta_title' => ['nullable', 'string', 'max:255'],
             'meta_description' => ['nullable', 'string', 'max:255'],
+            'gallery' => ['nullable', 'array'],
+            'gallery.*' => ['integer', 'exists:listing_images,id'],
         ];
 
         foreach (array_keys($skeleton) as $key) {
@@ -138,7 +155,7 @@ class PageContentController extends Controller
     }
 
     /**
-     * @param  \Illuminate\Support\Collection<int, string>  $imageKeys
+     * @param  Collection<int, string>  $imageKeys
      */
     private function requireAltText(Request $request, PageContent $page, $imageKeys): void
     {
@@ -151,6 +168,29 @@ class PageContentController extends Controller
                     "sections.$key.image_alt" => 'Alt text wajib diisi selama ada gambar.',
                 ]);
             }
+        }
+    }
+
+    /**
+     * Replaces the hero gallery with the checked photos, keeping the order the
+     * admin picked them in.
+     *
+     * @param  list<int|string>  $ids
+     */
+    private function syncGallery(array $ids): void
+    {
+        $selected = collect($ids)->map(fn ($id) => (int) $id)->unique()->values();
+
+        // Nothing checked means "use the fallback", so every picked photo goes.
+        HomeGalleryPhoto::query()
+            ->when($selected->isNotEmpty(), fn ($query) => $query->whereNotIn('listing_image_id', $selected->all()))
+            ->delete();
+
+        foreach ($selected as $position => $imageId) {
+            HomeGalleryPhoto::updateOrCreate(
+                ['listing_image_id' => $imageId],
+                ['sort_order' => $position],
+            );
         }
     }
 
