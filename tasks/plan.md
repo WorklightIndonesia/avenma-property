@@ -68,7 +68,7 @@ Basic Memory: `Avenma_Implementation_Plan` (project `Avenma_Memory`)
 - [x] Sitemap accessible
 - [ ] Switch bahasa berfungsi
 - [ ] Lighthouse > 80
-- [ ] Build production sukses
+- [x] Build production sukses
 - [ ] Ready deploy Hostinger
 
 ## Risks and Mitigations
