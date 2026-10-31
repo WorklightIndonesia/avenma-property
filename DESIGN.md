@@ -87,7 +87,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 ## 5. Ruang dan layout
 
 - Skala kelipatan 4 px. Jarak yang dipakai: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
-- Container `max-w-7xl` (1280 px) dengan gutter 16 / 24 / 32 px.
+- Container `max-w-[90rem]` (1440 px) dengan gutter 16 / 24 / 32 px.
 - Jarak antar-section 96 px (mobile) dan 128 px (desktop) — selalu lebih besar dari jarak di dalam section.
 - Radius kontrol: `6px` default untuk tombol, input, pilihan, dan badge. `4px` untuk elemen sangat kecil. Maksimum `12px`, hanya untuk panel besar.
 - Kartu, panel, dan bingkai foto tetap siku: tanpa `rounded`. Ini yang membuat katalog tetap terbaca sebagai grid, dan menghindari sudut foto yang ikut membulat.
@@ -137,9 +137,9 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 **Badge status**
 
-- `Dijual` — border `ink-950`, latar `paper`, teks `ink-950`.
+- `Dijual` — latar `gold-300`, teks `ink-950`.
 - `Disewa` — latar `gold-700`, teks putih.
-- `Baru` — latar `gold-300`, teks `ink-950`.
+- `Baru` — latar `paper`, teks `ink-950`.
 - Radius 6 px, teks 12 px bobot 600, padding `px-2 py-0.5`.
 
 **Kartu properti**
