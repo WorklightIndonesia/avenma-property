@@ -53,18 +53,9 @@
         get totalPayment() { return this.dpAmount + this.monthly * this.tenor * 12 },
         rp: function (value) { return 'Rp ' + Math.round(value).toLocaleString('id-ID') },
         setPrice: function (event) {
-            const el = event.target;
-            const caretDigits = el.value.slice(0, el.selectionStart).replace(/\D/g, '').length;
-            const digits = el.value.replace(/\D/g, '');
+            // Shared with the admin price field; it formats and restores the caret.
+            const digits = window.formatRupiah(event.target);
             this.price = digits === '' ? 0 : Math.min(parseInt(digits, 10), 999999999999);
-            const text = this.price === 0 ? '' : this.price.toLocaleString('id-ID');
-            el.value = text;
-            let pos = 0, seen = 0;
-            while (pos < text.length && seen < caretDigits) {
-                if (/\d/.test(text[pos])) seen++;
-                pos++;
-            }
-            el.setSelectionRange(pos, pos);
         }
     }"
 >

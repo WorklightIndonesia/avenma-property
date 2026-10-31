@@ -185,6 +185,29 @@ const PICKER = {
     },
 };
 
+/* Both the admin price field and the KPR widget rewrite the value with
+   thousands dots on every keystroke, which moves the caret to the end; this
+   puts it back after the same count of digits. Returns the digits typed, so
+   each caller keeps its own numeric state. On window because the KPR widget
+   lives in a Blade template. */
+function formatRupiah(input) {
+    const digits = input.value.replace(/\D/g, '');
+    const digitsLeft = input.value.slice(0, input.selectionStart).replace(/\D/g, '').length;
+
+    input.value = digits.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+    let pos = 0;
+    for (let seen = 0; pos < input.value.length && seen < digitsLeft; pos++) {
+        if (/\d/.test(input.value[pos])) seen++;
+    }
+
+    input.setSelectionRange(pos, pos);
+
+    return digits;
+}
+
+window.formatRupiah = formatRupiah;
+
 document.addEventListener('alpine:init', () => {
     /* One listbox for every dropdown: the location picker's panel look, applied
        to plain option lists. The hidden input is what actually submits. */
@@ -608,19 +631,11 @@ document.addEventListener('alpine:init', () => {
         },
     }));
 
-    /* Admin/agen form: rewriting the price with thousands dots moves the caret
-       to the end, so it is put back after the same count of digits. */
+    /* Admin/agen form: the price field is rewritten with thousands dots, so the
+       shared formatter is all this component needs. */
     Alpine.data('priceInput', () => ({
         format() {
-            const el = this.$el;
-            const digitsLeft = el.value.slice(0, el.selectionStart).replace(/\D/g, '').length;
-            el.value = el.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            let pos = 0;
-            for (let seen = 0; pos < el.value.length && seen < digitsLeft; pos++) {
-                if (/\d/.test(el.value[pos])) seen++;
-            }
-            el.setSelectionRange(pos, pos);
+            formatRupiah(this.$el);
         },
     }));
 
