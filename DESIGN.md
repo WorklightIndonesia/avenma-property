@@ -219,7 +219,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Memilih satu tempat mengisi tiga field tersembunyi (`provinsi`, `kota`, `kecamatan`) sesuai tingkat yang dipilih, dan membiarkan tingkat di bawahnya kosong. Server tetap memfilter per kolom, jadi URL lama dengan ketiga parameter masih bekerja.
 - Mengetik ulang menghapus pilihan, supaya kolom tidak mengirim nilai yang sudah tidak terlihat pembeli.
 - Daftar hanya memuat wilayah yang punya listing terbit.
-- Pencarian tanpa hasil menulis "Tidak ada lokasi yang cocok." dengan tombol `Lihat semua lokasi`. Jangan menulis bahwa belum ada properti terbit di wilayah itu: yang gagal adalah pencocokan nama, bukan datanya, dan pesan lama menyalahkan stok yang sebenarnya ada.
+- Pencarian tanpa hasil menulis "Mohon maaf, kami sedang tidak ada penawaran di lokasi tersebut" dengan tombol `Lihat semua lokasi`. Daftar hanya memuat wilayah yang punya listing terbit, jadi tidak ada hasil berarti memang belum ada penawaran di sana. Tombolnya tetap ada untuk pembeli yang salah ketik.
 - Panah keyboard, Enter, Escape, Home, dan End bekerja; panel menutup saat klik di luar.
 - Tanpa JavaScript, komponen merender `<select>` biasa di dalam `<noscript>` supaya formulir tetap bisa dikirim.
 - Grid dua kolom mulai `sm`; judul, deskripsi, dan peta memakai lebar penuh.
