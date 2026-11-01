@@ -127,120 +127,122 @@ C:\xampp\php\php.exe C:\xampp\php\composer.phar install
 
 XAMPP hanya menyertakan `composer.phar`, bukan `composer.bat`. Tanpa wrapper, jalankan Composer lewat `php` seperti contoh di atas.
 
-## Setup Environment
+## Menjalankan Lokal dari Nol
 
-Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commit.
+Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang bisa dibuka. Perintah ditulis untuk PowerShell, dengan versi bash bila berbeda.
 
-1. Salin file contoh:
-
-   ```bash
-   cp .env.example .env
-   ```
-
-   PowerShell:
-
-   ```powershell
-   Copy-Item .env.example .env
-   ```
-
-2. Generate application key:
+1. Clone repositori:
 
    ```bash
-   php artisan key:generate
+   git clone https://github.com/WorklightIndonesia/avenma-property.git
+   cd avenma-property
    ```
 
-3. Sesuaikan nilai penting di `.env`:
-
-   | Variabel | Nilai lokal | Keterangan |
-   |---|---|---|
-   | `APP_NAME` | `"Avenma Property"` | Nama aplikasi |
-   | `APP_ENV` | `local` | Gunakan `production` saat deploy |
-   | `APP_DEBUG` | `true` | Wajib `false` di production |
-   | `APP_URL` | `http://localhost:8000` | URL aplikasi |
-   | `APP_LOCALE` | `en` | Bilingual ID/EN menyusul di Phase 4 |
-   | `DB_CONNECTION` | `sqlite` | Ganti ke `mysql` untuk MariaDB |
-   | `SESSION_DRIVER` | `database` | Tabel session dibuat oleh migrasi |
-   | `CACHE_STORE` | `database` | Tabel cache dibuat oleh migrasi |
-   | `QUEUE_CONNECTION` | `database` | Tabel jobs dibuat oleh migrasi |
-   | `MAIL_MAILER` | `log` | Email ditulis ke log saat development |
-
-4. Untuk SQLite, pastikan file database tersedia:
-
-   ```bash
-   touch database/database.sqlite
-   ```
-
-   PowerShell:
-
-   ```powershell
-   New-Item database/database.sqlite
-   ```
-
-5. Untuk MariaDB, buat database lalu isi `DB_*`:
-
-   ```dotenv
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=avenma_property
-   DB_USERNAME=root
-   DB_PASSWORD=
-   ```
-
-6. Jalankan migrasi:
-
-   ```bash
-   php artisan migrate
-   ```
-
-   Untuk data contoh lokal:
-
-   ```bash
-   php artisan db:seed
-   ```
-
-   Seeder membuat satu akun: `fellixwl@gmail.com` (role `admin`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
-
-## Menjalankan Proyek Secara Lokal
-
-1. Pasang dependensi:
+2. Pasang dependensi:
 
    ```bash
    composer install
    npm install
    ```
 
-2. Siapkan `.env` seperti pada bagian **Setup Environment**.
+3. Salin `.env` lalu buat application key:
 
-3. Jalankan migrasi:
-
-   ```bash
-   php artisan migrate
+   ```powershell
+   Copy-Item .env.example .env
+   php artisan key:generate
    ```
 
-   Jika `php` tidak dikenali di Windows, lihat bagian **Windows (XAMPP)**.
+   bash: `cp .env.example .env && php artisan key:generate`
 
-4. Jalankan server development. Pilih salah satu:
+4. Sesuaikan tiga nilai di `.env`:
 
-   **Dua terminal terpisah:**
-
-   ```bash
-   php artisan serve
+   ```dotenv
+   APP_DEBUG=true
+   APP_URL=http://localhost:8000
+   ADMIN_PASSWORD=GantiDengan1!
    ```
 
-   ```bash
-   npm run dev
+   `ADMIN_PASSWORD` wajib diisi dengan aturan password akun: minimal 8 karakter, ada huruf besar, angka, dan simbol. Tanpa nilai itu `AdminSeeder` berhenti dan data contoh tidak masuk. Variabel lain dijelaskan di **Setup Environment**.
+
+5. Buat file database SQLite:
+
+   ```powershell
+   New-Item database/database.sqlite
    ```
 
-   **Satu perintah (server, queue, log, dan Vite sekaligus):**
+   bash: `touch database/database.sqlite`
+
+   File ini di-ignore git, jadi tidak ikut hasil clone. Tanpa file ini migrasi berhenti untuk menanyakan pembuatan database.
+
+6. Jalankan migrasi sekaligus isi data contoh:
+
+   ```bash
+   php artisan migrate --seed
+   ```
+
+   Hasilnya: 7.285 kecamatan resmi Kemendagri, 20 listing contoh, dan satu akun admin `fellixwl@gmail.com` dengan password dari `ADMIN_PASSWORD`.
+
+7. Jalankan server development. Satu perintah untuk server, queue, log, dan Vite sekaligus:
 
    ```bash
    composer run dev
    ```
 
-5. Buka `http://localhost:8000`.
+   Atau dua terminal terpisah. Terminal pertama:
 
-6. Login CMS di `http://localhost:8000/login`.
+   ```bash
+   php artisan serve
+   ```
+
+   Terminal kedua:
+
+   ```bash
+   npm run dev
+   ```
+
+8. Buka `http://localhost:8000`. CMS ada di `http://localhost:8000/login`.
+
+Perintah PHP di atas mengasumsikan `php` sudah ada di PATH. Jika belum, lihat **Windows (XAMPP)**.
+
+### Bila Ada yang Gagal
+
+| Gejala | Solusi |
+|---|---|
+| `php` tidak dikenali | PHP belum ada di PATH. Lihat **Windows (XAMPP)**. |
+| `Vite manifest not found` | Vite belum jalan. Jalankan `npm run dev` atau `npm run build`. |
+| `ADMIN_PASSWORD belum diisi di .env` | Isi `ADMIN_PASSWORD` di `.env` (langkah 4), lalu ulangi langkah 6. |
+| Database SQLite tidak ditemukan | File belum dibuat. Ulangi langkah 5. |
+| `no such table: users` | Migrasi belum jalan. Ulangi langkah 6. |
+
+## Setup Environment
+
+Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commit. Langkah hariannya ada di **Menjalankan Lokal dari Nol**; bagian ini merinci variabel dan opsi database.
+
+| Variabel | Nilai lokal | Keterangan |
+|---|---|---|
+| `APP_NAME` | `"Avenma Property"` | Nama aplikasi |
+| `APP_ENV` | `local` | Gunakan `production` saat deploy |
+| `APP_DEBUG` | `true` | Wajib `false` di production |
+| `APP_URL` | `http://localhost:8000` | URL aplikasi |
+| `APP_LOCALE` | `id` | Bahasa antarmuka dan pesan validasi |
+| `DB_CONNECTION` | `sqlite` | Ganti ke `mysql` untuk MariaDB |
+| `SESSION_DRIVER` | `database` | Tabel session dibuat oleh migrasi |
+| `CACHE_STORE` | `database` | Tabel cache dibuat oleh migrasi |
+| `QUEUE_CONNECTION` | `database` | Tabel jobs dibuat oleh migrasi |
+| `MAIL_MAILER` | `log` | Email ditulis ke log saat development |
+
+Untuk MariaDB, buat database lalu isi `DB_*`:
+
+```dotenv
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=avenma_property
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `fellixwl@gmail.com` (role `admin`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
 
 ## Testing dan Build
 
