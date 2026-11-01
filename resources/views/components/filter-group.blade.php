@@ -1,6 +1,6 @@
 @props(['title'])
 
-<div class="border-t border-line" x-data="{ g: false }">
+<div class="border-t border-line" x-data="{ g: false, settled: false }" x-init="$watch('g', (value) => { settled = false; setTimeout(() => { settled = value }, 320); })">
     <button
         type="button"
         x-on:click="g = ! g"
@@ -20,7 +20,9 @@
         class="grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none"
         x-bind:class="g ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'"
     >
-        <div class="overflow-hidden" x-bind:inert="! g">
+        {{-- Hidden while the row animates, visible once it settles, so a search
+             panel inside a group can paint past the group's own edge. --}}
+        <div x-bind:class="g && settled ? 'overflow-visible' : 'overflow-hidden'" x-bind:inert="! g">
             <div class="grid gap-4 px-4 pb-5 sm:grid-cols-2 lg:grid-cols-1">
                 {{ $slot }}
             </div>

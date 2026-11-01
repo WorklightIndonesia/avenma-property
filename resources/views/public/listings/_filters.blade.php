@@ -54,7 +54,7 @@
 
     {{-- Open on desktop where it is a sidebar; collapsed on phones to keep the
          results close to the top of the page. --}}
-    <div x-data="{ open: window.matchMedia('(min-width: 1024px)').matches }">
+    <div x-data="{ open: window.matchMedia('(min-width: 1024px)').matches, settled: false }" x-init="settled = open; $watch('open', (value) => { settled = false; setTimeout(() => { settled = value }, 320); })">
         <button
             type="button"
             x-on:click="open = ! open"
@@ -81,7 +81,7 @@
             class="grid transition-[grid-template-rows,opacity] duration-300 ease-out motion-reduce:transition-none"
             x-bind:class="open ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'"
         >
-        <div class="overflow-hidden" x-bind:inert="! open">
+        <div x-bind:class="open && settled ? 'overflow-visible' : 'overflow-hidden'" x-bind:inert="! open">
         <form
             method="GET"
             action="{{ $action }}"
@@ -109,12 +109,13 @@
                         class="{{ $inputClass }}"
                         placeholder="Ketik nama lokasi"
                     >
-                    <ul x-show="open === 'place'" x-on:click.stop x-cloak class="absolute z-20 mt-1 max-h-64 w-full overflow-auto border border-line bg-white shadow-float">
+                    {{-- Five rows of 44px plus the border: 14rem. --}}
+                    <ul x-show="open === 'place'" x-on:click.stop x-cloak class="absolute z-20 mt-1 max-h-[14rem] w-full overflow-auto border border-line bg-white shadow-float">
                         <template x-for="(item, index) in matches()" :key="item.label">
                             <li x-on:mouseenter="active = index">
-                                <button type="button" x-on:click="pick(item)" class="flex min-h-11 w-full items-center justify-between gap-3 border-l-2 px-3 text-left text-sm" :class="index === active ? 'border-gold-700 bg-gold-500/20 font-medium' : 'border-transparent hover:bg-sand'">
-                                    <span x-text="item.label"></span>
-                                    <span class="text-xs text-ink-500" x-text="item.count"></span>
+                                <button type="button" x-on:click="pick(item)" :title="item.label" class="flex min-h-11 w-full items-center justify-between gap-3 border-l-2 px-3 text-left text-sm" :class="index === active ? 'border-gold-700 bg-gold-500/20 font-medium' : 'border-transparent hover:bg-sand'">
+                                    <span class="truncate" x-text="item.label"></span>
+                                    <span class="shrink-0 text-xs text-ink-500" x-text="item.count"></span>
                                 </button>
                             </li>
                         </template>
