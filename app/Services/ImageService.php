@@ -40,15 +40,26 @@ class ImageService
      */
     public function store(UploadedFile $file, string $directory, string $disk = 'uploads'): string
     {
-        $webp = $this->toWebp($file->getRealPath());
+        $bytes = $this->toWebp($file->getRealPath());
 
-        if ($webp === null) {
-            return (string) $file->store($directory, $disk);
+        if ($bytes === null) {
+            $bytes = $file->get();
+
+            // The extension comes from the validated MIME, never from the file
+            // contents. guessExtension() is the only place an upload could land
+            // in the webroot under an extension nobody chose.
+            $extension = match ($file->getMimeType()) {
+                'image/png' => 'png',
+                'image/webp' => 'webp',
+                default => 'jpg',
+            };
+        } else {
+            $extension = 'webp';
         }
 
-        $path = $directory.'/'.Str::random(40).'.webp';
+        $path = $directory.'/'.Str::random(40).'.'.$extension;
 
-        Storage::disk($disk)->put($path, $webp);
+        Storage::disk($disk)->put($path, $bytes);
 
         return $path;
     }

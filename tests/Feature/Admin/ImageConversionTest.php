@@ -56,6 +56,13 @@ class ImageConversionTest extends TestCase
         Storage::disk('uploads')->assertExists($path);
     }
 
+    public function test_a_png_upload_that_cannot_be_decoded_keeps_a_png_name(): void
+    {
+        $path = $this->images()->store(UploadedFile::fake()->create('foto.png', 20, 'image/png'), 'images/blog');
+
+        $this->assertStringEndsWith('.png', $path);
+    }
+
     public function test_a_photo_too_wide_to_decode_safely_is_stored_unchanged(): void
     {
         $path = $this->images()->store($this->jpeg(ImageService::MAX_INPUT_EDGE + 1, 1), 'images/blog');

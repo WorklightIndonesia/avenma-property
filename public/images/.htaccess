@@ -1,0 +1,7 @@
+# Uploads are images only. Nothing in this tree may run as a script, whatever
+# the file extension claims; the app never writes one that could.
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(php|phtml|phar|php[0-9])$">
+        Require all denied
+    </FilesMatch>
+</IfModule>

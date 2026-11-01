@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Support\HtmlSanitizer;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,6 +21,15 @@ class PageSection extends Model
         'cta_url_2',
         'sort_order',
     ];
+
+    /**
+     * Views render this column raw, so every writer — not only the admin
+     * controller — has to go through the sanitizer.
+     */
+    protected function body(): Attribute
+    {
+        return Attribute::make(set: fn (?string $value) => HtmlSanitizer::clean($value));
+    }
 
     public function pageContent(): BelongsTo
     {

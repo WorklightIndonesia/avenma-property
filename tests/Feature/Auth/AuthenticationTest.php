@@ -42,6 +42,26 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
+    public function test_an_address_is_limited_across_many_accounts(): void
+    {
+        for ($attempt = 0; $attempt < 20; $attempt++) {
+            $this->post('/login', [
+                'email' => "penyusup{$attempt}@example.com",
+                'password' => 'wrong-password',
+            ]);
+        }
+
+        $response = $this->post('/login', [
+            'email' => 'penyusup21@example.com',
+            'password' => 'wrong-password',
+        ]);
+
+        $this->assertStringContainsString(
+            'Terlalu banyak percobaan',
+            (string) $response->getSession()->get('errors')?->first('email'),
+        );
+    }
+
     public function test_users_can_logout(): void
     {
         $user = User::factory()->create();

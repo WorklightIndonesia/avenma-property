@@ -30,6 +30,27 @@ class PasswordResetTest extends TestCase
         Notification::assertSentTo($user, ResetPassword::class);
     }
 
+    public function test_an_unknown_address_gets_the_same_answer(): void
+    {
+        Notification::fake();
+
+        $this->post('/forgot-password', ['email' => 'nobody@example.com'])
+            ->assertSessionHasNoErrors()
+            ->assertSessionHas('status');
+    }
+
+    public function test_the_form_is_throttled(): void
+    {
+        Notification::fake();
+
+        for ($attempt = 0; $attempt < 6; $attempt++) {
+            $this->post('/forgot-password', ['email' => 'nobody@example.com'])->assertRedirect();
+        }
+
+        $this->post('/forgot-password', ['email' => 'nobody@example.com'])
+            ->assertTooManyRequests();
+    }
+
     public function test_reset_password_screen_can_be_rendered(): void
     {
         Notification::fake();

@@ -47,6 +47,17 @@ class BlogPostCrudTest extends TestCase
         $this->assertSame('<h2>Judul</h2><p>Isi</p>', BlogPost::firstOrFail()->content);
     }
 
+    public function test_content_is_cleaned_even_when_the_model_is_written_directly(): void
+    {
+        $post = BlogPost::create([
+            'title' => 'Judul',
+            'slug' => 'judul',
+            'content' => '<p>Aman</p><script>alert(1)</script>',
+        ]);
+
+        $this->assertSame('<p>Aman</p>', $post->refresh()->content);
+    }
+
     public function test_an_empty_editor_is_rejected(): void
     {
         $this->actingAs($this->admin())
