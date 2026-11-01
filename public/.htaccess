@@ -23,3 +23,20 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Aset ber-nama unik boleh di-cache selamanya: Vite memberi hash pada nama
+# berkas, dan unggahan admin memakai nama acak 40 karakter.
+<IfModule mod_headers.c>
+    SetEnvIf Request_URI "^/build/assets/" AVENMA_CACHE_FOREVER
+    SetEnvIf Request_URI "^/images/(listings|pages|blog)/" AVENMA_CACHE_FOREVER
+    Header set Cache-Control "public, max-age=31536000, immutable" env=AVENMA_CACHE_FOREVER
+
+    # Foto contoh dan logo punya nama tetap, jadi jangan immutable: berkas
+    # pengganti tidak akan pernah sampai ke pengunjung lama.
+    SetEnvIf Request_URI "^/images/(properties|brand)/" AVENMA_CACHE_30D
+    Header set Cache-Control "public, max-age=2592000" env=AVENMA_CACHE_30D
+</IfModule>
+
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>

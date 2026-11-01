@@ -154,15 +154,19 @@ Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang 
 
    bash: `cp .env.example .env && php artisan key:generate`
 
-4. Sesuaikan tiga nilai di `.env`:
+4. Sesuaikan `.env` untuk lokal. File contoh berisi nilai production, jadi timpa:
 
    ```dotenv
+   APP_ENV=local
    APP_DEBUG=true
-   APP_URL=http://localhost:8000
+   APP_URL=http://127.0.0.1:8000
+   DB_CONNECTION=sqlite
+   SESSION_SECURE_COOKIE=false
+   MAIL_MAILER=log
    ADMIN_PASSWORD=GantiDengan1!
    ```
 
-   `ADMIN_PASSWORD` wajib diisi dengan aturan password akun: minimal 8 karakter, ada huruf besar, angka, dan simbol. Tanpa nilai itu `AdminSeeder` berhenti dan data contoh tidak masuk. Variabel lain dijelaskan di **Setup Environment**.
+   `ADMIN_PASSWORD` wajib diisi dengan aturan password akun: minimal 8 karakter, ada huruf besar dan kecil, angka, dan simbol. Tanpa nilai itu `AdminSeeder` berhenti dan data contoh tidak masuk. Variabel lain dijelaskan di **Setup Environment**.
 
 5. Buat file database SQLite:
 
@@ -180,7 +184,7 @@ Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang 
    php artisan migrate --seed
    ```
 
-   Hasilnya: 7.285 kecamatan resmi Kemendagri, 20 listing contoh, dan satu akun admin `fellixwl@gmail.com` dengan password dari `ADMIN_PASSWORD`.
+   Hasilnya: 7.285 kecamatan resmi Kemendagri, 20 listing contoh, dan satu akun admin `avenma.properti@gmail.com` dengan password dari `ADMIN_PASSWORD`.
 
 7. Jalankan server development. Satu perintah untuk server, queue, log, dan Vite sekaligus:
 
@@ -228,8 +232,8 @@ Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commi
 | `DB_CONNECTION` | `sqlite` | Ganti ke `mysql` untuk MariaDB |
 | `SESSION_DRIVER` | `database` | Tabel session dibuat oleh migrasi |
 | `CACHE_STORE` | `database` | Tabel cache dibuat oleh migrasi |
-| `QUEUE_CONNECTION` | `database` | Tabel jobs dibuat oleh migrasi |
-| `MAIL_MAILER` | `log` | Email ditulis ke log saat development |
+| `QUEUE_CONNECTION` | `sync` | Tidak ada worker di shared hosting |
+| `MAIL_MAILER` | `log` | Email ditulis ke log saat development; `smtp` di production |
 
 Untuk MariaDB, buat database lalu isi `DB_*`:
 
@@ -242,7 +246,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `fellixwl@gmail.com` (role `admin`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
+Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `avenma.properti@gmail.com` (role `admin`, nama `Avenma Properti`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar dan kecil, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
 
 ## Testing dan Build
 
@@ -259,36 +263,93 @@ npm run build
 
 ## Deploy ke Hostinger
 
-1. Set `.env` production:
+Semua perintah dijalankan lewat SSH, di dalam folder aplikasi di server.
 
-   ```dotenv
-   APP_ENV=production
-   APP_DEBUG=false
-   APP_URL=https://domain-anda.com
-   DB_CONNECTION=mysql
-   DB_HOST=localhost
-   DB_DATABASE=nama_database
-   DB_USERNAME=user_database
-   DB_PASSWORD=password_database
-   ```
+### Sebelum deploy
 
-2. Jalankan build dan migrasi:
+- PHP 8.3 dengan ekstensi `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `curl`, `gd` (dengan WebP), dan `exif`. Tanpa `exif` unggahan foto langsung gagal; tanpa WebP di `gd` foto disimpan apa adanya.
+- Node.js 20.19 atau lebih baru, dipakai `npm run build` di server.
+- Document root domain diarahkan ke folder `public/`.
+- SSL aktif dan Force HTTPS menyala.
+
+### Langkah deploy
+
+1. Clone dan pasang dependensi tanpa paket development:
 
    ```bash
+   git clone <url-repo> avenma-property
+   cd avenma-property
    composer install --no-dev --optimize-autoloader
+   ```
+
+2. Siapkan `.env`: `cp .env.example .env`, lalu `php artisan key:generate`. Isi `APP_URL`, empat `DB_*`, `MAIL_PASSWORD`, dan `ADMIN_PASSWORD`. File contoh sudah memakai nilai production, termasuk `SESSION_SECURE_COOKIE=true`.
+
+3. Build aset di server:
+
+   ```bash
    npm ci
    npm run build
-   php artisan migrate --force
    ```
 
-3. Bersihkan dan cache konfigurasi:
+   Pastikan `public/build/manifest.json` ada. Folder ini tidak masuk git, jadi hasil clone selalu kosong.
+
+4. Migrasi dan isi data:
 
    ```bash
-   php artisan config:cache
-   php artisan route:cache
-   php artisan view:cache
+   php artisan migrate --force
+   php artisan db:seed --class=MasterDataSeeder --force
+   php artisan db:seed --class=WilayahSeeder --force
+   php artisan db:seed --class=PageContentSeeder --force
+   php artisan db:seed --class=AdminSeeder --force
+   php artisan db:seed --class=BlogPostSeeder --force
    ```
 
-   Jalankan ketiganya di server. Cache rute yang dibuat di lokal ikut membawa rute `/design-system`, yang seharusnya hanya ada di luar produksi.
+   Jangan `php artisan db:seed` tanpa `--class`: `DatabaseSeeder` ikut memasukkan lima developer dan 20 listing contoh. Hasil yang benar: 7.285 kecamatan, pengaturan situs, halaman Beranda dan Kontak, satu akun `avenma.properti@gmail.com`, dan sepuluh artikel blog bertanggal hari seed.
 
-4. Arahkan document root Hostinger ke folder `public/`.
+5. Izin folder dan cache:
+
+   ```bash
+   chmod -R 775 storage bootstrap/cache
+   php artisan optimize
+   ```
+
+   `storage:link` tidak perlu: unggahan disimpan langsung di `public/` lewat disk `uploads`. `php artisan optimize` menjalankan `config:cache`, `route:cache`, dan `view:cache` sekaligus; jalankan di server, bukan di lokal, karena cache rute lokal membawa `/design-system`.
+
+6. Uji SMTP sebelum menyerahkan akun:
+
+   ```bash
+   php artisan tinker --execute="Mail::raw('tes', fn(\$m) => \$m->to('avenma.properti@gmail.com')->subject('SMTP Avenma'));"
+   ```
+
+   Halaman Lupa Password tetap menampilkan "tautan sudah dikirim" walau SMTP salah, jadi uji ini satu-satunya bukti email benar-benar keluar. Setelah akun dibuat, kosongkan `ADMIN_PASSWORD` di `.env`.
+
+7. Cek setelah deploy:
+
+   - `/up` mengembalikan 200.
+   - `/`, `/properti`, satu detail listing, `/blog`, dan `/kontak` tampil.
+   - Login admin berhasil; unggah satu foto menghasilkan tiga berkas (asli, `-medium.webp`, `-thumb.webp`) dan tidak miring.
+   - `/sitemap.xml` dan `/robots.txt` memakai domain asli.
+   - Header `Cache-Control` aset mengikuti aturan di `public/.htaccess`.
+
+### Rilis berikutnya
+
+```bash
+php artisan down --retry=60
+git pull
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+php artisan migrate --force
+php artisan optimize
+php artisan up
+```
+
+Unggahan tinggal di `public/` sebagai berkas untracked, jadi `git pull` tidak menyentuhnya. Cadangkan database dari hPanel sebelum migrasi. Rollback berarti memulihkan berkas dan snapshot database, bukan `migrate:rollback` di data hidup.
+
+### Antrean
+
+`QUEUE_CONNECTION=sync` karena shared hosting tidak punya worker dan aplikasi ini belum memakai job. Bila suatu saat ada pekerjaan lambat, ubah ke `database` dan tambahkan cron:
+
+```
+*/5 * * * * cd ~/avenma-property && php artisan queue:work --stop-when-empty --max-time=250
+```
+
