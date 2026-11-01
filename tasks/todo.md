@@ -152,7 +152,7 @@ Detail plan: `tasks/plan.md`
   - Depends: Task 6–17
   - Scope: Medium
 
-- [ ] **Task 19: Hostinger deployment prep**
+- [x] **Task 19: Hostinger deployment prep**
   - Acceptance: `.env.example` production-ready; checklist deploy; `npm run build` sukses.
   - Verification: build local, review checklist.
   - Files: `.env.example`, `AGENTS.md`
@@ -164,5 +164,5 @@ Detail plan: `tasks/plan.md`
 - [ ] Sitemap accessible
 - [ ] Switch bahasa berfungsi
 - [x] Lighthouse > 80 (mobile: beranda 83, katalog 89, detail 82; desktop 97)
-- [ ] Build production sukses
+- [x] Build production sukses
 - [ ] Ready deploy Hostinger

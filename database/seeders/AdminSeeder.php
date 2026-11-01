@@ -10,13 +10,18 @@ use RuntimeException;
 
 class AdminSeeder extends Seeder
 {
+    /**
+     * The launch account, and the author BlogPostSeeder pins the articles to.
+     */
+    public const EMAIL = 'avenma.properti@gmail.com';
+
     public function run(): void
     {
         $accounts = [
             [
-                'name' => 'Fellix',
-                'email' => 'fellixwl@gmail.com',
-                'phone' => null,
+                'name' => 'Avenma Properti',
+                'email' => self::EMAIL,
+                'phone' => '081299900387',
                 'role' => User::ROLE_ADMIN,
                 'password' => $this->password(),
             ],

@@ -5,12 +5,15 @@ namespace Database\Seeders;
 use App\Models\BlogPost;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 
 /**
  * Ten placeholder articles so the blog is readable before the client sends
  * real copy. Replace the rows in the admin, not by editing this file.
+ *
+ * The date is the day the seeder runs, not a fixed date, so a launch deploy
+ * does not publish a blog that looks weeks old. Re-running overwrites edits
+ * to these slugs; run it once per environment.
  */
 class BlogPostSeeder extends Seeder
 {
@@ -31,32 +34,31 @@ class BlogPostSeeder extends Seeder
             'menyewa-atau-membeli-hitungan-sederhana',
         ])->delete();
 
-        $authors = User::query()->get();
+        $author = User::where('email', AdminSeeder::EMAIL)->firstOrFail();
 
         foreach ($this->articles() as $article) {
             BlogPost::updateOrCreate(
                 ['slug' => Str::slug($article['title'])],
                 [
-                    'created_by' => $authors->random()->id,
+                    'created_by' => $author->id,
                     'title' => $article['title'],
                     'excerpt' => $article['excerpt'],
                     'content' => $article['content'],
                     'is_published' => true,
-                    'published_at' => Carbon::parse($article['date'])->setTime(9, 0),
+                    'published_at' => now()->setTime(9, 0),
                 ],
             );
         }
     }
 
     /**
-     * @return list<array{title: string, date: string, excerpt: string, content: string}>
+     * @return list<array{title: string, excerpt: string, content: string}>
      */
     private function articles(): array
     {
         return [
             [
                 'title' => 'Panduan KPR untuk Pembeli Rumah Pertama di Gading Serpong',
-                'date' => '2026-10-28',
                 'excerpt' => 'Hitung kemampuan bayar, siapkan uang muka dan dokumen, pahami skema bunga, lalu bandingkan beberapa bank sebelum memilih KPR.',
                 'content' => <<<'HTML'
 <p>Membeli rumah pertama hampir selalu identik dengan satu kata: KPR. Bagi sebagian besar keluarga muda, membayar rumah secara tunai bukan pilihan yang realistis, sehingga kredit pemilikan rumah menjadi jembatan antara mimpi dan kenyataan. Masalahnya, banyak pembeli pertama masuk ke proses KPR tanpa persiapan yang cukup, lalu kaget dengan syarat, biaya, dan cicilan yang ternyata lebih berat dari perkiraan awal.</p>
@@ -75,7 +77,6 @@ HTML,
             ],
             [
                 'title' => 'Rumah Tapak atau Apartemen di Gading Serpong? Ini Pertimbangannya',
-                'date' => '2026-10-21',
                 'excerpt' => 'Rumah tapak memberi ruang untuk tumbuh, apartemen menawarkan kepraktisan. Bandingkan biaya bulanan dan rencana lima sampai sepuluh tahun ke depan.',
                 'content' => <<<'HTML'
 <p>Salah satu pertanyaan yang paling sering muncul dari calon pembeli di Gading Serpong adalah: lebih baik rumah tapak atau apartemen? Keduanya sama-sama tersedia di kawasan ini, dan keduanya punya penggemar setia. Jawabannya tidak pernah satu untuk semua orang, karena sangat bergantung pada tahap hidup, gaya hidup, dan rencana jangka panjang masing-masing pembeli.</p>
@@ -93,7 +94,6 @@ HTML,
             ],
             [
                 'title' => 'Akses Transportasi Gading Serpong: Seberapa Mudah ke Jakarta?',
-                'date' => '2026-10-14',
                 'excerpt' => 'Tol, KRL, dan transportasi umum membuat perjalanan ke Jakarta lebih terprediksi. Uji sendiri waktu tempuhnya pada jam sibuk sebelum memilih cluster.',
                 'content' => <<<'HTML'
 <p>Bagi banyak pekerja yang berkantor di Jakarta, keputusan tinggal di kawasan penyangga selalu diawali satu pertanyaan sederhana: berapa lama perjalanan setiap hari? Rumah yang nyaman bisa terasa melelahkan jika setiap pagi dan sore harus dihabiskan berjam-jam di jalan. Karena itu, akses transportasi menjadi salah satu faktor penentu daya tarik Gading Serpong sebagai kawasan hunian.</p>
@@ -111,7 +111,6 @@ HTML,
             ],
             [
                 'title' => 'Kenapa Properti di Kota Mandiri Jadi Pilihan Investasi Jangka Panjang',
-                'date' => '2026-10-07',
                 'excerpt' => 'Perencanaan kawasan, fasilitas yang bertambah, dan permintaan sewa yang stabil membuat properti di kota mandiri tumbuh lebih konsisten.',
                 'content' => <<<'HTML'
 <p>Properti sejak lama dianggap sebagai salah satu bentuk investasi paling "aman" di Indonesia. Tapi tidak semua properti tumbuh dengan cara yang sama. Rumah di lokasi yang berkembang tanpa perencanaan bisa stagnan bertahun-tahun, sementara hunian di kota mandiri yang dirancang matang cenderung menunjukkan pertumbuhan nilai yang lebih konsisten. Lalu, apa yang membuat kota mandiri seperti Gading Serpong berbeda?</p>
@@ -129,7 +128,6 @@ HTML,
             ],
             [
                 'title' => 'Checklist Survei Rumah: Hal yang Wajib Dicek Sebelum Membeli',
-                'date' => '2026-09-30',
                 'excerpt' => 'Lingkungan, arah hadap, kualitas material, dan legalitas tanah. Empat hal ini menentukan apakah rumah layak dibeli, bukan tampilan brosurnya.',
                 'content' => <<<'HTML'
 <p>Foto brosur dan rumah contoh selalu tampil sempurna. Pencahayaan diatur, furnitur ditata rapi, dan setiap sudut terlihat lapang. Tapi rumah yang akan Anda tinggali bertahun-tahun ke depan perlu dinilai dengan mata yang lebih kritis. Survei langsung ke lokasi adalah langkah yang tidak boleh dilewatkan, dan akan jauh lebih efektif jika Anda datang dengan daftar periksa yang jelas.</p>
@@ -147,7 +145,6 @@ HTML,
             ],
             [
                 'title' => 'Biaya Tambahan Saat Membeli Rumah yang Sering Terlupakan',
-                'date' => '2026-09-23',
                 'excerpt' => 'BPHTB, notaris, biaya KPR, sampai pengeluaran setelah serah terima. Semuanya perlu masuk anggaran sejak awal.',
                 'content' => <<<'HTML'
 <p>Banyak pembeli rumah pertama menyiapkan dana pas-pasan untuk uang muka, lalu terkejut ketika diminta membayar sejumlah biaya lain menjelang akad. Padahal, biaya-biaya ini bukan hal baru, hanya saja jarang dibahas di awal proses pemasaran. Mengetahuinya sejak dini membantu Anda menyusun anggaran yang lebih realistis dan menghindari kepanikan di detik-detik terakhir.</p>
@@ -165,7 +162,6 @@ HTML,
             ],
             [
                 'title' => 'Kuliner dan Gaya Hidup di Gading Serpong: Lebih dari Sekadar Tempat Tinggal',
-                'date' => '2026-09-16',
                 'excerpt' => 'Dari kedai kopi sampai ruang publik, Gading Serpong kini jadi tujuan akhir pekan, bukan sekadar tempat pulang setelah bekerja.',
                 'content' => <<<'HTML'
 <p>Dulu, kawasan penyangga Jakarta sering dianggap sekadar "tempat tidur": penghuninya berangkat pagi ke Jakarta, pulang malam, lalu akhir pekan kembali lagi ke ibu kota untuk mencari hiburan. Gading Serpong mematahkan anggapan itu. Kawasan ini kini dikenal sebagai salah satu destinasi kuliner dan gaya hidup di Tangerang, sampai-sampai banyak warga Jakarta yang justru datang ke sini di akhir pekan.</p>
@@ -183,7 +179,6 @@ HTML,
             ],
             [
                 'title' => 'Tips Memilih Cluster yang Tepat untuk Keluarga Anda',
-                'date' => '2026-09-09',
                 'excerpt' => 'Karakter penghuni, sistem keamanan, jarak ke fasilitas, dan kualitas pengelolaan lingkungan menentukan kenyamanan tinggal jangka panjang.',
                 'content' => <<<'HTML'
 <p>Di kawasan sebesar Gading Serpong, memilih rumah bukan hanya soal tipe dan harga, tapi juga soal memilih cluster. Setiap cluster punya karakter sendiri: ada yang tenang dan dihuni keluarga mapan, ada yang ramai dengan pasangan muda, ada pula yang lokasinya sangat dekat dengan pusat komersial. Memilih cluster yang tepat sama pentingnya dengan memilih rumah itu sendiri.</p>
@@ -201,7 +196,6 @@ HTML,
             ],
             [
                 'title' => 'Rumah Ideal untuk Keluarga Muda: Ukuran, Layout, dan Fleksibilitas',
-                'date' => '2026-09-02',
                 'excerpt' => 'Rumah untuk keluarga muda bukan hanya yang cukup hari ini, tapi yang siap tumbuh bersama anak dan kebutuhan ruang yang berubah.',
                 'content' => <<<'HTML'
 <p>Keluarga muda menghadapi dilema yang unik saat membeli rumah. Kebutuhan hari ini mungkin masih sederhana, cukup satu kamar utama dan satu kamar tambahan. Tapi dalam beberapa tahun, anak bertambah, kebutuhan ruang berubah, dan rumah yang dulu terasa cukup bisa mendadak terasa sempit. Karena itu, rumah ideal untuk keluarga muda bukan hanya yang sesuai kebutuhan saat ini, tapi juga yang siap tumbuh bersama keluarga.</p>
@@ -219,7 +213,6 @@ HTML,
             ],
             [
                 'title' => 'Kesalahan Umum Pembeli Rumah Pertama dan Cara Menghindarinya',
-                'date' => '2026-08-26',
                 'excerpt' => 'Terburu-buru karena promo, mengabaikan lokasi, tidak menyisakan dana darurat, dan tidak membaca perjanjian. Empat kesalahan yang bisa dihindari.',
                 'content' => <<<'HTML'
 <p>Membeli rumah pertama adalah salah satu keputusan finansial terbesar dalam hidup. Wajar jika prosesnya terasa membingungkan, apalagi dengan banyaknya istilah, pilihan, dan tawaran promo yang datang bersamaan. Sayangnya, beberapa kesalahan yang terlihat kecil di awal bisa berdampak panjang. Mengenali kesalahan-kesalahan umum ini adalah cara paling sederhana untuk menghindarinya.</p>

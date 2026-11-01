@@ -21,9 +21,11 @@ class AdminSeederTest extends TestCase
 
         $this->seed(AdminSeeder::class);
 
-        $user = User::where('email', 'fellixwl@gmail.com')->firstOrFail();
+        $user = User::where('email', AdminSeeder::EMAIL)->firstOrFail();
 
         $this->assertSame(User::ROLE_ADMIN, $user->role);
+        $this->assertSame('Avenma Properti', $user->name);
+        $this->assertSame('081299900387', $user->phone);
         $this->assertTrue(Hash::check('Rahasia1!', $user->password));
     }
 
