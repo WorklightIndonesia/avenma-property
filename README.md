@@ -8,7 +8,76 @@ Website company profile dan katalog properti untuk Avenma Property. Website mena
 - **Admin:** semua akses Agen, ditambah pengelolaan akun, konten halaman, dan pengaturan situs.
 - **Agen:** mengelola listing miliknya sendiri, artikel blog, dan developer.
 
-Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dibangun bertahap. Lihat `tasks/todo.md` untuk daftar task dan `tasks/plan.md` untuk rencana implementasi.
+Status saat ini: Phase 1–3 selesai dan Phase 4 siap deploy. Katalog properti, detail listing, blog, dan CMS admin sudah berjalan. Task 17 (bilingual ID/EN) ditunda dan di luar cakupan peluncuran. Lihat `tasks/todo.md` untuk acceptance criteria per task dan `tasks/plan.md` untuk rencana implementasi.
+
+## Untuk Reviewer
+
+Bagian ini untuk yang baru pertama kali memegang repo. Perintah lengkapnya ada di **Menjalankan Lokal dari Nol**; di sini jalur terpendek dan apa yang perlu dicek.
+
+**Branch:** pekerjaan ada di `development`. `main` hanya berisi commit awal, jadi clone tanpa `-b development` memberi skeleton kosong.
+
+### Lima menit pertama
+
+Prasyarat: PHP 8.3 (atau minimal 8.2) dengan ekstensi `pdo_sqlite`, `mbstring`, `openssl`, `fileinfo`, `curl`, `gd` dengan WebP, dan `exif`; Composer 2; Node.js 20.19 atau lebih baru.
+
+```bash
+git clone -b development https://github.com/WorklightIndonesia/avenma-property.git
+cd avenma-property
+composer install
+npm install
+cp .env.example .env        # PowerShell: Copy-Item .env.example .env
+```
+
+`.env.example` berisi nilai production. Timpa baris berikut agar lokal jalan:
+
+```dotenv
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://127.0.0.1:8000
+DB_CONNECTION=sqlite
+SESSION_SECURE_COOKIE=false
+MAIL_MAILER=log
+ADMIN_PASSWORD=GantiDengan1!
+```
+
+```bash
+php artisan key:generate
+touch database/database.sqlite   # PowerShell: New-Item database/database.sqlite
+php artisan migrate --seed
+composer run dev
+```
+
+Buka `http://127.0.0.1:8000`; CMS ada di `/login`.
+
+### Akun uji
+
+| Hal | Nilai |
+|---|---|
+| Email | `avenma.properti@gmail.com` |
+| Password | Nilai `ADMIN_PASSWORD` yang Anda isi sendiri |
+| Role | `admin` |
+
+Registrasi publik dimatikan. Akun agen dibuat dari panel admin, dan role `agen` wajib punya nomor telepon.
+
+### Yang perlu dicek
+
+- `/properti`: 20 listing contoh, tombol filter yang membuka panel, dan chip filter setelah memilih satu opsi.
+- Satu detail listing: galeri, peta, chip status dan `Baru`, tombol WhatsApp, dan Simulasi KPR (hanya listing `dijual`).
+- `/blog`: 10 artikel bertanggal hari seeder dijalankan.
+- `/kontak`, halaman 404, dan `/hubungi-kami` yang langsung mengarah ke WhatsApp nomor kantor.
+- Login, lalu `/admin/listings`, `/admin/blog`, `/admin/pages`, `/admin/users`, `/admin/settings`, dan `/admin/pengaturan-listing` (developer serta opsi listing dikelola di sini).
+- Buat satu listing memakai tiga picker wilayah; unggah satu foto. Bila `gd` dengan WebP aktif, muncul tiga berkas (asli, `-medium.webp`, `-thumb.webp`).
+- Keluar, lalu buka `/admin/listings` lagi: harus diarahkan ke halaman login.
+- `php artisan test`: 312 test lulus.
+
+### Yang memang belum ada
+
+- Bilingual ID/EN (Task 17). Seluruh antarmuka berbahasa Indonesia; kolom `_en` ada di database tetapi belum dipakai.
+- Environment staging. Uji di lokal atau langsung di produksi.
+- Dokumen audit di `.scratch/` tidak ikut repo.
+- Lima developer dan 20 listing adalah data contoh, bukan isi katalog asli. Kembalikan dengan `php artisan migrate:fresh --seed`.
+
+`composer run setup` bukan jalur lokal: skrip itu menyalin `.env.example` apa adanya (nilai production) lalu menjalankan migrasi ke MySQL.
 
 ## Tech Stack
 
@@ -28,38 +97,46 @@ Status saat ini: Phase 1 (Foundation) selesai. Katalog, blog, dan CMS sedang dib
 
 ```text
 ├── app/
+│   ├── Console/Commands/           # images:variants (varian 480 dan 960 px)
 │   ├── Http/
 │   │   ├── Controllers/
 │   │   │   ├── Auth/               # Controller auth dari Breeze
-│   │   │   ├── Public/             # Rencana Phase 2: controller halaman publik
-│   │   │   └── Admin/              # Rencana Phase 2: controller CMS
-│   │   └── Middleware/             # Role.php: cek role admin / agen
-│   └── Models/
+│   │   │   ├── Public/             # Beranda, katalog, detail, blog, sitemap
+│   │   │   └── Admin/              # CMS: listing, blog, halaman, developer, akun, pengaturan
+│   │   ├── Middleware/             # Role.php (admin/agen), SecurityHeaders.php
+│   │   └── Requests/               # Validasi form admin
+│   ├── Models/
+│   ├── Providers/
+│   └── Services/                   # ImageService: WebP, varian, orientasi EXIF
 ├── bootstrap/
-│   └── app.php                     # Registrasi middleware dan alias 'role'
+│   └── app.php                     # Middleware, alias 'role', health check /up
 ├── config/
 ├── database/
-│   ├── migrations/                 # Schema users, listing, blog, halaman, KPR
+│   ├── data/                       # wilayah.csv (7.285 kecamatan) dan generatornya
+│   ├── migrations/                 # Schema users, listing, blog, halaman, KPR, opsi
 │   ├── seeders/
 │   └── factories/
+├── public/
+│   ├── build/                      # Hasil Vite, tidak di-commit
+│   └── images/                     # Foto contoh dan unggahan admin (WebP)
 ├── resources/
 │   ├── css/                        # Tailwind directives
 │   ├── js/                         # Alpine.js bootstrap
 │   └── views/
 │       ├── layouts/                # Layout publik, admin, app, guest
-│       ├── public/                 # Halaman publik (home, katalog, blog)
+│       ├── public/                 # Halaman publik (beranda, katalog, blog)
 │       ├── admin/                  # Halaman CMS
 │       ├── components/             # Komponen Blade reusable
 │       ├── auth/                   # Login, reset password, verifikasi email
 │       └── profile/                # Halaman profil admin
 ├── routes/
-│   ├── web.php                     # Route publik dan admin
+│   ├── web.php                     # Route publik, admin, sitemap, robots
 │   └── auth.php                    # Route autentikasi
 ├── tests/
-│   ├── Feature/                    # Feature test (auth, role, profil)
+│   ├── Feature/                    # Admin/, Auth/, Public/, aksesibilitas
 │   └── Unit/
-├── tasks/                          # plan.md (rencana implementasi) dan todo.md (task list)
-└── .scratch/                       # Catatan lokal (gitignored)
+├── tasks/                          # plan.md (rencana) dan todo.md (task list)
+└── .scratch/                       # Catatan lokal, hanya di mesin pengembang
 ```
 
 ## Dependency Checklist
@@ -68,13 +145,13 @@ Pastikan semua dependensi berikut tersedia sebelum menjalankan proyek.
 
 ### Tools
 
-- [ ] PHP >= 8.2 dengan ekstensi `pdo_sqlite` atau `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `curl`
+- [ ] PHP 8.3 (minimal 8.2) dengan ekstensi `pdo_sqlite` atau `pdo_mysql`, `mbstring`, `openssl`, `fileinfo`, `curl`, `gd` dengan dukungan WebP, dan `exif`
 - [ ] Composer 2.x
 - [ ] Node.js >= 20.19 dan npm
 - [ ] SQLite (lokal) atau MariaDB 10.5 (production)
 - [ ] Git
 
-Ekstensi `gd` dengan dukungan WebP dibutuhkan untuk konversi foto. Tanpa ekstensi itu, unggahan disimpan apa adanya.
+`gd` mengubah unggahan menjadi WebP dan membuat varian 480/960 px; tanpa dukungan WebP, foto disimpan apa adanya. `exif` dibaca untuk memutar foto ponsel sesuai orientasinya. Cek keduanya dengan `php -m`.
 
 ### Package Composer
 
@@ -131,12 +208,14 @@ XAMPP hanya menyertakan `composer.phar`, bukan `composer.bat`. Tanpa wrapper, ja
 
 Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang bisa dibuka. Perintah ditulis untuk PowerShell, dengan versi bash bila berbeda.
 
-1. Clone repositori:
+1. Clone branch `development`:
 
    ```bash
-   git clone https://github.com/WorklightIndonesia/avenma-property.git
+   git clone -b development https://github.com/WorklightIndonesia/avenma-property.git
    cd avenma-property
    ```
+
+   Branch `main` hanya berisi commit awal dan tidak berisi aplikasi ini.
 
 2. Pasang dependensi:
 
@@ -184,7 +263,7 @@ Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang 
    php artisan migrate --seed
    ```
 
-   Hasilnya: 7.285 kecamatan resmi Kemendagri, 20 listing contoh, dan satu akun admin `avenma.properti@gmail.com` dengan password dari `ADMIN_PASSWORD`.
+   Hasilnya: 7.285 kecamatan resmi Kemendagri, pengaturan situs dan default KPR, halaman Beranda dan Kontak, 5 developer contoh, 20 listing contoh, 10 artikel blog bertanggal hari itu, dan satu akun admin `avenma.properti@gmail.com` dengan password dari `ADMIN_PASSWORD`.
 
 7. Jalankan server development. Satu perintah untuk server, queue, log, dan Vite sekaligus:
 
@@ -204,7 +283,7 @@ Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang 
    npm run dev
    ```
 
-8. Buka `http://localhost:8000`. CMS ada di `http://localhost:8000/login`.
+8. Buka `http://127.0.0.1:8000`. CMS ada di `http://127.0.0.1:8000/login`.
 
 Perintah PHP di atas mengasumsikan `php` sudah ada di PATH. Jika belum, lihat **Windows (XAMPP)**.
 
@@ -217,6 +296,8 @@ Perintah PHP di atas mengasumsikan `php` sudah ada di PATH. Jika belum, lihat **
 | `ADMIN_PASSWORD belum diisi di .env` | Isi `ADMIN_PASSWORD` di `.env` (langkah 4), lalu ulangi langkah 6. |
 | Database SQLite tidak ditemukan | File belum dibuat. Ulangi langkah 5. |
 | `no such table: users` | Migrasi belum jalan. Ulangi langkah 6. |
+| `Call to undefined function exif_read_data()` saat unggah foto | Ekstensi `exif` belum aktif. Aktifkan di `php.ini` lalu ulangi unggahan. |
+| Hasil clone hanya skeleton Laravel, tanpa aplikasi | Clone memakai branch `main`. Ulangi dengan `git clone -b development`. |
 
 ## Setup Environment
 
@@ -227,7 +308,7 @@ Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commi
 | `APP_NAME` | `"Avenma Property"` | Nama aplikasi |
 | `APP_ENV` | `local` | Gunakan `production` saat deploy |
 | `APP_DEBUG` | `true` | Wajib `false` di production |
-| `APP_URL` | `http://localhost:8000` | URL aplikasi |
+| `APP_URL` | `http://127.0.0.1:8000` | URL aplikasi; samakan dengan alamat yang dibuka |
 | `APP_LOCALE` | `id` | Bahasa antarmuka dan pesan validasi |
 | `DB_CONNECTION` | `sqlite` | Ganti ke `mysql` untuk MariaDB |
 | `SESSION_DRIVER` | `database` | Tabel session dibuat oleh migrasi |
@@ -251,8 +332,11 @@ Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder
 ## Testing dan Build
 
 ```bash
-# Test
+# Test (312 test, 1816 assertion)
 php artisan test
+
+# Sama, lewat skrip Composer yang membersihkan cache config dulu
+composer test
 
 # Format kode
 ./vendor/bin/pint
