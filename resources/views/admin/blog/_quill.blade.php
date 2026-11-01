@@ -31,7 +31,7 @@
             // Quill renders icon-only buttons without labels; give each a tooltip.
             // The toolbar sits beside the editor, so read it from the module.
             const toolbar = editor.getModule('toolbar').container;
-            const tooltips = { bold: 'Tebal', italic: 'Miring', underline: 'Garis bawah', blockquote: 'Kutipan', link: 'Tautan', clean: 'Hapus format' };
+            const tooltips = { bold: 'Tebal', italic: 'Miring', underline: 'Garis bawah', blockquote: 'Kutipan', link: 'Link', clean: 'Hapus format' };
 
             toolbar.querySelectorAll('button').forEach((button) => {
                 const name = [...button.classList].find((cls) => cls.startsWith('ql-'))?.slice(3);

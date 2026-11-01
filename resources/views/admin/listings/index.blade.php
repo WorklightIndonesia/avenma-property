@@ -118,7 +118,7 @@
                             <a href="{{ route('admin.listings.edit', $listing) }}" class="font-medium text-ink-950 hover:underline">{{ $listing->title }}</a>
 
                             @unless ($listing->is_published)
-                                <span class="ml-2 rounded bg-sand px-1.5 py-0.5 text-xs font-medium text-ink-500">Draf</span>
+                                <span class="ml-2 rounded bg-sand px-1.5 py-0.5 text-xs font-medium text-ink-500">Draft</span>
                             @endunless
 
                             @if ($listing->is_featured)

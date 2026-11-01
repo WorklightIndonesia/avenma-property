@@ -41,7 +41,7 @@
             </div>
 
             <div>
-                <x-input-label for="password" value="Kata sandi" />
+                <x-input-label for="password" value="Password" />
                 <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" :required="$user->exists === false" />
                 <p class="mt-1 text-xs text-ink-500">
                     {{ $user->exists ? 'Kosongkan bila tidak diubah.' : 'Minimal 8 karakter, ada huruf besar, kecil, angka, dan simbol.' }}
@@ -50,7 +50,7 @@
             </div>
 
             <div>
-                <x-input-label for="password_confirmation" value="Konfirmasi kata sandi" />
+                <x-input-label for="password_confirmation" value="Konfirmasi password" />
                 <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" :required="$user->exists === false" />
             </div>
         </div>

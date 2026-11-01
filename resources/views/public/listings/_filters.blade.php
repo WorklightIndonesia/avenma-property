@@ -120,7 +120,7 @@
                             </li>
                         </template>
                         <li x-show="matches().length === 0" class="px-3 py-2 text-sm text-ink-500">
-                            Mohon maaf, kami sedang tidak ada penawaran di lokasi tersebut
+                            Belum ada properti di lokasi ini.
                             <button type="button" x-on:click="clear()" class="font-medium text-ink-950 underline hover:text-gold-700">Lihat semua lokasi</button>
                         </li>
                     </ul>
@@ -161,7 +161,7 @@
                 </div>
             </x-filter-group>
 
-            <x-filter-group title="Dimensi Properti">
+            <x-filter-group title="Luas dan Lantai">
                 <div>
                     <label for="{{ $prefix }}filter-lt" class="block text-xs font-medium text-ink-500">Luas tanah minimal (m²)</label>
                     <input

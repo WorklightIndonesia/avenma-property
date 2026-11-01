@@ -361,7 +361,7 @@
     <section id="foto" class="scroll-mt-20 border border-line bg-white p-5 sm:p-6">
         <h2 class="text-lg font-semibold text-ink-950">Foto</h2>
         <p id="photo-order-help" class="mt-1 text-sm text-ink-500">
-            Label tampil sebagai chip di galeri. Alt menjelaskan foto untuk pembaca layar.
+            Label tampil sebagai chip di galeri. Alt menjelaskan foto untuk screen reader.
             Tarik ikon titik enam, atau pakai tombol panah di atasnya, untuk mengubah urutan: foto paling atas menjadi sampul.
         </p>
 
@@ -406,7 +406,7 @@
                         </div>
 
                         <div>
-                            <x-input-label for="alt-{{ $image->id }}" value="Teks alternatif" />
+                            <x-input-label for="alt-{{ $image->id }}" value="Alt text" />
                             <x-text-input id="alt-{{ $image->id }}" name="images[{{ $image->id }}][alt]" type="text" maxlength="255" class="mt-1 block w-full" :value="old('images.'.$image->id.'.alt', $image->alt)" placeholder="{{ $photoAlt }}" />
                         </div>
 
@@ -423,7 +423,7 @@
         <div class="mt-4 border-t border-line pt-4">
             <x-input-label for="photos" value="Tambah foto" />
             <x-file-input id="photos" name="photos[]" multiple accept="image/jpeg,image/png,image/webp" />
-            <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB per foto, 10 foto sekali unggah, {{ \App\Models\Listing::MAX_PHOTOS }} foto per listing.</p>
+            <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB per foto, 10 foto sekali upload, {{ \App\Models\Listing::MAX_PHOTOS }} foto per listing.</p>
             <x-input-error class="mt-2" :messages="$photoErrors" />
         </div>
     </section>

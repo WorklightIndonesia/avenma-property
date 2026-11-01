@@ -17,7 +17,7 @@ class LocalizationTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', ['email' => $user->email, 'password' => 'salah-sekali'])
-            ->assertSessionHasErrors(['email' => 'Email atau kata sandi salah.']);
+            ->assertSessionHasErrors(['email' => 'Email atau password salah.']);
     }
 
     public function test_form_errors_are_indonesian_and_use_the_field_label(): void
@@ -46,7 +46,7 @@ class LocalizationTest extends TestCase
                 'photos' => [UploadedFile::fake()->create('shell.php', 10, 'application/x-php')],
             ])
             ->assertSessionHasErrors([
-                'photos.0' => 'Foto harus berupa berkas bertipe: image/jpeg, image/png, image/webp.',
+                'photos.0' => 'Foto harus berupa file bertipe: image/jpeg, image/png, image/webp.',
             ]);
     }
 }

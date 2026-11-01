@@ -37,7 +37,7 @@
                 ></div>
                 <input type="hidden" id="input-content" name="content" value="{{ $content }}">
                 <p class="mt-1 text-xs text-ink-500">
-                    Sub-judul, tebal, miring, daftar, dan tautan tersedia di bilah atas. Tempelan dari Word dibersihkan otomatis.
+                    Sub-judul, tebal, miring, daftar, dan link tersedia di bilah atas. Tempelan dari Word dibersihkan otomatis.
                 </p>
                 <x-input-error class="mt-2" :messages="$errors->get('content')" />
             </div>
@@ -55,7 +55,7 @@
         @endif
 
         <div class="mt-3">
-            <x-input-label for="cover" value="{{ $post->cover_image ? 'Ganti gambar' : 'Unggah gambar' }}" />
+            <x-input-label for="cover" value="{{ $post->cover_image ? 'Ganti gambar' : 'Upload gambar' }}" />
             <x-file-input id="cover" name="cover" accept="image/jpeg,image/png,image/webp" />
             <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB. Tanpa sampul, daftar artikel memakai logo Avenma.</p>
             <x-input-error class="mt-2" :messages="$errors->get('cover')" />

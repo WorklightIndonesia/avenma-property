@@ -108,7 +108,7 @@
                         <span class="font-semibold">Menunggu klien.</span> Foto properti dan file vektor logo.
                     </p>
                 </div>
-                <p class="mt-4 text-xs text-paper/50">Tautan dan formulir belum aktif, kecuali simulasi KPR yang bisa dicoba.</p>
+                <p class="mt-4 text-xs text-paper/50">Link dan formulir belum aktif, kecuali simulasi KPR yang bisa dicoba.</p>
             </div>
         </section>
 

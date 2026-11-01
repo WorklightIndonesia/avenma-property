@@ -40,13 +40,13 @@ class SiteSettingController extends Controller
             // server-side to read the place coordinates for the contact map.
             'maps_url' => ['nullable', 'url:https', 'max:2048', function (string $attribute, mixed $value, Closure $fail) {
                 if (! $this->isMapsHost((string) $value)) {
-                    $fail('Tautan harus dari Google Maps, misalnya https://maps.app.goo.gl/…');
+                    $fail('Link harus dari Google Maps, misalnya https://maps.app.goo.gl/…');
                 }
             }],
             'instagram' => ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9._]+$/'],
         ], [
             'whatsapp.regex' => 'Nomor WhatsApp harus diawali 08 dan berisi 9–14 angka.',
-            'maps_url.url' => 'Tautan Google Maps harus alamat https:// yang valid.',
+            'maps_url.url' => 'Link Google Maps harus alamat https:// yang valid.',
             'instagram.regex' => 'Isi nama pengguna Instagram saja, misalnya avenma.properti.',
         ]);
 

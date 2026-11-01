@@ -294,7 +294,7 @@ class PageContentController extends Controller
 
             if (($request->hasFile("sections.$key.image") || $kept) && blank($request->input("sections.$key.image_alt"))) {
                 throw ValidationException::withMessages([
-                    "sections.$key.image_alt" => 'Teks alternatif wajib diisi selama ada gambar.',
+                    "sections.$key.image_alt" => 'Alt text wajib diisi selama ada gambar.',
                 ]);
             }
         }

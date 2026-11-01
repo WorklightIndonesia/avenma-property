@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-ink-600">
-        Masukkan email akun Anda. Kami kirim tautan untuk membuat password baru.
+        Masukkan email akun Anda. Kami kirim link untuk membuat password baru.
     </div>
 
     <!-- Session Status -->
@@ -16,7 +16,7 @@
 
         <div class="flex items-center justify-end mt-4">
             <x-primary-button>
-                Kirim tautan
+                Kirim link
             </x-primary-button>
         </div>
     </form>

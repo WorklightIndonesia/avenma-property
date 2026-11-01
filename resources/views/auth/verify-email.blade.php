@@ -1,6 +1,6 @@
 <x-guest-layout>
     <div class="mb-4 text-sm text-ink-600">
-        Verifikasi email Anda lewat tautan yang kami kirim. Belum menerima emailnya? Kami kirim ulang.
+        Verifikasi email Anda lewat link yang kami kirim. Belum menerima emailnya? Kami kirim ulang.
     </div>
 
     <div class="mt-4 flex items-center justify-between">

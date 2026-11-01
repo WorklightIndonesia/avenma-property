@@ -83,7 +83,7 @@
                             <a href="{{ route('admin.blog.edit', $post) }}" class="font-medium text-ink-950 hover:underline">{{ $post->title }}</a>
 
                             @unless ($post->is_published)
-                                <span class="ml-2 rounded bg-sand px-1.5 py-0.5 text-xs font-medium text-ink-500">Draf</span>
+                                <span class="ml-2 rounded bg-sand px-1.5 py-0.5 text-xs font-medium text-ink-500">Draft</span>
                             @endunless
                         </td>
                         <td class="px-4 py-2 text-ink-600">{{ $post->creator?->name ?? '—' }}</td>

@@ -100,7 +100,7 @@ HTML,
 <h2>Pilihan Jalan Tol yang Beragam</h2>
 <p>Gading Serpong terhubung dengan beberapa ruas jalan tol yang mengarah ke Jakarta maupun ke wilayah Tangerang lainnya. Keberadaan lebih dari satu akses tol memberi fleksibilitas: ketika satu ruas padat, pengendara masih punya alternatif rute. Bagi yang bekerja di Jakarta Barat atau Jakarta Selatan, pilihan rute ini sangat berpengaruh terhadap waktu tempuh harian.</p>
 <h2>KRL Commuter Line untuk yang Ingin Bebas Macet</h2>
-<p>Tidak semua orang ingin menyetir setiap hari. Stasiun KRL di sekitar kawasan Serpong menjadi andalan para komuter yang ingin perjalanan lebih terprediksi. Dengan kombinasi kendaraan pribadi atau transportasi daring menuju stasiun, lalu melanjutkan perjalanan dengan kereta, banyak penghuni bisa menghemat biaya bahan bakar sekaligus menghindari stres kemacetan.</p>
+<p>Tidak semua orang ingin menyetir setiap hari. Stasiun KRL di sekitar kawasan Serpong menjadi andalan para komuter yang ingin perjalanan lebih terprediksi. Dengan kombinasi kendaraan pribadi atau transportasi online menuju stasiun, lalu melanjutkan perjalanan dengan kereta, banyak penghuni bisa menghemat biaya bahan bakar sekaligus menghindari stres kemacetan.</p>
 <h2>Transportasi Umum di Dalam dan Sekitar Kawasan</h2>
 <p>Selain tol dan kereta, layanan bus dan shuttle juga membantu mobilitas penghuni, baik untuk perjalanan ke Jakarta maupun di dalam kawasan. Bagi keluarga dengan satu kendaraan, ketersediaan transportasi umum seperti ini membuat aktivitas anggota keluarga lain tetap lancar tanpa harus bergantung pada mobil pribadi.</p>
 <h2>Hitung Waktu Tempuh Secara Realistis</h2>

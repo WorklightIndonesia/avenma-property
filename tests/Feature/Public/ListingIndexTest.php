@@ -87,7 +87,7 @@ class ListingIndexTest extends TestCase
             ->assertSee('\u0022label\u0022:\u0022Pondok Aren, Kota Tangerang Selatan\u0022', false)
             // The old cascade told a buyer nothing was published here when they
             // typed a district into the province box.
-            ->assertSee('Mohon maaf, kami sedang tidak ada penawaran di lokasi tersebut')
+            ->assertSee('Belum ada properti di lokasi ini')
             ->assertDontSee('Belum ada properti terbit di sini')
             ->assertDontSee('Cilandak');
     }

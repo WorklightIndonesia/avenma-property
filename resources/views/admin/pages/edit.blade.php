@@ -162,7 +162,7 @@
                                 @if ($galleries['search'] !== '')
                                     Tidak ada properti yang cocok dengan &ldquo;{{ $galleries['search'] }}&rdquo;.
                                 @else
-                                    Belum ada foto properti. Unggah foto di menu Properti lebih dulu.
+                                    Belum ada foto properti. Upload foto di menu Properti lebih dulu.
                                 @endif
                             </p>
                         @endif
@@ -202,7 +202,7 @@
                         ></div>
                         <input type="hidden" id="input-{{ $key }}" name="{{ $field }}[body]" value="{{ $bodyHtml }}">
                         <p class="mt-1 text-xs text-ink-500">
-                            Sub-judul, tebal, miring, daftar, dan tautan tersedia di bilah atas. Tempelan dari Word dibersihkan otomatis.
+                            Sub-judul, tebal, miring, daftar, dan link tersedia di bilah atas. Tempelan dari Word dibersihkan otomatis.
                         </p>
                         <x-input-error class="mt-2" :messages="$errors->get($path.'.body')" />
                     </div>
@@ -220,16 +220,16 @@
 
                             <div class="mt-3 grid gap-4 sm:grid-cols-2">
                                 <div>
-                                    <x-input-label :for="'image-'.$key" value="{{ $section?->image ? 'Ganti gambar' : 'Unggah gambar' }}" />
+                                    <x-input-label :for="'image-'.$key" value="{{ $section?->image ? 'Ganti gambar' : 'Upload gambar' }}" />
                                     <x-file-input id="image-{{ $key }}" name="{{ $field }}[image]" accept="image/jpeg,image/png,image/webp" />
                                     <p class="mt-1 text-xs text-ink-500">JPEG, PNG, atau WebP, maksimal 5 MB. Disimpan sebagai WebP, lebar maksimal 1920 px.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get($path.'.image')" />
                                 </div>
 
                                 <div>
-                                    <x-input-label :for="'alt-'.$key" value="Teks alternatif gambar" />
+                                    <x-input-label :for="'alt-'.$key" value="Alt text gambar" />
                                     <x-text-input :id="'alt-'.$key" :name="$field.'[image_alt]'" class="mt-1 block w-full" :value="old($path.'.image_alt', $section?->image_alt)" />
-                                    <p class="mt-1 text-xs text-ink-500">Dibacakan pembaca layar bagi pengunjung yang tidak melihat gambar. Wajib bila ada gambar.</p>
+                                    <p class="mt-1 text-xs text-ink-500">Dibacakan screen reader bagi pengunjung yang tidak melihat gambar. Wajib bila ada gambar.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get($path.'.image_alt')" />
                                 </div>
                             </div>
@@ -332,7 +332,7 @@
             // Quill renders icon-only buttons without labels; give each a tooltip.
             // The toolbar sits beside the editor, so read it from the module.
             const toolbar = editor.getModule('toolbar').container;
-            const tooltips = { bold: 'Tebal', italic: 'Miring', underline: 'Garis bawah', blockquote: 'Kutipan', link: 'Tautan', clean: 'Hapus format' };
+            const tooltips = { bold: 'Tebal', italic: 'Miring', underline: 'Garis bawah', blockquote: 'Kutipan', link: 'Link', clean: 'Hapus format' };
 
             toolbar.querySelectorAll('button').forEach((button) => {
                 const name = [...button.classList].find((cls) => cls.startsWith('ql-'))?.slice(3);

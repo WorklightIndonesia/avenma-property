@@ -29,7 +29,7 @@
 
             <main id="main" class="flex flex-1 items-center py-16">
                 <div class="max-w-prose">
-                    <p class="text-xs font-semibold uppercase tracking-wider text-ink-500">Galat @yield('code')</p>
+                    <p class="text-xs font-semibold uppercase tracking-wider text-ink-500">Error @yield('code')</p>
 
                     <h1 class="mt-3 text-4xl font-semibold leading-[1.15] tracking-tight">@yield('heading')</h1>
 

@@ -129,16 +129,16 @@
                             :class="rateType === 'floating' ? 'border-ink-950 bg-ink-950 text-paper' : 'border-line text-ink-600 hover:border-ink-950'"
                             :aria-pressed="rateType === 'floating'"
                             @click="rateType = 'floating'"
-                        >Mengambang</button>
+                        >Floating</button>
                     </div>
-                    <p id="{{ $id }}-rate-help" class="mt-2 text-xs text-ink-500" x-text="rateType === 'fixed' ? 'Bunga tetap selama tenor. Angka perkiraan, bukan penawaran bank.' : 'Bunga mengambang: angsuran bisa berubah bila suku bunga pasar naik.'">Bunga tetap selama tenor. Angka perkiraan, bukan penawaran bank.</p>
+                    <p id="{{ $id }}-rate-help" class="mt-2 text-xs text-ink-500" x-text="rateType === 'fixed' ? 'Bunga tetap selama tenor. Angka perkiraan, bukan penawaran bank.' : 'Bunga floating: angsuran bisa berubah bila suku bunga pasar naik.'">Bunga tetap selama tenor. Angka perkiraan, bukan penawaran bank.</p>
                 </div>
             </div>
 
             <div class="bg-ink-950 p-5 text-paper sm:p-6">
                 <p class="text-sm text-paper/60">Angsuran per bulan</p>
                 <p class="tabular mt-2 text-3xl font-semibold leading-none sm:text-4xl" x-text="price > 0 ? rp(monthly) : '—'">{{ $price > 0 ? $rupiah($monthly) : '—' }}</p>
-                <p class="mt-2 text-sm text-paper/60"><span x-text="tenor">{{ $tenor }}</span> tahun · <span x-text="rateType === 'fixed' ? 'bunga tetap' : 'bunga mengambang'">bunga tetap</span></p>
+                <p class="mt-2 text-sm text-paper/60"><span x-text="tenor">{{ $tenor }}</span> tahun · <span x-text="rateType === 'fixed' ? 'bunga tetap' : 'bunga floating'">bunga tetap</span></p>
 
                 <dl class="mt-6 space-y-3 border-t border-paper/15 pt-5 text-sm">
                     <div class="flex items-baseline justify-between gap-3">
