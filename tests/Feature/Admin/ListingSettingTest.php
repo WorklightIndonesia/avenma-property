@@ -80,7 +80,7 @@ class ListingSettingTest extends TestCase
         $this->assertDatabaseMissing('listing_options', ['id' => $option->id]);
     }
 
-    public function test_an_agen_adds_and_removes_a_developer_here(): void
+    public function test_an_agen_adds_a_developer_here(): void
     {
         $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
 
@@ -90,8 +90,24 @@ class ListingSettingTest extends TestCase
 
         $developer = Developer::where('name', 'Graha Nusantara')->firstOrFail();
         $this->assertSame('graha-nusantara', $developer->slug);
+    }
 
-        $this->actingAs($agen)
+    public function test_an_agen_cannot_delete_a_developer_here(): void
+    {
+        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
+
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_AGEN]))
+            ->delete("/admin/pengaturan-listing/developer/{$developer->id}")
+            ->assertForbidden();
+
+        $this->assertModelExists($developer);
+    }
+
+    public function test_an_admin_deletes_an_unused_developer_here(): void
+    {
+        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
+
+        $this->actingAs($this->admin())
             ->delete("/admin/pengaturan-listing/developer/{$developer->id}")
             ->assertRedirect();
 

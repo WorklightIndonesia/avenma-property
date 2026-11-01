@@ -35,6 +35,7 @@
         $name = $filters['nama'] ?? '';
         $sortAsc = $sort === 'tersedikit';
         $sortDesc = $sort === 'terbanyak';
+        $isAdmin = auth()->user()->role === App\Models\User::ROLE_ADMIN;
         // Only the column that was just edited opens; a filled filter is already
         // readable from the header text.
         $open = request('focus') === 'nama' ? 'nama' : null;
@@ -45,7 +46,9 @@
             <colgroup>
                 <col>
                 <col class="w-24">
-                <col class="w-40">
+                @if ($isAdmin)
+                    <col class="w-40">
+                @endif
             </colgroup>
             <thead class="bg-sand text-sm font-semibold text-ink-600">
                 <tr>
@@ -68,25 +71,33 @@
                             @endif
                         </a>
                     </th>
-                    <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>
+                    @if ($isAdmin)
+                        <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center">Aksi</span></th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
                 @forelse ($developers as $developer)
                     <tr class="min-h-12 border-b border-line last:border-0 hover:bg-paper">
                         <td class="px-4 py-2">
-                            <a href="{{ route('admin.developers.edit', $developer) }}" class="font-medium text-ink-950 hover:underline">{{ $developer->name }}</a>
+                            @if ($isAdmin)
+                                <a href="{{ route('admin.developers.edit', $developer) }}" class="font-medium text-ink-950 hover:underline">{{ $developer->name }}</a>
+                            @else
+                                <span class="font-medium text-ink-950">{{ $developer->name }}</span>
+                            @endif
                         </td>
                         <td class="tabular px-4 py-2 text-right text-ink-600">{{ $developer->listings_count }}</td>
-                        <td class="whitespace-nowrap px-4 py-1 text-center">
-                            <a href="{{ route('admin.developers.edit', $developer) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
+                        @if ($isAdmin)
+                            <td class="whitespace-nowrap px-4 py-1 text-center">
+                                <a href="{{ route('admin.developers.edit', $developer) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
 
-                            <button type="button" x-on:click="$dispatch('open-modal', 'delete-developer-{{ $developer->id }}')" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
-                        </td>
+                                <button type="button" x-on:click="$dispatch('open-modal', 'delete-developer-{{ $developer->id }}')" class="inline-flex h-10 items-center rounded px-3 font-medium text-danger hover:bg-sand">Hapus</button>
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="3" class="px-4 py-2">
+                        <td colspan="{{ $isAdmin ? 3 : 2 }}" class="px-4 py-2">
                             @if ($name !== '')
                                 <x-empty-state title="Tidak ada developer yang cocok." description="Ubah kata kunci atau hapus filter.">
                                     <x-slot:action>
@@ -112,6 +123,7 @@
     </div>
 
     {{-- One dialog per row, placed outside the table so nothing clips it. --}}
+    @if ($isAdmin)
     @foreach ($developers as $developer)
         <x-modal name="delete-developer-{{ $developer->id }}" labelledby="delete-developer-title-{{ $developer->id }}" max-width="md" focusable>
             <form method="POST" action="{{ route('admin.developers.destroy', $developer) }}" class="p-6">
@@ -130,4 +142,5 @@
             </form>
         </x-modal>
     @endforeach
+    @endif
 @endsection

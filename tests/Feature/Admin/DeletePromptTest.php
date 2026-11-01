@@ -40,6 +40,22 @@ class DeletePromptTest extends TestCase
             ->assertDontSee('return confirm', false);
     }
 
+    public function test_an_agen_gets_no_developer_delete_control(): void
+    {
+        $developer = Developer::create(['name' => 'Beverly Group', 'slug' => 'beverly-group']);
+        $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
+
+        $this->actingAs($agen)->get('/admin/developers')
+            ->assertOk()
+            ->assertDontSee("open-modal', 'delete-developer-{$developer->id}", false)
+            ->assertDontSee('Hapus developer?');
+
+        $this->actingAs($agen)->get('/admin/pengaturan-listing')
+            ->assertOk()
+            ->assertDontSee("open-modal', 'delete-setting-developer-{$developer->id}", false)
+            ->assertDontSee('Hapus developer?');
+    }
+
     public function test_the_account_table_opens_a_dialog_naming_the_account(): void
     {
         $agen = User::factory()->create([

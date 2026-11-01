@@ -18,14 +18,14 @@ class DeveloperCrudTest extends TestCase
         $this->get('/admin/developers')->assertRedirect('/login');
     }
 
-    public function test_agen_sees_the_developer_screens(): void
+    public function test_agen_sees_the_list_and_create_screen_only(): void
     {
         $developer = Developer::create(['name' => 'Ciputra', 'slug' => 'ciputra']);
         $agen = $this->agen();
 
         $this->actingAs($agen)->get('/admin/developers')->assertOk()->assertSee('Ciputra');
         $this->actingAs($agen)->get('/admin/developers/create')->assertOk();
-        $this->actingAs($agen)->get(route('admin.developers.edit', $developer))->assertOk()->assertSee('Ciputra');
+        $this->actingAs($agen)->get(route('admin.developers.edit', $developer))->assertForbidden();
     }
 
     public function test_agen_can_create_a_developer(): void
@@ -57,11 +57,22 @@ class DeveloperCrudTest extends TestCase
         $this->assertDatabaseCount('developers', 0);
     }
 
-    public function test_agen_can_update_a_developer(): void
+    public function test_agen_cannot_update_a_developer(): void
     {
         $developer = Developer::create(['name' => 'Lama', 'slug' => 'lama']);
 
         $this->actingAs($this->agen())
+            ->put(route('admin.developers.update', $developer), ['name' => 'Baru'])
+            ->assertForbidden();
+
+        $this->assertSame('Lama', $developer->refresh()->name);
+    }
+
+    public function test_admin_can_update_a_developer(): void
+    {
+        $developer = Developer::create(['name' => 'Lama', 'slug' => 'lama']);
+
+        $this->actingAs($this->admin())
             ->put(route('admin.developers.update', $developer), [
                 'name' => 'Baru',
                 'description' => 'Deskripsi baru',
@@ -80,7 +91,7 @@ class DeveloperCrudTest extends TestCase
         $developer = Developer::create(['name' => 'Dipakai', 'slug' => 'dipakai']);
         $this->listing($developer);
 
-        $this->actingAs($this->agen())
+        $this->actingAs($this->admin())
             ->delete(route('admin.developers.destroy', $developer))
             ->assertSessionHasErrors('developer');
 
@@ -91,11 +102,27 @@ class DeveloperCrudTest extends TestCase
     {
         $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
 
-        $this->actingAs($this->agen())
+        $this->actingAs($this->admin())
             ->delete(route('admin.developers.destroy', $developer))
             ->assertRedirect(route('admin.developers.index'));
 
         $this->assertDatabaseMissing('developers', ['id' => $developer->id]);
+    }
+
+    public function test_agen_cannot_delete_a_developer(): void
+    {
+        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
+
+        $this->actingAs($this->agen())
+            ->delete(route('admin.developers.destroy', $developer))
+            ->assertForbidden();
+
+        $this->assertDatabaseHas('developers', ['id' => $developer->id]);
+    }
+
+    private function admin(): User
+    {
+        return User::factory()->create(['role' => User::ROLE_ADMIN]);
     }
 
     private function agen(): User
