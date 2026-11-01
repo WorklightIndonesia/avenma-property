@@ -46,10 +46,10 @@
     <div class="mt-6 overflow-x-auto border border-line bg-white">
         <table class="w-full table-fixed min-w-[720px] text-sm" x-data="{ open: @js($open) }">
             <colgroup>
-                <col class="w-[44%]">
-                <col class="w-[20%]">
-                <col class="w-[20%]">
-                <col class="w-[16%]">
+                <col>
+                <col class="w-36">
+                <col class="w-32">
+                <col class="w-[14rem]">
             </colgroup>
             <thead class="bg-sand text-sm font-semibold text-ink-600" x-on:click.outside="open = null">
                 <tr>
@@ -78,7 +78,7 @@
             </thead>
             <tbody>
                 @forelse ($posts as $post)
-                    <tr class="h-12 border-b border-line last:border-0 hover:bg-paper">
+                    <tr class="min-h-12 border-b border-line last:border-0 hover:bg-paper">
                         <td class="px-4 py-2">
                             <a href="{{ route('admin.blog.edit', $post) }}" class="font-medium text-ink-950 hover:underline">{{ $post->title }}</a>
 

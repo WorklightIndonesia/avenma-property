@@ -25,7 +25,7 @@
             </thead>
             <tbody>
                 @foreach ($skeleton as $key => $page)
-                    <tr class="h-12 border-b border-line last:border-0 hover:bg-paper">
+                    <tr class="min-h-12 border-b border-line last:border-0 hover:bg-paper">
                         <td class="px-4 py-2 font-medium text-ink-950">{{ $page['label'] }}</td>
                         <td class="px-4 py-2 text-ink-600">{{ $page['path'] }}</td>
                         <td class="px-4 py-2 text-ink-600">{{ count($page['sections']) }} bagian</td>

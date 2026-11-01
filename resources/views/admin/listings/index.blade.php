@@ -113,7 +113,7 @@
             </thead>
             <tbody>
                 @forelse ($listings as $listing)
-                    <tr class="h-12 border-b border-line last:border-0 hover:bg-paper">
+                    <tr class="min-h-12 border-b border-line last:border-0 hover:bg-paper">
                         <td class="px-4 py-2">
                             <a href="{{ route('admin.listings.edit', $listing) }}" class="font-medium text-ink-950 hover:underline">{{ $listing->title }}</a>
 

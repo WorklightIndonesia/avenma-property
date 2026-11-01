@@ -73,7 +73,7 @@
             </thead>
             <tbody>
                 @forelse ($developers as $developer)
-                    <tr class="h-12 border-b border-line last:border-0 hover:bg-paper">
+                    <tr class="min-h-12 border-b border-line last:border-0 hover:bg-paper">
                         <td class="px-4 py-2">
                             <a href="{{ route('admin.developers.edit', $developer) }}" class="font-medium text-ink-950 hover:underline">{{ $developer->name }}</a>
                         </td>

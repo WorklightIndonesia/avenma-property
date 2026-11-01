@@ -190,7 +190,8 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 **Tabel (admin)**
 
 - Header `sand`, teks 14 px (sama dengan isi tabel) bobot 600 `ink-600`; tautan header menggelap ke `ink-950` saat hover.
-- Baris 48 px, border bawah `line`, hover `paper`.
+- Baris minimal 48 px, border bawah `line`, hover `paper`. Kolom isi memakai `min-h-12`; judul panjang membungkus dan barisnya ikut memanjang, bukan dipotong.
+- Kolom yang isinya sudah pasti lebarnya memakai ukuran tetap (`w-36`, `w-[14rem]`), dan satu kolom dibiarkan tanpa lebar untuk mengambil sisa. Jangan membagi kolom dengan persentase yang membuat kolom aksi lebih sempit dari tiga tombol di dalamnya.
 - Angka rata kanan dan `.tabular`; harga `whitespace-nowrap`.
 - Sel Aksi rata tengah di semua tabel.
 - Di layar sempit, bungkus tabel dengan `overflow-x-auto`, jangan `overflow-hidden`.
