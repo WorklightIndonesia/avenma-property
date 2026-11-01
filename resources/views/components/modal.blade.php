@@ -18,6 +18,7 @@ $maxWidth = [
 <div
     x-data="{
         show: @js($show),
+        lastFocused: null,
         focusables() {
             // All focusable element types...
             let selector = 'a, button, input:not([type=\'hidden\']), textarea, select, details, [tabindex]:not([tabindex=\'-1\'])'
@@ -26,6 +27,9 @@ $maxWidth = [
                 .filter(el => ! el.hasAttribute('disabled'))
         },
         firstFocusable() { return this.focusables()[0] },
+        // The cancel button carries data-autofocus, so a warning link placed
+        // above the buttons never takes the first keystroke.
+        initialFocusable() { return $el.querySelector('[data-autofocus]') || this.firstFocusable() },
         lastFocusable() { return this.focusables().slice(-1)[0] },
         nextFocusable() { return this.focusables()[this.nextFocusableIndex()] || this.firstFocusable() },
         prevFocusable() { return this.focusables()[this.prevFocusableIndex()] || this.lastFocusable() },
@@ -34,10 +38,13 @@ $maxWidth = [
     }"
     x-init="$watch('show', value => {
         if (value) {
+            lastFocused = document.activeElement;
             document.body.classList.add('overflow-y-hidden');
-            {{ $attributes->has('focusable') ? 'setTimeout(() => firstFocusable().focus(), 100)' : '' }}
+            {{ $attributes->has('focusable') ? 'setTimeout(() => initialFocusable().focus(), 100)' : '' }}
         } else {
             document.body.classList.remove('overflow-y-hidden');
+            if (lastFocused && lastFocused !== document.body) lastFocused.focus();
+            lastFocused = null;
         }
     })"
     x-on:open-modal.window="$event.detail == '{{ $name }}' ? show = true : null"

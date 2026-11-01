@@ -42,7 +42,7 @@
             </div>
 
             <div class="mt-6 flex flex-wrap justify-end gap-3">
-                <x-secondary-button x-on:click="$dispatch('close')">
+                <x-secondary-button data-autofocus x-on:click="$dispatch('close')">
                     Batal
                 </x-secondary-button>
 

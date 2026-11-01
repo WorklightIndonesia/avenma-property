@@ -36,6 +36,7 @@
             <aside
                 x-cloak
                 id="admin-sidebar"
+                x-bind:inert="!sidebarOpen"
                 :class="sidebarOpen ? 'translate-x-0 lg:w-64' : '-translate-x-full lg:w-0'"
                 class="fixed inset-y-0 left-0 z-40 flex w-64 transform flex-col overflow-hidden bg-ink-950 text-paper/70 transition-[transform,width] duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0 lg:self-start"
             >

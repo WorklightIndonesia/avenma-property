@@ -74,6 +74,19 @@ class DeletePromptTest extends TestCase
             ->assertDontSee('return confirm', false);
     }
 
+    public function test_a_delete_dialog_announces_itself_and_starts_on_cancel(): void
+    {
+        $listing = $this->listing();
+
+        $this->actingAs($this->admin())->get('/admin/listings')
+            ->assertOk()
+            ->assertSee('role="dialog"', false)
+            ->assertSee('aria-modal="true"', false)
+            ->assertSee('aria-labelledby="delete-listing-title-'.$listing->id.'"', false)
+            ->assertSee('id="delete-listing-title-'.$listing->id.'"', false)
+            ->assertSee('data-autofocus', false);
+    }
+
     private function listing(array $attributes = []): Listing
     {
         return Listing::create(array_merge([
