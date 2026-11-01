@@ -434,6 +434,22 @@
     </div>
 </form>
 
+{{-- Leaving a dirty form inside the app. A real unload still falls to the
+     browser's own prompt, which no page can style. --}}
+<x-modal name="unsaved-changes" labelledby="unsaved-changes-title" max-width="md" focusable>
+    <div class="p-6">
+        <h2 id="unsaved-changes-title" class="text-lg font-semibold text-ink-950">Tinggalkan halaman ini?</h2>
+        <p class="mt-2 text-sm text-ink-600">
+            Perubahan pada listing ini belum disimpan. Bila Anda pindah halaman, isian yang sudah diketik akan hilang dan tidak bisa dikembalikan.
+        </p>
+
+        <div class="mt-6 flex flex-wrap justify-end gap-3">
+            <x-secondary-button data-autofocus x-on:click="$dispatch('close')">Tetap di sini</x-secondary-button>
+            <x-danger-button type="button" x-on:click="$dispatch('leave-confirmed')">Buang perubahan</x-danger-button>
+        </div>
+    </div>
+</x-modal>
+
  {{-- Each photo dialog lives outside the main form: form elements cannot nest. --}}
 @if ($listing->exists)
     @foreach ($listing->images as $image)

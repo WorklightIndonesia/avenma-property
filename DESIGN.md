@@ -203,7 +203,8 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Isian memakai `<x-text-input>`, `<x-textarea>`, `<x-input-label>`, dan `<x-input-error>`; select memakai `<x-select>`.
 - `Kelengkapan Surat` adalah pengecualian: isinya terbuka (SHM, HGB, AJB, girik), jadi tetap `<x-text-input>` dengan `<datalist>` sebagai saran. Aturan "semua pilihan memakai `<x-select>`" hanya berlaku untuk pilihan tertutup.
 - Simpan dan Batal menempel di bawah layar (`sticky bottom-0`), bergaris atas `line`, berlatar `sand`. Form listing lebih dari 2.000 px, jadi tombol tidak boleh hanya ada di ujung bawah.
-- Form panjang memasang `data-dirty-guard`: mengetik menandai form kotor, dan browser meminta konfirmasi sebelum halaman ditinggalkan. Tandanya dibersihkan saat form dikirim.
+- Form panjang memasang `data-dirty-guard`. Mengetik menandai form kotor, dan tandanya dibersihkan saat form dikirim.
+- Ada dua jalur untuk form kotor, dan keduanya disengaja. Pindah halaman di dalam aplikasi memakai dialog `<x-modal name="unsaved-changes">`: judul berupa pertanyaan, satu paragraf yang menyebut apa yang hilang, `Tetap di sini` sebagai fokus awal, `Buang perubahan` sebagai aksi destruktif. Menutup tab, memuat ulang, atau keluar situs tetap memakai prompt bawaan browser; prompt itu tidak bisa digayakan maupun diterjemahkan dari halaman, jadi jangan mencoba menggantinya dengan dialog sendiri.
 - Setelah listing dibuat, pengalihan berakhir di `#foto` pada layar edit, karena label foto masih diisi di layar itu.
 - Placeholder kolom alt menampilkan teks yang dipakai galeri bila alt kosong: judul listing ditambah nama kecamatan. Jangan menyimpannya ke database; biarkan galeri yang menghitungnya supaya alt tidak basi saat judul berubah.
 

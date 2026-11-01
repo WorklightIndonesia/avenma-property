@@ -956,24 +956,70 @@ document.addEventListener('alpine:init', () => {
 
 Alpine.start();
 
-// Admin forms: the listing form is over 2,000px tall, and the sidebar link that
-// leaves it is one click away, so warn before the browser throws the entry away.
-document.querySelectorAll('[data-dirty-guard]').forEach((form) => {
-    let dirty = false;
+// Admin forms: the listing form is over 2,000px tall, and the links that leave
+// it are one click away. In-app navigation gets the site's own dialog; a real
+// unload (tab close, reload) still falls to the browser prompt, which cannot be
+// styled or translated from here.
+(() => {
+    const forms = [...document.querySelectorAll('[data-dirty-guard]')];
 
-    form.addEventListener('input', () => { dirty = true; });
-    form.addEventListener('change', () => { dirty = true; });
-    form.addEventListener('submit', () => { dirty = false; });
+    if (! forms.length) {
+        return;
+    }
+
+    let pendingHref = null;
+    let bypass = false;
+
+    const isDirty = () => forms.some((form) => form.dataset.dirty === '1');
+
+    forms.forEach((form) => {
+        form.addEventListener('input', () => { form.dataset.dirty = '1'; });
+        form.addEventListener('change', () => { form.dataset.dirty = '1'; });
+        form.addEventListener('submit', () => { form.dataset.dirty = '0'; bypass = true; });
+    });
+
+    // Capture, so a link's own handler never runs before the question is asked.
+    document.addEventListener('click', (event) => {
+        if (bypass || ! isDirty() || ! (event.target instanceof Element)) {
+            return;
+        }
+
+        const link = event.target.closest('a[href]');
+
+        if (! link || link.target === '_blank') {
+            return;
+        }
+
+        const url = new URL(link.href, location.href);
+        const samePage = url.pathname === location.pathname && url.search === location.search;
+
+        // A jump inside the same page is not leaving it.
+        if (samePage && url.hash !== '') {
+            return;
+        }
+
+        event.preventDefault();
+        pendingHref = link.href;
+        window.dispatchEvent(new CustomEvent('open-modal', { detail: 'unsaved-changes' }));
+    }, true);
 
     window.addEventListener('beforeunload', (event) => {
-        if (! dirty) {
+        if (bypass || ! isDirty()) {
             return;
         }
 
         event.preventDefault();
         event.returnValue = '';
     });
-});
+
+    window.addEventListener('leave-confirmed', () => {
+        bypass = true;
+
+        if (pendingHref) {
+            location.href = pendingHref;
+        }
+    });
+})();
 document.addEventListener('click', (event) => {
     const link = event.target.closest('[data-focus]');
 

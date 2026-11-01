@@ -155,6 +155,16 @@ class ListingCrudTest extends TestCase
         $this->assertTrue($listing->is_published);
     }
 
+    public function test_the_form_carries_the_unsaved_changes_dialog(): void
+    {
+        $this->actingAs($this->agen())->get('/admin/listings/create')
+            ->assertOk()
+            ->assertSee('data-dirty-guard', false)
+            ->assertSee('Tinggalkan halaman ini?')
+            ->assertSee('Buang perubahan')
+            ->assertSee('data-autofocus', false);
+    }
+
     public function test_creating_a_listing_lands_on_the_photo_section(): void
     {
         $response = $this->actingAs($this->agen())
