@@ -30,7 +30,7 @@
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-ink-600 hover:text-ink-950 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gold-700" href="{{ route('password.request') }}">
-                    Lupa password?
+                    Lupa kata sandi?
                 </a>
             @endif
 

@@ -20,10 +20,17 @@
 
                 <div>
                     @if ($listings->isEmpty())
-                        <x-empty-state class="border border-line" title="Belum ada properti yang cocok." description="Ubah atau hapus filter, lalu coba lagi.">
-                            <x-slot:action>
-                                <a href="{{ route('public.listings.index') }}" class="inline-flex items-center rounded border border-line px-5 py-3 text-sm font-semibold text-ink-950 hover:bg-sand">Hapus semua filter</a>
-                            </x-slot:action>
+                        @php($filtered = $chips !== [])
+                        <x-empty-state
+                            class="border border-line"
+                            :title="$filtered ? 'Belum ada properti yang cocok.' : 'Belum ada properti yang tayang.'"
+                            :description="$filtered ? 'Ubah atau hapus filter, lalu coba lagi.' : 'Listing baru akan tampil di sini setelah diterbitkan.'"
+                        >
+                            @if ($filtered)
+                                <x-slot:action>
+                                    <a href="{{ route('public.listings.index') }}" class="inline-flex items-center rounded border border-line px-5 py-3 text-sm font-semibold text-ink-950 hover:bg-sand">Hapus semua filter</a>
+                                </x-slot:action>
+                            @endif
                         </x-empty-state>
                     @else
                         <h2 class="sr-only">Hasil pencarian properti</h2>

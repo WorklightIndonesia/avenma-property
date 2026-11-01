@@ -1,0 +1,19 @@
+{
+    "Dashboard": "Dashboard",
+    "Profile": "Profil",
+    "Profile Information": "Data profil",
+    "Name": "Nama",
+    "Email": "Email",
+    "Save": "Simpan",
+    "Update Password": "Ubah kata sandi",
+    "Current Password": "Kata sandi saat ini",
+    "New Password": "Kata sandi baru",
+    "Confirm Password": "Konfirmasi kata sandi",
+    "Password": "Kata sandi",
+    "Delete Account": "Hapus akun",
+    "Log Out": "Keluar",
+    "Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.": "Setelah akun dihapus, seluruh datanya ikut terhapus dan tidak bisa dikembalikan. Unduh dulu data yang ingin Anda simpan.",
+    "Ensure your account is using a long, random password to stay secure.": "Pakai kata sandi yang panjang dan acak agar akun tetap aman.",
+    "Your email address is unverified.": "Email Anda belum diverifikasi.",
+    "Click here to re-send the verification email.": "Kirim ulang email verifikasi."
+}

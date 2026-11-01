@@ -17,7 +17,7 @@ class LocalizationTest extends TestCase
         $user = User::factory()->create();
 
         $this->post('/login', ['email' => $user->email, 'password' => 'salah-sekali'])
-            ->assertSessionHasErrors(['email' => 'Email atau password yang digunakan salah.']);
+            ->assertSessionHasErrors(['email' => 'Email atau kata sandi salah.']);
     }
 
     public function test_form_errors_are_indonesian_and_use_the_field_label(): void

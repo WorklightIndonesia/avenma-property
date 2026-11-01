@@ -314,6 +314,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 ## 9. Konten
 
 - Bahasa Indonesia baku, sapaan "Anda" untuk halaman publik, "kamu" tidak dipakai.
+- Istilah antarmuka memakai bahasa Indonesia: `kata sandi` (bukan `password`), `peran akun` (bukan `role`), `keluar` (bukan `logout`). Teks Inggris hanya untuk nama merek dan istilah properti yang tidak punya padanan lazim.
 - Harga: `Rp 1.250.000.000` (titik sebagai pemisah ribuan, tanpa desimal).
 - Persentase: `7,5%` (koma sebagai pemisah desimal).
 - Label status: `Dijual`, `Disewa`, `Baru`.

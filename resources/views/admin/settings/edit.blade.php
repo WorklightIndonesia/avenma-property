@@ -47,7 +47,7 @@
                 <div class="sm:col-span-2">
                     <x-input-label for="maps_url" value="Tautan Google Maps" />
                     <x-text-input id="maps_url" name="maps_url" type="url" class="mt-1 block w-full" :value="old('maps_url', $setting->maps_url)" placeholder="https://maps.app.goo.gl/..." />
-                    <p class="mt-1 text-xs text-ink-500">Buka tempat kantor di Google Maps, lalu Bagikan → Salin tautan. Dipakai ikon peta di footer dan tombol “Buka di Google Maps”; titik petanya diambil dari tautan ini.</p>
+                    <p class="mt-1 text-xs text-ink-500">Buka tempat kantor di Google Maps, lalu pilih Bagikan dan Salin tautan. Tautan ini dipakai ikon peta di footer dan tombol "Buka di Google Maps"; titik petanya diambil dari sini.</p>
                     <x-input-error class="mt-2" :messages="$errors->get('maps_url')" />
                 </div>
             </div>

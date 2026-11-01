@@ -29,16 +29,31 @@
                             <span class="block text-xs text-ink-500">{{ $developer->listings_count }} listing</span>
                         </span>
 
-                        <form method="POST" action="{{ route('admin.listing-settings.developers.destroy', $developer) }}" onsubmit="return confirm('Hapus developer ini?')">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-xs font-semibold text-ink-500 hover:text-danger">Hapus</button>
-                        </form>
+                        <button type="button" x-on:click="$dispatch('open-modal', 'delete-setting-developer-{{ $developer->id }}')" class="text-xs font-semibold text-ink-500 hover:text-danger">Hapus</button>
                     </li>
                 @empty
                     <li class="text-sm text-ink-500">Belum ada developer.</li>
                 @endforelse
             </ul>
+
+            @foreach ($developers as $developer)
+                <x-modal name="delete-setting-developer-{{ $developer->id }}" labelledby="delete-setting-developer-title-{{ $developer->id }}" max-width="md" focusable>
+                    <form method="POST" action="{{ route('admin.listing-settings.developers.destroy', $developer) }}" class="p-6">
+                        @csrf
+                        @method('DELETE')
+
+                        <h2 id="delete-setting-developer-title-{{ $developer->id }}" class="text-lg font-semibold text-ink-950">Hapus developer?</h2>
+                        <p class="mt-2 text-sm text-ink-600">
+                            &ldquo;{{ $developer->name }}&rdquo; akan dihapus dari pilihan listing. Developer yang masih dipakai listing tidak bisa dihapus.
+                        </p>
+
+                        <div class="mt-6 flex flex-wrap justify-end gap-3">
+                            <x-secondary-button data-autofocus x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                            <x-danger-button>Hapus developer</x-danger-button>
+                        </div>
+                    </form>
+                </x-modal>
+            @endforeach
 
             <form method="POST" action="{{ route('admin.listing-settings.developers.store') }}" class="mt-4 border-t border-line pt-4">
                 @csrf
@@ -63,17 +78,32 @@
                             <span class="min-w-0 truncate text-ink-950">{{ $label }}</span>
 
                             @if ($extra)
-                                <form method="POST" action="{{ route('admin.listing-settings.options.destroy', $extra) }}" onsubmit="return confirm('Hapus opsi ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="text-xs font-semibold text-ink-500 hover:text-danger">Hapus</button>
-                                </form>
+                                <button type="button" x-on:click="$dispatch('open-modal', 'delete-setting-option-{{ $extra->id }}')" class="text-xs font-semibold text-ink-500 hover:text-danger">Hapus</button>
                             @else
                                 <span class="text-xs text-ink-500">Bawaan</span>
                             @endif
                         </li>
                     @endforeach
                 </ul>
+
+                @foreach ($custom[$group] as $extra)
+                    <x-modal name="delete-setting-option-{{ $extra->id }}" labelledby="delete-setting-option-title-{{ $extra->id }}" max-width="md" focusable>
+                        <form method="POST" action="{{ route('admin.listing-settings.options.destroy', $extra) }}" class="p-6">
+                            @csrf
+                            @method('DELETE')
+
+                            <h2 id="delete-setting-option-title-{{ $extra->id }}" class="text-lg font-semibold text-ink-950">Hapus opsi?</h2>
+                            <p class="mt-2 text-sm text-ink-600">
+                                &ldquo;{{ $extra->label }}&rdquo; akan dihapus dari daftar pilihan. Opsi yang sudah dipakai listing tidak bisa dihapus.
+                            </p>
+
+                            <div class="mt-6 flex flex-wrap justify-end gap-3">
+                                <x-secondary-button data-autofocus x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                                <x-danger-button>Hapus opsi</x-danger-button>
+                            </div>
+                        </form>
+                    </x-modal>
+                @endforeach
 
                 <form method="POST" action="{{ route('admin.listing-settings.options.store') }}" class="mt-4 border-t border-line pt-4">
                     @csrf

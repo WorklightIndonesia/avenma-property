@@ -335,7 +335,7 @@ class ListingCrudTest extends TestCase
         $this->actingAs($agen)
             ->delete(route('admin.listings.destroy', $listing))
             ->assertRedirect(route('admin.listings.index'))
-            ->assertSessionHas('warning', 'Salah satu foto di listing ini sedang digunakan pada website, laporkan pada admin agar foto dapat diganti!');
+            ->assertSessionHas('warning', 'Salah satu foto listing ini dipakai di galeri beranda, jadi beranda kehilangan foto itu. Minta admin menggantinya.');
 
         $this->assertSoftDeleted($listing);
     }

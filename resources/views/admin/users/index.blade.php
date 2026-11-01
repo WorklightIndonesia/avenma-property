@@ -22,7 +22,7 @@
                     <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Nama</span></th>
                     <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Email</span></th>
                     <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Telepon</span></th>
-                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Role</span></th>
+                    <th class="px-4 py-3 text-left align-top"><span class="flex min-h-10 items-center font-semibold">Peran</span></th>
                     <th class="px-4 py-3 text-center align-top"><span class="flex min-h-10 items-center justify-center font-semibold">Aksi</span></th>
                 </tr>
             </thead>

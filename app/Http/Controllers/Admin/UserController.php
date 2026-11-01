@@ -47,7 +47,7 @@ class UserController extends Controller
         if ($user->is($request->user()) && $data['role'] !== $user->role) {
             return back()
                 ->withInput()
-                ->withErrors(['role' => 'Role akun yang sedang Anda pakai tidak bisa diubah.']);
+                ->withErrors(['role' => 'Peran akun yang sedang Anda pakai tidak bisa diubah.']);
         }
 
         if (blank($data['password'] ?? null)) {

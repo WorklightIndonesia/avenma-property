@@ -57,7 +57,7 @@
         <div class="mt-3">
             <x-input-label for="cover" value="{{ $post->cover_image ? 'Ganti gambar' : 'Unggah gambar' }}" />
             <x-file-input id="cover" name="cover" accept="image/jpeg,image/png,image/webp" />
-            <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB. Tanpa sampul, daftar artikel memakai blok lambang.</p>
+            <p class="mt-1 text-xs text-ink-500">JPG, PNG, atau WebP. Maksimal 5 MB. Tanpa sampul, daftar artikel memakai logo Avenma.</p>
             <x-input-error class="mt-2" :messages="$errors->get('cover')" />
         </div>
     </section>

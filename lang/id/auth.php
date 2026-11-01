@@ -2,8 +2,8 @@
 
 return [
 
-    'failed' => 'Email atau password yang digunakan salah.',
-    'password' => 'Password yang dimasukkan salah.',
+    'failed' => 'Email atau kata sandi salah.',
+    'password' => 'Kata sandi yang dimasukkan salah.',
     'throttle' => 'Terlalu banyak percobaan masuk. Coba lagi dalam :seconds detik.',
 
 ];

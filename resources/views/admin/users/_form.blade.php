@@ -28,20 +28,20 @@
             </div>
 
             <div>
-                <x-input-label for="role" value="Role" />
+                <x-input-label for="role" value="Peran akun" />
                 <x-select
                     id="role"
                     name="role"
                     :options="$roles"
                     :value="old('role', $user->role ?? App\Models\User::ROLE_AGEN)"
-                    aria-label="Role akun"
+                    aria-label="Peran akun"
                     class="mt-1"
                 />
                 <x-input-error class="mt-2" :messages="$errors->get('role')" />
             </div>
 
             <div>
-                <x-input-label for="password" value="Password" />
+                <x-input-label for="password" value="Kata sandi" />
                 <x-text-input id="password" name="password" type="password" class="mt-1 block w-full" autocomplete="new-password" :required="$user->exists === false" />
                 <p class="mt-1 text-xs text-ink-500">
                     {{ $user->exists ? 'Kosongkan bila tidak diubah.' : 'Minimal 8 karakter, ada huruf besar, kecil, angka, dan simbol.' }}
@@ -50,7 +50,7 @@
             </div>
 
             <div>
-                <x-input-label for="password_confirmation" value="Konfirmasi password" />
+                <x-input-label for="password_confirmation" value="Konfirmasi kata sandi" />
                 <x-text-input id="password_confirmation" name="password_confirmation" type="password" class="mt-1 block w-full" autocomplete="new-password" :required="$user->exists === false" />
             </div>
         </div>

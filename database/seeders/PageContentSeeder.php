@@ -37,11 +37,11 @@ class PageContentSeeder extends Seeder
                 'key' => 'home',
                 'title' => 'Beranda',
                 'meta_title' => 'Avenma Properti - Katalog Properti Pilihan',
-                'meta_description' => 'Katalog properti primer dan sekunder pilihan di Jabodetabek, lengkap dengan informasi lokasi dan simulasi KPR.',
+                'meta_description' => 'Katalog properti primer dan sekunder di Jabodetabek, dengan lokasi resmi, luas, harga, dan simulasi KPR. Bandingkan tanpa membuka tab lain.',
                 'sections' => [
                     'hero' => [
                         'heading' => 'Temukan properti yang tepat untuk Anda.',
-                        'body' => '<p>Katalog properti pilihan di Jabodetabek, lengkap dengan informasi lokasi dan simulasi KPR.</p>',
+                        'body' => '<p>Setiap listing memuat lokasi resmi, luas, harga, dan perkiraan angsuran, jadi Anda bisa membandingkan tanpa membuka tab lain.</p>',
                         'image_alt' => 'Foto properti utama Avenma',
                         'cta_label' => 'Lihat Properti',
                         'cta_url' => '/properti',

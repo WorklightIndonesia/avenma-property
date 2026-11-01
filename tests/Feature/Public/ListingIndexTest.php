@@ -287,10 +287,22 @@ class ListingIndexTest extends TestCase
 
     public function test_empty_state_offers_a_reset(): void
     {
-        $this->get('/properti')
+        $this->listing(['bedrooms' => 2]);
+
+        // A filter that matches nothing is a dead end; an empty catalog is not,
+        // so only the first one offers a way back.
+        $this->get('/properti?kamar=5')
             ->assertOk()
             ->assertSee('Belum ada properti yang cocok')
             ->assertSee('Hapus semua filter');
+    }
+
+    public function test_an_empty_catalog_does_not_blame_the_filters(): void
+    {
+        $this->get('/properti')
+            ->assertOk()
+            ->assertSee('Belum ada properti yang tayang')
+            ->assertDontSee('Hapus semua filter');
     }
 
     private function listing(array $attributes = []): Listing

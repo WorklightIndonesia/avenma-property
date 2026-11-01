@@ -158,7 +158,7 @@
                 </ul>
             </div>
 
-            <p class="mt-1 text-xs text-ink-500" x-show="!suggestNote">Saran dari OpenStreetMap (Photon). Boleh diabaikan — ketik alamat sendiri tetap bisa.</p>
+            <p class="mt-1 text-xs text-ink-500" x-show="!suggestNote">Saran dari OpenStreetMap (Photon). Boleh diabaikan; mengetik alamat sendiri tetap bisa.</p>
             <p class="mt-1 text-xs text-danger" x-show="suggestNote" x-text="suggestNote"></p>
             <p class="mt-1 text-xs text-ink-500" x-show="suggestBusy">Mencari saran…</p>
             <x-input-error class="mt-2" :messages="$errors->get('address')" />
@@ -333,7 +333,7 @@
             <div>
                 <x-input-label for="contact_phone" value="Nomor WhatsApp agen" />
                 <x-text-input id="contact_phone" name="contact_phone" type="tel" class="mt-1 block w-full" :value="old('contact_phone', $listing->contact_phone)" placeholder="{{ auth()->user()->phone }}" />
-                <p class="mt-1 text-xs text-ink-500">Kosongkan untuk memakai nomor Anda, atau nomor kantor bila kosong.</p>
+                <p class="mt-1 text-xs text-ink-500">Kosongkan untuk memakai nomor Anda. Bila nomor Anda juga kosong, dipakai nomor kantor.</p>
                 <x-input-error class="mt-2" :messages="$errors->get('contact_phone')" />
             </div>
 
@@ -346,7 +346,7 @@
                 <x-checkbox id="show_kpr" name="show_kpr" :checked="old('show_kpr', $listing->show_kpr ?? true)">
                     Tampilkan simulasi KPR untuk listing ini?
                 </x-checkbox>
-                <p class="text-xs text-ink-500">Muncul di bawah halaman properti. Listing berstatus disewa tidak menampilkannya.</p>
+                <p class="text-xs text-ink-500">Muncul di halaman detail properti. Listing berstatus disewa tidak menampilkannya.</p>
 
                 @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
                     <x-checkbox id="is_featured" name="is_featured" :checked="old('is_featured', $listing->is_featured ?? false)">

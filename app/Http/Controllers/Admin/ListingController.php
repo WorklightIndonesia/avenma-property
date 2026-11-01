@@ -165,7 +165,7 @@ class ListingController extends Controller
             ->with('status', 'Listing dihapus.');
 
         if ($inHero && $request->user()->role !== User::ROLE_ADMIN) {
-            $response->with('warning', 'Salah satu foto di listing ini sedang digunakan pada website, laporkan pada admin agar foto dapat diganti!');
+            $response->with('warning', 'Salah satu foto listing ini dipakai di galeri beranda, jadi beranda kehilangan foto itu. Minta admin menggantinya.');
         }
 
         return $response;
