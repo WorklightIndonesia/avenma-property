@@ -13,6 +13,8 @@ class Developer extends Model
         'slug',
         'description',
         'description_en',
+        'whatsapp',
+        'email',
         'logo',
     ];
 

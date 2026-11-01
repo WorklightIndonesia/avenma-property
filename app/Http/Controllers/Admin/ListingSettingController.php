@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\DeveloperRequest;
 use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\ListingOption;
@@ -23,24 +24,18 @@ class ListingSettingController extends Controller
     {
         return view('admin.listing-settings.index', [
             'groups' => ListingOption::GROUPS,
-            'custom' => collect(ListingOption::GROUPS)
-                ->mapWithKeys(fn ($label, $group) => [$group => ListingOption::custom($group)]),
             'options' => collect(ListingOption::GROUPS)
-                ->mapWithKeys(fn ($label, $group) => [$group => ListingOption::options($group)]),
+                ->mapWithKeys(fn ($label, $group) => [
+                    $group => ListingOption::query()->where('group', $group)->orderBy('label')->get(),
+                ]),
             'developers' => Developer::query()->withCount('listings')->orderBy('name')->get(),
         ]);
     }
 
-    public function storeDeveloper(Request $request): RedirectResponse
+    public function storeDeveloper(DeveloperRequest $request): RedirectResponse
     {
-        $data = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-        ], [
-            'name.required' => 'Nama developer wajib diisi.',
-        ]);
-
-        $developer = new Developer($data);
-        Slug::save($developer, $data['name'], 'developer');
+        $developer = new Developer($request->validated());
+        Slug::save($developer, $request->validated()['name'], 'developer');
 
         return back()->with('status', "Developer \"{$developer->name}\" ditambahkan.");
     }

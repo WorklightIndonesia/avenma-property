@@ -28,13 +28,13 @@ class DeletePromptTest extends TestCase
             ->assertDontSee('return confirm', false);
     }
 
-    public function test_the_developer_table_opens_a_dialog_naming_the_developer(): void
+    public function test_the_settings_page_opens_a_dialog_naming_the_developer(): void
     {
         $developer = Developer::create(['name' => 'Beverly Group', 'slug' => 'beverly-group']);
 
-        $this->actingAs($this->admin())->get('/admin/developers')
+        $this->actingAs($this->admin())->get('/admin/pengaturan-listing')
             ->assertOk()
-            ->assertSee("open-modal', 'delete-developer-{$developer->id}", false)
+            ->assertSee("open-modal', 'delete-setting-developer-{$developer->id}", false)
             ->assertSee('Hapus developer?')
             ->assertSee('Beverly Group')
             ->assertDontSee('return confirm', false);
@@ -44,11 +44,6 @@ class DeletePromptTest extends TestCase
     {
         $developer = Developer::create(['name' => 'Beverly Group', 'slug' => 'beverly-group']);
         $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
-
-        $this->actingAs($agen)->get('/admin/developers')
-            ->assertOk()
-            ->assertDontSee("open-modal', 'delete-developer-{$developer->id}", false)
-            ->assertDontSee('Hapus developer?');
 
         $this->actingAs($agen)->get('/admin/pengaturan-listing')
             ->assertOk()

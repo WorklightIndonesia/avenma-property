@@ -3,7 +3,7 @@
 @section('title', 'Ubah developer')
 
 @section('content')
-    <x-back-link :href="route('admin.developers.index')">Developer</x-back-link>
+    <x-back-link :href="route('admin.listing-settings.index')">Pengaturan Listing</x-back-link>
     <h1 class="text-xl font-semibold text-ink-950">Ubah developer</h1>
 
     @include('admin.developers._form', [

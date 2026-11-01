@@ -59,13 +59,6 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
         ->parameters(['blog' => 'post'])
         ->names('admin.blog');
 
-    // Agen may list a developer and add one; changing or removing an existing
-    // record is admin-only, because the name is shared with every listing that
-    // points at that developer.
-    Route::resource('/admin/developers', DeveloperController::class)
-        ->only(['index', 'create', 'store'])
-        ->names('admin.developers');
-
     Route::get('/admin/pengaturan-listing', [ListingSettingController::class, 'index'])
         ->name('admin.listing-settings.index');
     Route::post('/admin/pengaturan-listing/developer', [ListingSettingController::class, 'storeDeveloper'])
@@ -76,12 +69,12 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
         ->name('admin.listing-settings.options.destroy');
 
     Route::middleware('role:'.User::ROLE_ADMIN)->group(function () {
+        // Developers have no page of their own: they are listed and added on
+        // Pengaturan Listing, and only this edit screen stays outside it.
         Route::get('/admin/developers/{developer}/edit', [DeveloperController::class, 'edit'])
             ->name('admin.developers.edit');
         Route::put('/admin/developers/{developer}', [DeveloperController::class, 'update'])
             ->name('admin.developers.update');
-        Route::delete('/admin/developers/{developer}', [DeveloperController::class, 'destroy'])
-            ->name('admin.developers.destroy');
         Route::delete('/admin/pengaturan-listing/developer/{developer}', [ListingSettingController::class, 'destroyDeveloper'])
             ->name('admin.listing-settings.developers.destroy');
 

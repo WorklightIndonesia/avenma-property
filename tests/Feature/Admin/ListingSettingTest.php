@@ -23,8 +23,34 @@ class ListingSettingTest extends TestCase
                 ->assertSee('Tipe properti')
                 ->assertSee('Status')
                 ->assertSee('Tambah developer')
-                ->assertSee('Bawaan');
+                ->assertSee('Rumah Siap Huni');
         }
+    }
+
+    public function test_each_section_has_a_search_box(): void
+    {
+        $this->actingAs($this->admin())
+            ->get('/admin/pengaturan-listing')
+            ->assertOk()
+            ->assertSee('aria-label="Cari developer"', false)
+            ->assertSee('aria-label="Cari tipe properti"', false)
+            ->assertSee('aria-label="Cari jenis penawaran"', false)
+            ->assertSee('aria-label="Cari status"', false);
+    }
+
+    public function test_a_builtin_option_has_a_delete_control_and_can_be_removed(): void
+    {
+        $option = ListingOption::where('group', 'status')->where('slug', 'disewa')->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->get('/admin/pengaturan-listing')
+            ->assertSee("delete-setting-option-{$option->id}", false);
+
+        $this->actingAs($this->admin())
+            ->delete("/admin/pengaturan-listing/opsi/{$option->id}")
+            ->assertRedirect();
+
+        $this->assertArrayNotHasKey('disewa', ListingOption::options('status'));
     }
 
     public function test_an_option_added_here_reaches_the_listing_form(): void
@@ -80,16 +106,57 @@ class ListingSettingTest extends TestCase
         $this->assertDatabaseMissing('listing_options', ['id' => $option->id]);
     }
 
+    public function test_the_add_form_asks_for_contact_details(): void
+    {
+        $this->actingAs($this->admin())
+            ->get('/admin/pengaturan-listing')
+            ->assertOk()
+            ->assertSee('name="whatsapp"', false)
+            ->assertSee('name="email"', false);
+    }
+
     public function test_an_agen_adds_a_developer_here(): void
     {
         $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
 
         $this->actingAs($agen)
-            ->post('/admin/pengaturan-listing/developer', ['name' => 'Graha Nusantara'])
+            ->post('/admin/pengaturan-listing/developer', [
+                'name' => 'Graha Nusantara',
+                'whatsapp' => '081234567890',
+                'email' => 'halo@graha.test',
+            ])
             ->assertRedirect();
 
         $developer = Developer::where('name', 'Graha Nusantara')->firstOrFail();
         $this->assertSame('graha-nusantara', $developer->slug);
+        $this->assertSame('081234567890', $developer->whatsapp);
+        $this->assertSame('halo@graha.test', $developer->email);
+    }
+
+    public function test_whatsapp_must_be_an_indonesian_mobile_number(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/pengaturan-listing/developer', $this->developerPayload(['whatsapp' => '12345']))
+            ->assertSessionHasErrors('whatsapp');
+
+        $this->assertDatabaseCount('developers', 0);
+    }
+
+    public function test_name_whatsapp_and_email_are_required(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/pengaturan-listing/developer', [])
+            ->assertSessionHasErrors(['name', 'whatsapp', 'email']);
+
+        $this->assertDatabaseCount('developers', 0);
+    }
+
+    public function test_duplicate_names_get_a_distinct_slug(): void
+    {
+        $this->actingAs($this->admin())->post('/admin/pengaturan-listing/developer', $this->developerPayload(['name' => 'Sama']));
+        $this->actingAs($this->admin())->post('/admin/pengaturan-listing/developer', $this->developerPayload(['name' => 'Sama']));
+
+        $this->assertSame(['sama', 'sama-2'], Developer::orderBy('id')->pluck('slug')->all());
     }
 
     public function test_an_agen_cannot_delete_a_developer_here(): void
@@ -101,6 +168,26 @@ class ListingSettingTest extends TestCase
             ->assertForbidden();
 
         $this->assertModelExists($developer);
+    }
+
+    public function test_an_admin_gets_an_edit_link_next_to_each_developer(): void
+    {
+        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/pengaturan-listing')
+            ->assertOk()
+            ->assertSee(route('admin.developers.edit', $developer));
+    }
+
+    public function test_an_agen_gets_no_developer_edit_link(): void
+    {
+        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
+
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_AGEN]))
+            ->get('/admin/pengaturan-listing')
+            ->assertOk()
+            ->assertDontSee(route('admin.developers.edit', $developer));
     }
 
     public function test_an_admin_deletes_an_unused_developer_here(): void
@@ -125,6 +212,19 @@ class ListingSettingTest extends TestCase
             ->assertSessionHasErrors('option');
 
         $this->assertModelExists($developer);
+    }
+
+    /**
+     * @param  array<string, mixed>  $overrides
+     * @return array<string, mixed>
+     */
+    private function developerPayload(array $overrides = []): array
+    {
+        return array_merge([
+            'name' => 'Ciputra',
+            'whatsapp' => '081234567890',
+            'email' => 'halo@ciputra.test',
+        ], $overrides);
     }
 
     private function admin(): User

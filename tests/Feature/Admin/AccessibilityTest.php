@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Developer;
 use App\Models\PageContent;
 use App\Models\User;
 use Tests\Feature\AccessibilityTestCase;
@@ -16,13 +17,20 @@ class AccessibilityTest extends AccessibilityTestCase
 
         $page = PageContent::where('key', 'kontak')->firstOrFail();
 
+        $developer = Developer::create([
+            'name' => 'Developer Uji',
+            'slug' => 'developer-uji',
+            'whatsapp' => '081234567890',
+            'email' => 'halo@developer.test',
+        ]);
+
         $screens = [
             '/admin/dashboard',
             '/admin/listings',
             '/admin/listings/create',
             '/admin/listings/rumah-uji/edit',
-            '/admin/developers',
-            '/admin/developers/create',
+            '/admin/pengaturan-listing',
+            route('admin.developers.edit', $developer),
             '/admin/blog',
             '/admin/blog/create',
             '/admin/blog/artikel-uji/edit',

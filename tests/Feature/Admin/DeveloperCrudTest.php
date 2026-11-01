@@ -3,58 +3,53 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\Developer;
-use App\Models\Listing;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class DeveloperCrudTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_guests_are_redirected_from_the_developer_screen(): void
+    public function test_the_developer_list_page_is_gone(): void
     {
-        $this->get('/admin/developers')->assertRedirect('/login');
+        $this->actingAs($this->admin())
+            ->get('/admin/developers')
+            ->assertNotFound();
     }
 
-    public function test_agen_sees_the_list_and_create_screen_only(): void
+    public function test_guests_are_redirected_from_the_edit_screen(): void
     {
         $developer = Developer::create(['name' => 'Ciputra', 'slug' => 'ciputra']);
-        $agen = $this->agen();
 
-        $this->actingAs($agen)->get('/admin/developers')->assertOk()->assertSee('Ciputra');
-        $this->actingAs($agen)->get('/admin/developers/create')->assertOk();
-        $this->actingAs($agen)->get(route('admin.developers.edit', $developer))->assertForbidden();
+        $this->get(route('admin.developers.edit', $developer))->assertRedirect('/login');
     }
 
-    public function test_agen_can_create_a_developer(): void
+    public function test_agen_cannot_open_the_edit_screen(): void
     {
+        $developer = Developer::create(['name' => 'Ciputra', 'slug' => 'ciputra']);
+
         $this->actingAs($this->agen())
-            ->post('/admin/developers', ['name' => 'Ciputra'])
-            ->assertRedirect(route('admin.developers.index'));
-
-        $developer = Developer::firstOrFail();
-
-        $this->assertSame('Ciputra', $developer->name);
-        $this->assertSame('ciputra', $developer->slug);
+            ->get(route('admin.developers.edit', $developer))
+            ->assertForbidden();
     }
 
-    public function test_duplicate_names_get_a_distinct_slug(): void
+    public function test_the_edit_form_carries_the_contact_fields(): void
     {
-        $this->actingAs($this->agen())->post('/admin/developers', ['name' => 'Sama']);
-        $this->actingAs($this->agen())->post('/admin/developers', ['name' => 'Sama']);
+        $developer = Developer::create([
+            'name' => 'Ciputra',
+            'slug' => 'ciputra',
+            'whatsapp' => '081234567890',
+            'email' => 'halo@ciputra.test',
+        ]);
 
-        $this->assertSame(['sama', 'sama-2'], Developer::orderBy('id')->pluck('slug')->all());
-    }
-
-    public function test_name_is_required(): void
-    {
-        $this->actingAs($this->agen())
-            ->post('/admin/developers', ['name' => ''])
-            ->assertSessionHasErrors('name');
-
-        $this->assertDatabaseCount('developers', 0);
+        $this->actingAs($this->admin())
+            ->get(route('admin.developers.edit', $developer))
+            ->assertOk()
+            ->assertSee('name="whatsapp"', false)
+            ->assertSee('name="email"', false)
+            ->assertSee('081234567890')
+            ->assertSee('halo@ciputra.test');
     }
 
     public function test_agen_cannot_update_a_developer(): void
@@ -76,48 +71,18 @@ class DeveloperCrudTest extends TestCase
             ->put(route('admin.developers.update', $developer), [
                 'name' => 'Baru',
                 'description' => 'Deskripsi baru',
+                'whatsapp' => '081298765432',
+                'email' => 'halo@baru.test',
             ])
-            ->assertRedirect(route('admin.developers.index'));
+            ->assertRedirect(route('admin.listing-settings.index'));
 
         $developer->refresh();
 
         $this->assertSame('Baru', $developer->name);
         $this->assertSame('baru', $developer->slug);
         $this->assertSame('Deskripsi baru', $developer->description);
-    }
-
-    public function test_developer_in_use_cannot_be_deleted(): void
-    {
-        $developer = Developer::create(['name' => 'Dipakai', 'slug' => 'dipakai']);
-        $this->listing($developer);
-
-        $this->actingAs($this->admin())
-            ->delete(route('admin.developers.destroy', $developer))
-            ->assertSessionHasErrors('developer');
-
-        $this->assertDatabaseHas('developers', ['id' => $developer->id]);
-    }
-
-    public function test_free_developer_can_be_deleted(): void
-    {
-        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
-
-        $this->actingAs($this->admin())
-            ->delete(route('admin.developers.destroy', $developer))
-            ->assertRedirect(route('admin.developers.index'));
-
-        $this->assertDatabaseMissing('developers', ['id' => $developer->id]);
-    }
-
-    public function test_agen_cannot_delete_a_developer(): void
-    {
-        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
-
-        $this->actingAs($this->agen())
-            ->delete(route('admin.developers.destroy', $developer))
-            ->assertForbidden();
-
-        $this->assertDatabaseHas('developers', ['id' => $developer->id]);
+        $this->assertSame('081298765432', $developer->whatsapp);
+        $this->assertSame('halo@baru.test', $developer->email);
     }
 
     private function admin(): User
@@ -128,20 +93,5 @@ class DeveloperCrudTest extends TestCase
     private function agen(): User
     {
         return User::factory()->create(['role' => User::ROLE_AGEN]);
-    }
-
-    private function listing(Developer $developer): Listing
-    {
-        return Listing::create([
-            'developer_id' => $developer->id,
-            'location_id' => $this->location()->id,
-            'title' => 'Rumah Uji',
-            'slug' => Str::random(10),
-            'description' => 'Deskripsi uji.',
-            'listing_type' => 'primary',
-            'property_type' => 'rumah_siap_huni',
-            'status' => 'dijual',
-            'price' => 1_000_000_000,
-        ]);
     }
 }

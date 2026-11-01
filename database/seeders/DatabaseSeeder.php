@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             MasterDataSeeder::class,
             WilayahSeeder::class,
             AdminSeeder::class,
+            DeveloperSeeder::class,
             ListingSeeder::class,
             PageContentSeeder::class,
             BlogPostSeeder::class,
