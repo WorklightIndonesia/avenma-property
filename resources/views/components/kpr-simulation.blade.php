@@ -131,7 +131,7 @@
                             @click="rateType = 'floating'"
                         >Mengambang</button>
                     </div>
-                    <p id="{{ $id }}-rate-help" class="mt-2 text-xs text-ink-500" x-text="rateType === 'fixed' ? 'Bunga tetap selama tenor. Angka asumsi internal, bukan penawaran bank.' : 'Bunga mengambang: angsuran bisa berubah bila suku bunga pasar naik.'">Bunga tetap selama tenor. Angka asumsi internal, bukan penawaran bank.</p>
+                    <p id="{{ $id }}-rate-help" class="mt-2 text-xs text-ink-500" x-text="rateType === 'fixed' ? 'Bunga tetap selama tenor. Angka perkiraan, bukan penawaran bank.' : 'Bunga mengambang: angsuran bisa berubah bila suku bunga pasar naik.'">Bunga tetap selama tenor. Angka perkiraan, bukan penawaran bank.</p>
                 </div>
             </div>
 
@@ -172,6 +172,6 @@
         </div>
 
         @if ($settingsNote)
-            <p class="mt-4 text-sm text-ink-500">Metode anuitas: angsuran tetap tiap bulan, bunga dihitung dari sisa pokok. Angka awal bunga dan DP minimum mengikuti <code class="text-xs">kpr_settings</code>.</p>
+            <p class="mt-4 text-sm text-ink-500">Hitungan ini memakai metode anuitas. Angsuran tetap tiap bulan, dan bunga dihitung dari sisa pokok. Suku bunga dan DP minimum di sini adalah angka awal dari kantor; Anda bisa mengubahnya untuk mencoba angka lain.</p>
         @endif
 </div>
