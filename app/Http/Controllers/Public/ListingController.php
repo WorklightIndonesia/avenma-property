@@ -138,7 +138,7 @@ class ListingController extends Controller
      * the three pickers: provinces, then cities by province, then kecamatan by
      * "province|city".
      *
-     * @return array{provinces: list<array{name: string, count: int}>, cities: array<string, list<array{name: string, count: int}>>, districts: array<string, list<array{name: string, count: int}>>}
+     * @return array{provinces: list<array{name: string, count: int}>, cities: array<string, list<array{name: string, count: int}>>, districts: array<string, list<array{name: string, count: int}>>, places: list<array{label: string, province: string, city: string|null, district: string|null, count: int}>}
      */
     private function regions(): array
     {
@@ -150,17 +150,50 @@ class ListingController extends Controller
         $provinces = [];
         $cities = [];
         $districts = [];
+        $places = [];
 
         foreach ($rows as $row) {
             $provinces[$row->province] = ($provinces[$row->province] ?? 0) + $row->total;
             $cities[$row->province][$row->city] = ($cities[$row->province][$row->city] ?? 0) + $row->total;
             $districts[$row->province.'|'.$row->city][$row->name] = $row->total;
+
+            // Every level is offered, each labelled with its parent, so a buyer
+            // can stop at provinsi, at kota, or at the kecamatan they think in.
+            $places[$row->province] = [
+                'label' => $row->province,
+                'province' => $row->province,
+                'city' => null,
+                'district' => null,
+                'count' => $provinces[$row->province],
+            ];
+
+            $cityLabel = $row->city.', '.$row->province;
+            $places[$cityLabel] = [
+                'label' => $cityLabel,
+                'province' => $row->province,
+                'city' => $row->city,
+                'district' => null,
+                'count' => $cities[$row->province][$row->city],
+            ];
+
+            $districtLabel = $row->name.', '.$row->city;
+            $places[$districtLabel] = [
+                'label' => $districtLabel,
+                'province' => $row->province,
+                'city' => $row->city,
+                'district' => $row->name,
+                'count' => $row->total,
+            ];
         }
+
+        $places = array_values($places);
+        usort($places, fn (array $a, array $b) => strcasecmp($a['label'], $b['label']));
 
         return [
             'provinces' => $this->options($provinces),
             'cities' => array_map(fn (array $group) => $this->options($group), $cities),
             'districts' => array_map(fn (array $group) => $this->options($group), $districts),
+            'places' => $places,
         ];
     }
 

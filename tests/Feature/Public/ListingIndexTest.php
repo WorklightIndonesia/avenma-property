@@ -79,11 +79,15 @@ class ListingIndexTest extends TestCase
         $this->listing(['location_id' => $pondokAren->id]);
         $this->listing(['title' => 'Draf', 'location_id' => $cilandak->id, 'is_published' => false]);
 
-        // The pickers are rendered from the JSON the page hands to Alpine.
+        // The location field is rendered from the JSON the page hands to Alpine,
+        // and every level that has a published listing is offered.
         $this->get('/properti')
             ->assertOk()
-            ->assertSee('\u0022name\u0022:\u0022Banten\u0022,\u0022count\u0022:2', false)
-            ->assertSee('\u0022name\u0022:\u0022Pondok Aren\u0022,\u0022count\u0022:2', false)
+            ->assertSee('\u0022label\u0022:\u0022Banten\u0022', false)
+            ->assertSee('\u0022label\u0022:\u0022Pondok Aren, Kota Tangerang Selatan\u0022', false)
+            // The old cascade told a buyer nothing was published here when they
+            // typed a district into the province box.
+            ->assertDontSee('Belum ada properti terbit di sini')
             ->assertDontSee('Cilandak');
     }
 

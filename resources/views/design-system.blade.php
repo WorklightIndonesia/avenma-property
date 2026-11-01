@@ -277,6 +277,12 @@
                                 'provinces' => [['name' => 'Banten', 'count' => 4], ['name' => 'DKI Jakarta', 'count' => 2]],
                                 'cities' => ['Banten' => [['name' => 'Kota Tangerang Selatan', 'count' => 4]]],
                                 'districts' => ['Banten|Kota Tangerang Selatan' => [['name' => 'Pondok Aren', 'count' => 4]]],
+                                'places' => [
+                                    ['label' => 'Banten', 'province' => 'Banten', 'city' => null, 'district' => null, 'count' => 4],
+                                    ['label' => 'Kota Tangerang Selatan, Banten', 'province' => 'Banten', 'city' => 'Kota Tangerang Selatan', 'district' => null, 'count' => 4],
+                                    ['label' => 'Pondok Aren, Kota Tangerang Selatan', 'province' => 'Banten', 'city' => 'Kota Tangerang Selatan', 'district' => 'Pondok Aren', 'count' => 4],
+                                    ['label' => 'DKI Jakarta', 'province' => 'DKI Jakarta', 'city' => null, 'district' => null, 'count' => 2],
+                                ],
                             ];
                         @endphp
                         @include('public.listings._filters', [

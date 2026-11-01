@@ -837,21 +837,96 @@ document.addEventListener('alpine:init', () => {
 
     /* Public filter: server-rendered lists, limited to regions that have a
        published listing. Nothing is applied until Terapkan is pressed. */
+    /* Public catalog: one search across provinsi, kota and kecamatan. Picking a
+       place fills the three fields the server still filters on, so the query
+       string and the chips stay exactly as they were. */
     Alpine.data('catalogFilter', (config = {}) => ({
-        ...PICKER,
-
-        provinces: config.provinces ?? [],
-        regionCities: config.cities ?? {},
-        regionDistricts: config.districts ?? {},
-        selProv: config.province || null,
-        qProv: config.province || '',
-        selCity: config.city || null,
-        qCity: config.city || '',
-        selDist: config.district || null,
-        qDistrict: config.district || '',
+        open: '',
+        active: 0,
+        places: config.places ?? [],
+        picked: null,
+        query: '',
 
         init() {
-            this.initRegions();
+            this.picked = this.places.find((place) =>
+                place.province === config.province
+                && place.city === (config.city || null)
+                && place.district === (config.district || null)
+            ) ?? null;
+
+            this.query = this.picked ? this.picked.label : '';
+        },
+
+        matches() {
+            if (! this.query || (this.picked && this.query === this.picked.label)) {
+                return this.places;
+            }
+
+            const needle = norm(this.query);
+
+            if (! needle) {
+                return this.places;
+            }
+
+            const starts = this.places.filter((place) => norm(place.label).startsWith(needle));
+
+            return starts.length ? starts : this.places.filter((place) => norm(place.label).includes(needle));
+        },
+
+        focusField() {
+            this.open = 'place';
+            this.active = 0;
+        },
+
+        // Typing drops the picked place, so an edited box never submits a value
+        // the buyer no longer sees.
+        type() {
+            this.picked = null;
+            this.focusField();
+        },
+
+        keys(event) {
+            if (event.key === 'Escape') {
+                this.open = '';
+                return;
+            }
+
+            const list = this.matches();
+
+            if (! list.length) {
+                return;
+            }
+
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+                event.preventDefault();
+
+                if (this.open !== 'place') {
+                    this.focusField();
+                    return;
+                }
+
+                const step = event.key === 'ArrowDown' ? 1 : -1;
+                this.active = (this.active + step + list.length) % list.length;
+                event.target.parentElement.querySelector('ul')?.children[this.active]?.scrollIntoView({ block: 'nearest' });
+            } else if (event.key === 'Enter') {
+                event.preventDefault();
+                this.pick(list[Math.min(this.active, list.length - 1)]);
+            } else if (event.key === 'Tab') {
+                this.open = '';
+            }
+        },
+
+        pick(place) {
+            this.picked = place;
+            this.query = place.label;
+            this.open = '';
+        },
+
+        clear() {
+            this.picked = null;
+            this.query = '';
+            this.open = 'place';
+            this.active = 0;
         },
     }));
 
@@ -968,6 +1043,8 @@ Alpine.start();
     }
 
     let pendingHref = null;
+    let pendingForm = null;
+    let pendingSubmitter = null;
     let bypass = false;
 
     const isDirty = () => forms.some((form) => form.dataset.dirty === '1');
@@ -1000,6 +1077,27 @@ Alpine.start();
 
         event.preventDefault();
         pendingHref = link.href;
+        pendingForm = null;
+        window.dispatchEvent(new CustomEvent('open-modal', { detail: 'unsaved-changes' }));
+    }, true);
+
+    // Logout and the photo-delete dialogs navigate by submitting a form that is
+    // not the guarded one, so they need the same question before they go.
+    document.addEventListener('submit', (event) => {
+        const form = event.target;
+
+        if (bypass || ! (form instanceof HTMLFormElement) || ! isDirty()) {
+            return;
+        }
+
+        if (form.hasAttribute('data-dirty-guard')) {
+            return;
+        }
+
+        event.preventDefault();
+        pendingForm = form;
+        pendingSubmitter = event.submitter ?? null;
+        pendingHref = null;
         window.dispatchEvent(new CustomEvent('open-modal', { detail: 'unsaved-changes' }));
     }, true);
 
@@ -1014,6 +1112,22 @@ Alpine.start();
 
     window.addEventListener('leave-confirmed', () => {
         bypass = true;
+
+        if (pendingForm) {
+            const form = pendingForm;
+            const submitter = pendingSubmitter;
+            pendingForm = null;
+            pendingSubmitter = null;
+
+            // requestSubmit keeps browser validation and the button's own value.
+            if (submitter) {
+                form.requestSubmit(submitter);
+            } else {
+                form.requestSubmit();
+            }
+
+            return;
+        }
 
         if (pendingHref) {
             location.href = pendingHref;

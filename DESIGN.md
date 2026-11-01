@@ -211,7 +211,15 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 **Dropdown**
 
 - Semua pilihan tertutup memakai `<x-select>`: tombol 44 px dengan border `line`, panel `absolute` bergaris `line` dan `shadow-float`, butir 44 px dengan garis kiri 2 px `gold-700` serta latar `gold-500/20` untuk pilihan aktif.
-- Pemilih wilayah dan filter lokasi bukan `<x-select>`: keduanya combobox berjenjang yang menyaring daftar sambil mengetik, dengan `location_id` hanya terisi lewat pilihan dari daftar. Jangan diganti `<x-select>`; alurnya diuji `PhotonAddressTest`.
+- Pemilih wilayah di form admin bukan `<x-select>`: itu combobox berjenjang yang menyaring daftar sambil mengetik, dengan `location_id` hanya terisi lewat pilihan dari daftar. Jangan diganti `<x-select>`; alurnya diuji `PhotonAddressTest`.
+
+**Filter katalog (publik)**
+
+- Lokasi memakai satu kolom pencarian, bukan tiga pemilih berjenjang. Daftarnya memuat tiga tingkat sekaligus, dan setiap label menyebut induknya: `Jawa Barat`, `Kota Bogor, Jawa Barat`, `Bogor Barat, Kota Bogor`. Setiap baris menampilkan jumlah listing terbit di wilayah itu.
+- Memilih satu tempat mengisi tiga field tersembunyi (`provinsi`, `kota`, `kecamatan`) sesuai tingkat yang dipilih, dan membiarkan tingkat di bawahnya kosong. Server tetap memfilter per kolom, jadi URL lama dengan ketiga parameter masih bekerja.
+- Mengetik ulang menghapus pilihan, supaya kolom tidak mengirim nilai yang sudah tidak terlihat pembeli.
+- Daftar hanya memuat wilayah yang punya listing terbit.
+- Pencarian tanpa hasil menulis "Tidak ada lokasi yang cocok." dengan tombol `Lihat semua lokasi`. Jangan menulis bahwa belum ada properti terbit di wilayah itu: yang gagal adalah pencocokan nama, bukan datanya, dan pesan lama menyalahkan stok yang sebenarnya ada.
 - Panah keyboard, Enter, Escape, Home, dan End bekerja; panel menutup saat klik di luar.
 - Tanpa JavaScript, komponen merender `<select>` biasa di dalam `<noscript>` supaya formulir tetap bisa dikirim.
 - Grid dua kolom mulai `sm`; judul, deskripsi, dan peta memakai lebar penuh.

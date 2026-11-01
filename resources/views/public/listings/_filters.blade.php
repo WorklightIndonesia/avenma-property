@@ -12,13 +12,16 @@
 
     $inputClass = 'mt-1 block w-full scroll-mt-24 rounded border-line bg-white py-2 text-sm text-ink-950 placeholder:text-ink-500 focus:border-gold-700 focus:ring-gold-500/30 disabled:bg-sand disabled:text-ink-500';
 
+    // The three region keys now live in one field, so their chips point there.
+    $focusId = fn (string $key) => in_array($key, ['provinsi', 'kota', 'kecamatan'], true)
+        ? $prefix.'filter-lokasi'
+        : $prefix.'filter-'.$key;
+
     $countOptions = fn (int $max) => collect(range(1, $max))->mapWithKeys(fn (int $n) => [$n => $n.'+'])->all();
     $hargaOptions = collect(App\Models\Listing::PRICE_BUCKETS)->map(fn (array $bucket) => $bucket['label'])->all();
 
     $regionData = [
-        'provinces' => $regions['provinces'],
-        'cities' => $regions['cities'],
-        'districts' => $regions['districts'],
+        'places' => $regions['places'] ?? [],
         'province' => $filters['provinsi'],
         'city' => $filters['kota'],
         'district' => $filters['kecamatan'],
@@ -33,8 +36,8 @@
             @foreach ($chips as $chip)
                 <span class="inline-flex items-center rounded border border-line bg-white text-sm">
                     <a
-                        href="#{{ $prefix }}filter-{{ $chip['key'] }}"
-                        data-focus="#{{ $prefix }}filter-{{ $chip['key'] }}"
+                        href="#{{ $focusId($chip['key']) }}"
+                        data-focus="#{{ $focusId($chip['key']) }}"
                         class="px-3 py-1.5 font-medium text-ink-950 hover:bg-sand"
                     >{{ $chip['label'] }}</a>
                     <a
@@ -87,86 +90,38 @@
             x-on:click.outside="open = ''"
         >
             <x-filter-group title="Lokasi">
-                {{-- Options hold only regions that have a published listing, and the
-                     visible inputs are search boxes: the hidden inputs below are what
-                     reaches the server, and only after Terapkan. --}}
+                {{-- One search across all three levels. The cascade made a buyer
+                     name the provinsi before they could reach the kecamatan they
+                     live in, and typing a district into the province box claimed
+                     nothing was published there. Only the level the buyer picked
+                     is sent; the server still filters provinsi, kota and
+                     kecamatan separately. --}}
                 <div class="relative">
-                    <label for="{{ $prefix }}filter-provinsi" class="block text-xs font-medium text-ink-500">Provinsi</label>
+                    <label for="{{ $prefix }}filter-lokasi" class="block text-xs font-medium text-ink-500">Provinsi, kota, atau kecamatan</label>
                     <input
-                        id="{{ $prefix }}filter-provinsi"
+                        id="{{ $prefix }}filter-lokasi"
                         type="text"
-                        x-model="qProv"
-                        x-on:input="typeProvince($event.target.value)"
-                        x-on:focus="focusField('province')"
-                        x-on:keydown="keys($event, options(provinces, qProv, selProv), pickProvince, 'province')"
+                        x-model="query"
+                        x-on:input="type()"
+                        x-on:focus="focusField()"
+                        x-on:keydown="keys($event)"
                         autocomplete="off"
                         class="{{ $inputClass }}"
-                        placeholder="Semua provinsi"
+                        placeholder="Ketik nama lokasi"
                     >
-                    <ul x-show="open === 'province'" x-on:click.stop x-cloak class="absolute z-20 mt-1 max-h-56 w-full overflow-auto border border-line bg-white shadow-float">
-                        <template x-for="(item, index) in options(provinces, qProv, selProv)" :key="item.name">
+                    <ul x-show="open === 'place'" x-on:click.stop x-cloak class="absolute z-20 mt-1 max-h-64 w-full overflow-auto border border-line bg-white shadow-float">
+                        <template x-for="(item, index) in matches()" :key="item.label">
                             <li x-on:mouseenter="active = index">
-                                <button type="button" x-on:click="pickProvince(item)" class="flex min-h-11 w-full items-center justify-between gap-3 border-l-2 px-3 text-left text-sm" :class="index === active ? 'border-gold-700 bg-gold-500/20 font-medium' : 'border-transparent hover:bg-sand'">
-                                    <span x-text="item.name"></span>
+                                <button type="button" x-on:click="pick(item)" class="flex min-h-11 w-full items-center justify-between gap-3 border-l-2 px-3 text-left text-sm" :class="index === active ? 'border-gold-700 bg-gold-500/20 font-medium' : 'border-transparent hover:bg-sand'">
+                                    <span x-text="item.label"></span>
                                     <span class="text-xs text-ink-500" x-text="item.count"></span>
                                 </button>
                             </li>
                         </template>
-                        <li x-show="options(provinces, qProv, selProv).length === 0" class="px-3 py-2 text-sm text-ink-500">Belum ada properti terbit di sini.</li>
-                    </ul>
-                </div>
-
-                <div class="relative">
-                    <label for="{{ $prefix }}filter-kota" class="block text-xs font-medium text-ink-500">Kota / kabupaten</label>
-                    <input
-                        id="{{ $prefix }}filter-kota"
-                        type="text"
-                        x-model="qCity"
-                        x-bind:disabled="!selProv"
-                        x-on:input="typeCity($event.target.value)"
-                        x-on:focus="selProv && focusField('city')"
-                        x-on:keydown="keys($event, options(cities, qCity, selCity), pickCity, 'city')"
-                        autocomplete="off"
-                        class="{{ $inputClass }}"
-                        x-bind:placeholder="selProv ? 'Semua kota' : 'Pilih provinsi dulu'"
-                    >
-                    <ul x-show="open === 'city'" x-on:click.stop x-cloak class="absolute z-20 mt-1 max-h-56 w-full overflow-auto border border-line bg-white shadow-float">
-                        <template x-for="(item, index) in options(cities, qCity, selCity)" :key="item.name">
-                            <li x-on:mouseenter="active = index">
-                                <button type="button" x-on:click="pickCity(item)" class="flex min-h-11 w-full items-center justify-between gap-3 border-l-2 px-3 text-left text-sm" :class="index === active ? 'border-gold-700 bg-gold-500/20 font-medium' : 'border-transparent hover:bg-sand'">
-                                    <span x-text="item.name"></span>
-                                    <span class="text-xs text-ink-500" x-text="item.count"></span>
-                                </button>
-                            </li>
-                        </template>
-                        <li x-show="options(cities, qCity, selCity).length === 0" class="px-3 py-2 text-sm text-ink-500">Belum ada properti terbit di sini.</li>
-                    </ul>
-                </div>
-
-                <div class="relative">
-                    <label for="{{ $prefix }}filter-kecamatan" class="block text-xs font-medium text-ink-500">Kecamatan</label>
-                    <input
-                        id="{{ $prefix }}filter-kecamatan"
-                        type="text"
-                        x-model="qDistrict"
-                        x-bind:disabled="!selCity"
-                        x-on:input="typeDistrict($event.target.value)"
-                        x-on:focus="selCity && focusField('district')"
-                        x-on:keydown="keys($event, options(districts, qDistrict, selDist), pickDistrict, 'district')"
-                        autocomplete="off"
-                        class="{{ $inputClass }}"
-                        x-bind:placeholder="selCity ? 'Semua kecamatan' : 'Pilih kota dulu'"
-                    >
-                    <ul x-show="open === 'district'" x-on:click.stop x-cloak class="absolute z-20 mt-1 max-h-56 w-full overflow-auto border border-line bg-white shadow-float">
-                        <template x-for="(item, index) in options(districts, qDistrict, selDist)" :key="item.name">
-                            <li x-on:mouseenter="active = index">
-                                <button type="button" x-on:click="pickDistrict(item)" class="flex min-h-11 w-full items-center justify-between gap-3 border-l-2 px-3 text-left text-sm" :class="index === active ? 'border-gold-700 bg-gold-500/20 font-medium' : 'border-transparent hover:bg-sand'">
-                                    <span x-text="item.name"></span>
-                                    <span class="text-xs text-ink-500" x-text="item.count"></span>
-                                </button>
-                            </li>
-                        </template>
-                        <li x-show="options(districts, qDistrict, selDist).length === 0" class="px-3 py-2 text-sm text-ink-500">Belum ada properti terbit di sini.</li>
+                        <li x-show="matches().length === 0" class="px-3 py-2 text-sm text-ink-500">
+                            Tidak ada lokasi yang cocok.
+                            <button type="button" x-on:click="clear()" class="font-medium text-ink-950 underline hover:text-gold-700">Lihat semua lokasi</button>
+                        </li>
                     </ul>
                 </div>
             </x-filter-group>
@@ -260,9 +215,9 @@
                 <span class="text-xs text-ink-500">Perubahan berlaku setelah Terapkan.</span>
             </div>
 
-            <input type="hidden" name="provinsi" :value="selProv ?? ''">
-            <input type="hidden" name="kota" :value="selCity ?? ''">
-            <input type="hidden" name="kecamatan" :value="selDist ?? ''">
+            <input type="hidden" name="provinsi" :value="picked?.province ?? ''">
+            <input type="hidden" name="kota" :value="picked?.city ?? ''">
+            <input type="hidden" name="kecamatan" :value="picked?.district ?? ''">
             {{-- Kept out of the panel, but applying a filter must not reset it. --}}
             <input type="hidden" name="per" value="{{ $perPage }}">
             <input type="hidden" name="urut" value="{{ $sort }}">
