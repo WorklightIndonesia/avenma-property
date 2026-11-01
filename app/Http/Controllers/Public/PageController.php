@@ -41,6 +41,8 @@ class PageController extends Controller
             ->map(fn (HomeGalleryPhoto $photo) => [
                 'url' => route('public.listings.show', $photo->image->listing),
                 'image' => asset($photo->image->path),
+                'thumb' => asset($photo->image->thumb_path),
+                'medium' => asset($photo->image->medium_path),
                 'alt' => $photo->image->alt ?: $photo->image->listing->title,
                 'label' => $photo->image->listing->title,
             ]);
@@ -51,6 +53,8 @@ class PageController extends Controller
                 ->map(fn (Listing $listing) => [
                     'url' => route('public.listings.show', $listing),
                     'image' => asset($listing->images->first()->path),
+                    'thumb' => asset($listing->images->first()->thumb_path),
+                    'medium' => asset($listing->images->first()->medium_path),
                     'alt' => $listing->images->first()->alt ?: $listing->title,
                     'label' => $listing->title,
                 ])

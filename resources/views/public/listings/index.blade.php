@@ -56,7 +56,7 @@
 
                         <div class="grid gap-x-6 gap-y-8 sm:grid-cols-2 xl:grid-cols-3">
                             @foreach ($listings as $listing)
-                                <x-property-card :listing="$listing" />
+                                <x-property-card :listing="$listing" :priority="$loop->first" />
                             @endforeach
                         </div>
 

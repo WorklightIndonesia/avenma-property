@@ -137,7 +137,7 @@ class BlogPostController extends Controller
 
         $previous = $post->cover_image;
 
-        $post->cover_image = $file ? $this->images->store($file, 'images/blog') : null;
+        $post->cover_image = $file ? $this->images->store($file, 'images/blog', 'uploads', false) : null;
         $post->save();
 
         // Deleted only once the new path is saved: a failed write used to take

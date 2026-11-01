@@ -1,4 +1,4 @@
-@props(['listing'])
+@props(['listing', 'priority' => false])
 
 @php
     $type = \App\Models\ListingOption::options('listing_type')[$listing->listing_type] ?? $listing->listing_type;
@@ -20,9 +20,16 @@
     {{-- shortcut: sample photos stand in until the client sends real ones; listings without photos keep the mark block --}}
     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
         @if ($cover = $listing->images->first())
-            <img src="{{ asset($cover->path) }}" alt="{{ $cover->alt ?: $listing->title }}" class="h-full w-full object-cover" loading="lazy">
+            <img
+                src="{{ asset($cover->medium_path) }}"
+                srcset="{{ asset($cover->thumb_path) }} 480w, {{ asset($cover->medium_path) }} 960w, {{ asset($cover->path) }} 1920w"
+                sizes="(min-width: 1280px) 33vw, (min-width: 640px) 50vw, 100vw"
+                alt="{{ $cover->alt ?: $listing->title }}"
+                class="h-full w-full object-cover"
+                @if ($priority) fetchpriority="high" @else loading="lazy" decoding="async" @endif
+            >
         @else
-            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-14" onerror="this.remove()">
         @endif
 
         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>

@@ -18,6 +18,11 @@
              about 0.8s of mobile LCP. media="print" fetches without blocking,
              then flips to all; the noscript copy covers JavaScript being off. --}}
         <link rel="preconnect" href="https://fonts.bunny.net">
+        {{-- The stylesheet loads async, so without this the 400 and 600 faces
+             land around 3s and swap under the text already on screen. Preloading
+             them starts the download at parse time and removes that reflow. --}}
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2">
+        <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2">
         <link rel="preload" as="style" href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap">
         <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
         <noscript><link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet"></noscript>

@@ -16,6 +16,16 @@ class ImageService
     /** Widest image the site serves; anything larger is scaled down. */
     public const MAX_WIDTH = 1920;
 
+    /**
+     * The two smaller variants written beside every stored image. Cards and the
+     * gallery strip are a few hundred pixels wide, so shipping the 1920px file
+     * into them was most of the page weight. A 480px strip thumbnail and a
+     * 960px card/hero medium cover every slot without upscaling either.
+     */
+    public const THUMB_WIDTH = 480;
+
+    public const MEDIUM_WIDTH = 960;
+
     public const QUALITY = 82;
 
     /** Quality floor when a file has to be squeezed under the size cap. */
@@ -34,11 +44,33 @@ class ImageService
     public const MAX_INPUT_EDGE = 8000;
 
     /**
+     * Derives the variant path that sits beside a stored image. The suffix is
+     * always webp: the variant is re-encoded, whatever the original extension
+     * turned out to be.
+     */
+    public static function variantPath(string $path, string $suffix): string
+    {
+        $base = preg_replace('/\.[^.]+$/', '', $path);
+
+        return ($base === null ? $path : $base).'-'.$suffix.'.webp';
+    }
+
+    public static function thumbPath(string $path): string
+    {
+        return self::variantPath($path, 'thumb');
+    }
+
+    public static function mediumPath(string $path): string
+    {
+        return self::variantPath($path, 'medium');
+    }
+
+    /**
      * Returns the stored path. A file that cannot be decoded — or is too large
      * to decode safely — is stored as it arrived, so an upload never fails the
-     * request.
+     * request. The smaller variants are written beside it when they can be.
      */
-    public function store(UploadedFile $file, string $directory, string $disk = 'uploads'): string
+    public function store(UploadedFile $file, string $directory, string $disk = 'uploads', bool $withVariants = true): string
     {
         $bytes = $this->toWebp($file->getRealPath());
 
@@ -61,7 +93,88 @@ class ImageService
 
         Storage::disk($disk)->put($path, $bytes);
 
+        if ($withVariants) {
+            $this->writeVariants($path, $bytes, $disk);
+        }
+
         return $path;
+    }
+
+    /**
+     * Writes the thumbnail and medium variants for an already stored image.
+     * Returns false when the file is missing or cannot be decoded, so callers
+     * can count what a backfill actually managed.
+     */
+    public function writeVariantsFor(string $path, string $disk = 'uploads'): bool
+    {
+        $storage = Storage::disk($disk);
+
+        if (! $storage->exists($path)) {
+            return false;
+        }
+
+        return $this->writeVariants($path, (string) $storage->get($path), $disk);
+    }
+
+    private function writeVariants(string $path, string $bytes, string $disk): bool
+    {
+        $written = false;
+
+        foreach ([['thumb', self::THUMB_WIDTH], ['medium', self::MEDIUM_WIDTH]] as [$suffix, $width]) {
+            $variant = $this->scaledWebp($bytes, $width);
+
+            if ($variant === null) {
+                continue;
+            }
+
+            Storage::disk($disk)->put(self::variantPath($path, $suffix), $variant);
+            $written = true;
+        }
+
+        return $written;
+    }
+
+    /**
+     * Re-encodes stored bytes at the given width. Null means "cannot decode",
+     * and the caller leaves that variant absent rather than writing raw bytes
+     * under a webp name.
+     */
+    private function scaledWebp(string $bytes, int $width): ?string
+    {
+        if (! function_exists('imagecreatefromstring') || ! function_exists('imagewebp')) {
+            return null;
+        }
+
+        $size = @getimagesizefromstring($bytes);
+
+        if ($size === false || max($size[0], $size[1]) > self::MAX_INPUT_EDGE) {
+            return null;
+        }
+
+        $image = @imagecreatefromstring($bytes);
+
+        if (! $image instanceof GdImage) {
+            return null;
+        }
+
+        if (imagesx($image) > $width) {
+            $scaled = imagescale($image, $width, -1, IMG_BICUBIC);
+
+            if ($scaled instanceof GdImage) {
+                imagedestroy($image);
+                $image = $scaled;
+            }
+        }
+
+        imagepalettetotruecolor($image);
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+
+        $webp = $this->encode($image);
+
+        imagedestroy($image);
+
+        return $webp;
     }
 
     private function toWebp(string $path): ?string

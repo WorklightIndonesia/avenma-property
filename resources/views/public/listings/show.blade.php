@@ -36,6 +36,8 @@
     $photoAlt = $listing->title.($listing->location ? ' di '.$listing->location->name : '');
     $gallery = $listing->images->map(fn ($image) => [
         'src' => asset($image->path),
+        'thumb' => asset($image->thumb_path),
+        'medium' => asset($image->medium_path),
         'alt' => $image->alt ?: $photoAlt,
         'label' => $image->label,
     ])->values();
@@ -95,7 +97,7 @@
                                 </x-photo-gallery>
                             @else
                                 <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
-                                    <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="80" height="56" class="h-14 w-auto" onerror="this.remove()">
+                                    <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="80" height="56" class="h-14 w-20" onerror="this.remove()">
                                     <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
                                     @if ($listing->isNew())
                                         <span class="absolute left-3 top-3 rounded bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>

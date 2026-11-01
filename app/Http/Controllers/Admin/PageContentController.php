@@ -347,7 +347,7 @@ class PageContentController extends Controller
 
         $previous = filled($section->image) ? $section->image : null;
 
-        $section->image = $file ? $this->images->store($file, 'images/pages/'.$section->page_content_id) : null;
+        $section->image = $file ? $this->images->store($file, 'images/pages/'.$section->page_content_id, 'uploads', false) : null;
 
         return $previous;
     }

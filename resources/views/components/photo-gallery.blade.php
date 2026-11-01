@@ -54,7 +54,15 @@
                         class="relative w-[calc(25%-6px)] flex-none snap-start overflow-hidden border p-0.5 hover:border-ink-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gold-700"
                         aria-label="Tampilkan foto {{ $index + 1 }}{{ $photo['label'] ? ': '.$photo['label'] : '' }}"
                     >
-                        <img src="{{ $photo['src'] }}" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy" fetchpriority="low">
+                        <img
+                            src="{{ $photo['thumb'] }}"
+                            srcset="{{ $photo['thumb'] }} 480w, {{ $photo['medium'] }} 960w"
+                            sizes="25vw"
+                            alt=""
+                            class="aspect-[4/3] w-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                        >
                         @if ($photo['label'])
                             <span class="absolute bottom-1.5 left-1.5 hidden max-w-[calc(100%-0.75rem)] truncate rounded bg-ink-950/90 px-2 py-0.5 text-xs font-semibold text-paper sm:block">{{ $photo['label'] }}</span>
                         @endif

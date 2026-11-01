@@ -81,9 +81,9 @@
                             styleFor(index) {
                                 const p = this.pos(index);
                                 return {
-                                    left: (14 + p * 72) + '%',
+                                    left: '14%',
                                     opacity: Math.abs(p) > 1 ? '0' : (p === 0 ? '1' : '0.6'),
-                                    transform: p === 0 ? 'scale(1)' : 'scale(0.86)',
+                                    transform: 'translateX(' + (p * 100) + '%) scale(' + (p === 0 ? 1 : 0.86) + ')',
                                     zIndex: p === 0 ? 10 : 1,
                                     visibility: Math.abs(p) > 1 ? 'hidden' : 'visible',
                                 };
@@ -105,10 +105,10 @@
                                 <a
                                     href="{{ $slide['url'] }}"
                                     aria-label="{{ $slide['label'] }}"
-                                    class="absolute top-0 block w-[72%] px-2 transition-all duration-500 ease-out motion-reduce:transition-none"
+                                    class="absolute top-0 block w-[72%] px-2 transition duration-500 ease-out motion-reduce:transition-none"
                                     :style="styleFor({{ $index }})"
                                 >
-                                    <img src="{{ $slide['image'] }}" alt="{{ $slide['alt'] }}" class="aspect-[4/3] w-full border border-line object-cover" :class="pos({{ $index }}) === 0 ? 'shadow-[0_12px_26px_-10px_rgba(20,17,14,0.40)]' : ''" @if ($index > 0) loading="lazy" fetchpriority="low" @else fetchpriority="high" @endif>
+                                    <img src="{{ $slide['medium'] }}" srcset="{{ $slide['thumb'] }} 480w, {{ $slide['medium'] }} 960w, {{ $slide['image'] }} 1920w" sizes="72vw" alt="{{ $slide['alt'] }}" class="aspect-[4/3] w-full border border-line object-cover" :class="pos({{ $index }}) === 0 ? 'shadow-[0_12px_26px_-10px_rgba(20,17,14,0.40)]' : ''" @if ($index > 0) loading="lazy" fetchpriority="low" decoding="async" @else fetchpriority="high" @endif>
                                 </a>
                             @endforeach
 
@@ -160,7 +160,7 @@
                     >
                 @else
                     <div class="flex aspect-[16/9] flex-col items-center justify-center bg-sand lg:aspect-[4/3]">
-                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-14" onerror="this.remove()">
                         <p class="mt-3 text-xs text-ink-500">{{ $isHome ? 'Foto properti utama' : 'Foto halaman' }}</p>
                     </div>
                 @endif
@@ -367,7 +367,7 @@
 
                 <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     @foreach ($listings as $listing)
-                        <x-property-card :listing="$listing" />
+                        <x-property-card :listing="$listing" :priority="$loop->first" />
                     @endforeach
                 </div>
             </div>
