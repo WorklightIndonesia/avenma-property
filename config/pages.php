@@ -16,7 +16,7 @@ return [
         'path' => '/',
         'route' => 'public.pages.home',
         'sections' => [
-            'hero' => ['label' => 'Hero', 'image' => true, 'cta' => 2],
+            'hero' => ['label' => 'Bagian pembuka', 'image' => true, 'cta' => 2],
         ],
     ],
 

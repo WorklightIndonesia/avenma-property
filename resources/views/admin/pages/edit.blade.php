@@ -71,7 +71,7 @@
                         form="gallery-search-form"
                         :value="$galleries['search']"
                         class="mt-1 block w-full sm:max-w-sm"
-                        placeholder="Judul properti atau alt foto"
+                        placeholder="Judul properti atau teks alternatif foto"
                     />
                     <input type="hidden" name="pilih" form="gallery-search-form" value="{{ implode(',', $galleries['picked']) }}" data-picks-field>
 
@@ -142,7 +142,7 @@
                                     <img src="{{ asset($image->path) }}" alt="" class="h-14 w-20 shrink-0 border border-line object-cover">
                                     <span class="min-w-0">
                                         <span class="block truncate font-medium text-ink-950">{{ $image->label ?: 'Tanpa label' }}</span>
-                                        <span class="block truncate text-xs text-ink-500">{{ $image->alt ?: 'Tanpa alt text' }}</span>
+                                        <span class="block truncate text-xs text-ink-500">{{ $image->alt ?: 'Tanpa teks alternatif' }}</span>
                                     </span>
                                 </x-checkbox>
                             @endforeach
@@ -227,9 +227,9 @@
                                 </div>
 
                                 <div>
-                                    <x-input-label :for="'alt-'.$key" value="Alt text gambar" />
+                                    <x-input-label :for="'alt-'.$key" value="Teks alternatif gambar" />
                                     <x-text-input :id="'alt-'.$key" :name="$field.'[image_alt]'" class="mt-1 block w-full" :value="old($path.'.image_alt', $section?->image_alt)" />
-                                    <p class="mt-1 text-xs text-ink-500">Dibacakan pembaca layar. Wajib bila ada gambar.</p>
+                                    <p class="mt-1 text-xs text-ink-500">Dibacakan pembaca layar bagi pengunjung yang tidak melihat gambar. Wajib bila ada gambar.</p>
                                     <x-input-error class="mt-2" :messages="$errors->get($path.'.image_alt')" />
                                 </div>
                             </div>
@@ -263,7 +263,7 @@
 
                                     <div>
                                         <x-input-label :for="'cta-url-'.$key.$suffix" :value="'Tujuan tombol '.$slotName.' (opsional)'" />
-                                        <x-text-input :id="'cta-url-'.$key.$suffix" :name="$field.'['.$urlKey.']'" type="text" class="mt-1 block w-full" :value="$urlValue" placeholder="/properti atau https://" />
+                                        <x-text-input :id="'cta-url-'.$key.$suffix" :name="$field.'['.$urlKey.']'" type="text" class="mt-1 block w-full" :value="$urlValue" placeholder="Contoh: /properti" />
                                         <x-input-error class="mt-2" :messages="$errors->get($path.'.'.$urlKey)" />
                                     </div>
                                 </div>

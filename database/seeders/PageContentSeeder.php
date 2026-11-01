@@ -59,7 +59,7 @@ class PageContentSeeder extends Seeder
                 'sections' => [
                     'kontak' => [
                         'heading' => 'Hubungi Kami',
-                        'body' => '<p>WhatsApp adalah jalur tercepat: pesan Anda langsung sampai ke tim yang memegang listing terkait. Sertakan nama properti atau tautan halamannya agar kami bisa menjawab tanpa bertanya balik.</p>'
+                        'body' => '<p>WhatsApp adalah jalur tercepat. Pesan Anda langsung sampai ke tim yang memegang listing terkait. Sertakan nama properti atau tautan halamannya agar kami bisa menjawab tanpa bertanya balik.</p>'
                             .'<p>Untuk kerja sama developer atau pemasangan listing, tuliskan kebutuhan Anda pada pesan pertama.</p>',
                     ],
                 ],

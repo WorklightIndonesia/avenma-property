@@ -158,7 +158,7 @@
                 </ul>
             </div>
 
-            <p class="mt-1 text-xs text-ink-500" x-show="!suggestNote">Saran dari OpenStreetMap (Photon). Boleh diabaikan; mengetik alamat sendiri tetap bisa.</p>
+            <p class="mt-1 text-xs text-ink-500" x-show="!suggestNote">Saran alamat dari OpenStreetMap. Boleh diabaikan; mengetik alamat sendiri tetap bisa.</p>
             <p class="mt-1 text-xs text-danger" x-show="suggestNote" x-text="suggestNote"></p>
             <p class="mt-1 text-xs text-ink-500" x-show="suggestBusy">Mencari saran…</p>
             <x-input-error class="mt-2" :messages="$errors->get('address')" />
@@ -406,7 +406,7 @@
                         </div>
 
                         <div>
-                            <x-input-label for="alt-{{ $image->id }}" value="Alt" />
+                            <x-input-label for="alt-{{ $image->id }}" value="Teks alternatif" />
                             <x-text-input id="alt-{{ $image->id }}" name="images[{{ $image->id }}][alt]" type="text" maxlength="255" class="mt-1 block w-full" :value="old('images.'.$image->id.'.alt', $image->alt)" placeholder="{{ $photoAlt }}" />
                         </div>
 

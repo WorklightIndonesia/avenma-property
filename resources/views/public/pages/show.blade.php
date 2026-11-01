@@ -341,7 +341,7 @@
                             </form>
 
                             <noscript>
-                                <p class="mt-4 text-sm text-ink-600">Formulir butuh JavaScript. <a href="{{ $whatsappUrl }}" class="underline">Hubungi kami lewat WhatsApp</a>.</p>
+                                <p class="mt-4 text-sm text-ink-600">Formulir tidak bisa dimuat di peramban ini. <a href="{{ $whatsappUrl }}" class="underline">Hubungi kami lewat WhatsApp</a>.</p>
                             </noscript>
                         </div>
                     @endif

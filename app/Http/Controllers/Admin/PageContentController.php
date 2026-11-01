@@ -183,8 +183,8 @@ class PageContentController extends Controller
         $imageKeys = collect($skeleton)->filter(fn ($meta) => $meta['image'] ?? false)->keys();
 
         $data = $request->validate($this->rules($skeleton, $imageKeys), [
-            'sections.*.cta_url.regex' => 'Tujuan tombol harus diawali http://, https://, atau / untuk alamat di situs ini.',
-            'sections.*.cta_url_2.regex' => 'Tujuan tombol kedua harus diawali http://, https://, atau / untuk alamat di situs ini.',
+            'sections.*.cta_url.regex' => 'Tulis alamat lengkap (https://...) atau bagian situs ini, misalnya /properti.',
+            'sections.*.cta_url_2.regex' => 'Tulis alamat lengkap (https://...) atau bagian situs ini, misalnya /kontak.',
             'sections.*.image.mimetypes' => 'Gambar harus JPEG, PNG, atau WebP.',
             'sections.*.image.max' => 'Ukuran gambar maksimal 5 MB.',
             'gallery.max' => 'Galeri beranda maksimal '.self::MAX_GALLERY.' foto. Lepas beberapa dulu.',
@@ -294,7 +294,7 @@ class PageContentController extends Controller
 
             if (($request->hasFile("sections.$key.image") || $kept) && blank($request->input("sections.$key.image_alt"))) {
                 throw ValidationException::withMessages([
-                    "sections.$key.image_alt" => 'Alt text wajib diisi selama ada gambar.',
+                    "sections.$key.image_alt" => 'Teks alternatif wajib diisi selama ada gambar.',
                 ]);
             }
         }

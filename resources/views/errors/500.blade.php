@@ -1,7 +1,7 @@
 @extends('errors.layout')
 
 @section('code', '500')
-@section('heading', 'Ada masalah di server kami')
+@section('heading', 'Ada masalah di situs kami')
 @section('body', 'Permintaan Anda tidak bisa diproses saat ini. Muat ulang halaman ini beberapa saat lagi.')
 
 @section('actions')
