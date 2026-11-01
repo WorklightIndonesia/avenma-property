@@ -108,6 +108,7 @@ class ListingController extends Controller
 
         return redirect()
             ->route('admin.listings.edit', $listing)
+            ->withFragment('foto')
             ->with('status', 'Listing dibuat. Isi label tiap foto di bawah.');
     }
 

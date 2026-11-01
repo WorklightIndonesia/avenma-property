@@ -155,6 +155,18 @@ class ListingCrudTest extends TestCase
         $this->assertTrue($listing->is_published);
     }
 
+    public function test_creating_a_listing_lands_on_the_photo_section(): void
+    {
+        $response = $this->actingAs($this->agen())
+            ->post('/admin/listings', $this->payload());
+
+        $response->assertRedirect();
+
+        // Labels are still a second pass, so the redirect puts the admin on it
+        // instead of at the top of a 2,000px form.
+        $this->assertStringEndsWith('#foto', $response->headers->get('Location'));
+    }
+
     public function test_a_given_contact_phone_wins_over_the_agen_number(): void
     {
         $agen = $this->agen(['phone' => '081234567890']);

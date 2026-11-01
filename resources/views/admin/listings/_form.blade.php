@@ -7,6 +7,12 @@
         ->flatMap(fn ($key) => $errors->get($key))
         ->all();
 
+    // The alt input hints at what the gallery falls back to, so the field looks
+    // finished without the admin having to invent a sentence per photo.
+    $photoAlt = $listing->exists
+        ? $listing->title.($listing->location ? ' di '.$listing->location->name : '')
+        : null;
+
     // old('location_id') wins, so a failed save keeps the region the agent picked.
     $current = $currentLocation;
     $initial = [
@@ -22,7 +28,7 @@
     ];
 @endphp
 
-<form method="POST" action="{{ $action }}" enctype="multipart/form-data" x-data="{ propertyType: @js(old('property_type', $listing->property_type ?? 'rumah_siap_huni')), apartmentTypes: @js(\App\Models\Listing::APARTMENT_TYPES), landOnlyTypes: @js(\App\Models\Listing::LAND_TYPES), floorTypes: @js(\App\Models\Listing::FLOOR_TYPES) }" class="mt-6 space-y-6">
+<form method="POST" action="{{ $action }}" enctype="multipart/form-data" data-dirty-guard x-data="{ propertyType: @js(old('property_type', $listing->property_type ?? 'rumah_siap_huni')), apartmentTypes: @js(\App\Models\Listing::APARTMENT_TYPES), landOnlyTypes: @js(\App\Models\Listing::LAND_TYPES), floorTypes: @js(\App\Models\Listing::FLOOR_TYPES) }" class="mt-6 space-y-6">
     @csrf
     @if ($method !== 'POST')
         @method($method)
@@ -352,7 +358,7 @@
         </div>
     </section>
 
-    <section class="border border-line bg-white p-5 sm:p-6">
+    <section id="foto" class="scroll-mt-20 border border-line bg-white p-5 sm:p-6">
         <h2 class="text-lg font-semibold text-ink-950">Foto</h2>
         <p id="photo-order-help" class="mt-1 text-sm text-ink-500">
             Label tampil sebagai chip di galeri. Alt menjelaskan foto untuk pembaca layar.
@@ -401,7 +407,7 @@
 
                         <div>
                             <x-input-label for="alt-{{ $image->id }}" value="Alt" />
-                            <x-text-input id="alt-{{ $image->id }}" name="images[{{ $image->id }}][alt]" type="text" maxlength="255" class="mt-1 block w-full" :value="old('images.'.$image->id.'.alt', $image->alt)" />
+                            <x-text-input id="alt-{{ $image->id }}" name="images[{{ $image->id }}][alt]" type="text" maxlength="255" class="mt-1 block w-full" :value="old('images.'.$image->id.'.alt', $image->alt)" placeholder="{{ $photoAlt }}" />
                         </div>
 
                         <button
@@ -422,9 +428,9 @@
         </div>
     </section>
 
-    <div class="flex flex-wrap items-center gap-3">
+    <div class="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-line bg-sand px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <x-primary-button>{{ $listing->exists ? 'Simpan perubahan' : 'Simpan listing' }}</x-primary-button>
-        <a href="{{ route('admin.listings.index') }}" class="inline-flex min-h-11 items-center rounded border border-line px-5 text-sm font-semibold text-ink-950 hover:bg-sand">Batal</a>
+        <a href="{{ route('admin.listings.index') }}" class="inline-flex min-h-11 items-center rounded border border-line bg-white px-5 text-sm font-semibold text-ink-950 hover:bg-paper">Batal</a>
     </div>
 </form>
 

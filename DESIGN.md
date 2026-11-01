@@ -195,13 +195,17 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 - Angka rata kanan dan `.tabular`; harga `whitespace-nowrap`.
 - Sel Aksi rata tengah di semua tabel.
 - Di layar sempit, bungkus tabel dengan `overflow-x-auto`, jangan `overflow-hidden`.
-- Aksi baris berupa tautan dan tombol 40 px; sel aksi memakai `py-1` supaya tinggi baris tetap 48 px.
+- Aksi baris berupa tautan dan tombol 40 px; sel aksi memakai `py-1` supaya tombol itu tidak menambah tinggi baris.
 
 **Form (admin)**
 
 - Satu kartu per kelompok isian: `border-line` di atas `paper`, padding 20–24 px, judul 18 px.
 - Isian memakai `<x-text-input>`, `<x-textarea>`, `<x-input-label>`, dan `<x-input-error>`; select memakai `<x-select>`.
 - `Kelengkapan Surat` adalah pengecualian: isinya terbuka (SHM, HGB, AJB, girik), jadi tetap `<x-text-input>` dengan `<datalist>` sebagai saran. Aturan "semua pilihan memakai `<x-select>`" hanya berlaku untuk pilihan tertutup.
+- Simpan dan Batal menempel di bawah layar (`sticky bottom-0`), bergaris atas `line`, berlatar `sand`. Form listing lebih dari 2.000 px, jadi tombol tidak boleh hanya ada di ujung bawah.
+- Form panjang memasang `data-dirty-guard`: mengetik menandai form kotor, dan browser meminta konfirmasi sebelum halaman ditinggalkan. Tandanya dibersihkan saat form dikirim.
+- Setelah listing dibuat, pengalihan berakhir di `#foto` pada layar edit, karena label foto masih diisi di layar itu.
+- Placeholder kolom alt menampilkan teks yang dipakai galeri bila alt kosong: judul listing ditambah nama kecamatan. Jangan menyimpannya ke database; biarkan galeri yang menghitungnya supaya alt tidak basi saat judul berubah.
 
 **Dropdown**
 

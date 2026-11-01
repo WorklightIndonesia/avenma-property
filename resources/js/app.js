@@ -956,7 +956,24 @@ document.addEventListener('alpine:init', () => {
 
 Alpine.start();
 
-// Filter chips point at their field so a click lands on the input that owns the value.
+// Admin forms: the listing form is over 2,000px tall, and the sidebar link that
+// leaves it is one click away, so warn before the browser throws the entry away.
+document.querySelectorAll('[data-dirty-guard]').forEach((form) => {
+    let dirty = false;
+
+    form.addEventListener('input', () => { dirty = true; });
+    form.addEventListener('change', () => { dirty = true; });
+    form.addEventListener('submit', () => { dirty = false; });
+
+    window.addEventListener('beforeunload', (event) => {
+        if (! dirty) {
+            return;
+        }
+
+        event.preventDefault();
+        event.returnValue = '';
+    });
+});
 document.addEventListener('click', (event) => {
     const link = event.target.closest('[data-focus]');
 

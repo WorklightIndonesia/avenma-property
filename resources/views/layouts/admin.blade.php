@@ -68,7 +68,7 @@
                             Kontak Avenma
                         </a>
                     @endif
-                    <a href="{{ url('/') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 hover:text-paper">
+                    <a href="{{ url('/') }}" target="_blank" rel="noopener" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 hover:text-paper">
                         Lihat Website
                     </a>
                 </nav>
