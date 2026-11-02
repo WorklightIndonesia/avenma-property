@@ -146,8 +146,10 @@
                     @endif
                 </div>
 
-                <aside class="contents lg:col-start-2 lg:row-start-1 lg:block lg:self-start {{ $hasDenah ? 'lg:row-span-5' : 'lg:row-span-4' }}">
-                    <div class="contents lg:block lg:space-y-5">
+                {{-- The column stretches to the page, so the visit card can stay
+                     pinned while the long copy scrolls past it. --}}
+                <aside class="contents lg:col-start-2 lg:row-start-1 lg:block {{ $hasDenah ? 'lg:row-span-5' : 'lg:row-span-4' }}">
+                    <div class="contents lg:block lg:h-full lg:space-y-5">
                         <div class="order-2 bg-ink-950 p-6 text-paper">
                             <p class="text-[11px] font-semibold uppercase tracking-[0.14em] text-paper/60">
                                 {{ $listing->developer ? 'Harga developer' : 'Harga' }}
@@ -262,7 +264,7 @@
                                  with the name and date already in the message. --}}
                             <div
                                 id="kunjungan"
-                                class="order-7 scroll-mt-24 border border-line bg-white p-6"
+                                class="order-7 scroll-mt-24 border border-line bg-white p-6 lg:sticky lg:top-24"
                                 x-data="{
                                     sent: false,
                                     error: '',
