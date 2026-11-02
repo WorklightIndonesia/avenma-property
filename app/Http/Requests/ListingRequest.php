@@ -40,9 +40,9 @@ class ListingRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:255'],
             // A point is only useful with both coordinates; either one alone is
             // a half-filled pin.
-            // A published listing needs its own point; the map card otherwise
-            // shows Google's address search instead of the property.
-            'latitude' => ['nullable', 'required_with:longitude', Rule::requiredIf(fn () => $this->boolean('is_published')), 'numeric', 'between:-90,90'],
+            // A listing being published needs its own point; the map card
+            // otherwise shows Google's address search instead of the property.
+            'latitude' => ['nullable', 'required_with:longitude', Rule::requiredIf(fn () => $this->publishesWithoutPoint()), 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
             'contact_phone' => ['nullable', 'string', 'max:30'],
             'is_featured' => ['boolean'],
@@ -69,6 +69,19 @@ class ListingRequest extends FormRequest
             'latitude.required' => 'Tandai titik lokasi di peta sebelum listing diterbitkan.',
             'photos.max' => 'Maksimal '.$this->maxUploads().' foto bisa ditambahkan sekarang; batas tiap listing '.Listing::MAX_PHOTOS.' foto.',
         ];
+    }
+
+    /**
+     * Only a listing that is being published now needs a point. Rows published
+     * before that rule have none, so requiring one again would block every edit
+     * to them; the public page already falls back to the address map.
+     */
+    private function publishesWithoutPoint(): bool
+    {
+        $listing = $this->route('listing');
+
+        return $this->boolean('is_published')
+            && (! $listing instanceof Listing || ! $listing->is_published);
     }
 
     /**

@@ -341,7 +341,7 @@
                 <x-checkbox id="is_published" name="is_published" :checked="old('is_published', $listing->is_published ?? true)">
                     Terbitkan di website
                 </x-checkbox>
-                <p class="text-xs text-ink-500">Listing terbit wajib punya titik lokasi di peta.</p>
+                <p class="text-xs text-ink-500">Listing yang baru diterbitkan wajib punya titik lokasi di peta.</p>
 
                 <x-checkbox id="show_kpr" name="show_kpr" :checked="old('show_kpr', $listing->show_kpr ?? true)">
                     Tampilkan simulasi KPR untuk listing ini?

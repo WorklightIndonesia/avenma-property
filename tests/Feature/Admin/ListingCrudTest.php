@@ -402,6 +402,31 @@ class ListingCrudTest extends TestCase
         $this->assertDatabaseCount('listings', 1);
     }
 
+    public function test_an_already_published_listing_is_editable_without_a_point(): void
+    {
+        $agen = $this->agen();
+        $listing = $this->listing(['created_by' => $agen->id, 'is_published' => true]);
+
+        $this->actingAs($agen)
+            ->put(route('admin.listings.update', $listing), $this->payload([
+                'title' => 'Rumah Uji Diperbarui',
+                'latitude' => '',
+                'longitude' => '',
+            ]))
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame('Rumah Uji Diperbarui', $listing->refresh()->title);
+        $this->assertNull($listing->latitude);
+
+        // Unpublishing and publishing again counts as a new publish.
+        $draft = $this->listing(['created_by' => $agen->id, 'is_published' => false]);
+
+        $this->actingAs($agen)
+            ->put(route('admin.listings.update', $draft), $this->payload(['latitude' => '', 'longitude' => '']))
+            ->assertSessionHasErrors('latitude');
+    }
+
     public function test_half_a_point_is_rejected(): void
     {
         $this->actingAs($this->agen())
