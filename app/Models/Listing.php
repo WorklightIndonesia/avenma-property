@@ -142,6 +142,11 @@ class Listing extends Model
         return $this->hasMany(ListingImage::class)->orderBy('sort_order')->orderBy('id');
     }
 
+    public function rooms(): HasMany
+    {
+        return $this->hasMany(ListingRoom::class)->orderBy('floor')->orderBy('id');
+    }
+
     /**
      * True when one of its photos sits in the home hero. A soft delete keeps the
      * photo row, so the hero would point at a listing that is gone.

@@ -1027,6 +1027,271 @@ document.addEventListener('alpine:init', () => {
             }
         },
     }));
+
+    /* Admin listing form: the denah editor. Rooms sit on a fixed 12 x 16 grid so
+       every plan keeps the sample's proportions. Dragging empty space draws a
+       room, dragging its body moves it, and the corner handle resizes it.
+       Arrow keys nudge and Shift + arrows resize, so a room can be placed
+       without a pointer. */
+    Alpine.data('floorPlan', (initial = [], floorCount = 1) => ({
+        cols: 12,
+        rows: 16,
+        rooms: [],
+        active: null,
+        floor: 1,
+        floors: Math.max(1, Number(floorCount) || 1),
+        mode: '',
+        anchor: null,
+        base: null,
+        history: [],
+        nextId: 1,
+
+        toneOptions: [
+            { value: 'biasa', label: 'Biasa' },
+            { value: 'utama', label: 'Ruang utama' },
+            { value: 'luar', label: 'Luar (carport / taman)' },
+        ],
+
+        init() {
+            this.rooms = (Array.isArray(initial) ? initial : []).map((room) => ({
+                id: this.nextId++,
+                floor: Number(room.floor) || 1,
+                label: String(room.label ?? ''),
+                x: Number(room.x) || 0,
+                y: Number(room.y) || 0,
+                w: Number(room.w) || 1,
+                h: Number(room.h) || 1,
+                tone: room.tone || 'biasa',
+            }));
+
+            this.floors = Math.max(this.floors, ...this.rooms.map((room) => room.floor), 1);
+            this.floor = this.rooms.length ? this.rooms[0].floor : 1;
+            this.active = this.rooms[0] ?? null;
+        },
+
+        get visible() {
+            return this.rooms.filter((room) => room.floor === this.floor);
+        },
+
+        get payload() {
+            return JSON.stringify(this.rooms.map(({ id, ...room }) => room));
+        },
+
+        roomStyle(room) {
+            return `left:${room.x / this.cols * 100}%;top:${room.y / this.rows * 100}%;width:${room.w / this.cols * 100}%;height:${room.h / this.rows * 100}%`;
+        },
+
+        cellOf(event) {
+            const box = this.$refs.canvas.getBoundingClientRect();
+            const x = Math.floor((event.clientX - box.left) / (box.width / this.cols));
+            const y = Math.floor((event.clientY - box.top) / (box.height / this.rows));
+
+            return {
+                x: Math.max(0, Math.min(this.cols - 1, x)),
+                y: Math.max(0, Math.min(this.rows - 1, y)),
+            };
+        },
+
+        snapshot() {
+            this.history.push(JSON.stringify(this.rooms.map(({ id, ...room }) => room)));
+
+            if (this.history.length > 50) {
+                this.history.shift();
+            }
+        },
+
+        // The form's dirty guard listens for input events, and a pointer drag
+        // fires none, so the hidden field announces every change.
+        sync() {
+            this.$refs.field?.dispatchEvent(new Event('input', { bubbles: true }));
+        },
+
+        start(event) {
+            if (event.pointerType === 'mouse' && event.button !== 0) {
+                return;
+            }
+
+            this.snapshot();
+
+            const cell = this.cellOf(event);
+            const room = {
+                id: this.nextId++,
+                floor: this.floor,
+                label: '',
+                x: cell.x,
+                y: cell.y,
+                w: 1,
+                h: 1,
+                tone: 'biasa',
+            };
+
+            this.rooms.push(room);
+            this.active = room;
+            this.mode = 'draw';
+            this.anchor = cell;
+            this.$refs.canvas.focus();
+            this.$refs.canvas.setPointerCapture?.(event.pointerId);
+            this.sync();
+        },
+
+        startMove(event, room) {
+            this.snapshot();
+            this.active = room;
+            this.mode = 'move';
+            this.anchor = this.cellOf(event);
+            this.base = { x: room.x, y: room.y };
+            this.$refs.canvas.setPointerCapture?.(event.pointerId);
+        },
+
+        startResize(event, room) {
+            this.snapshot();
+            this.active = room;
+            this.mode = 'resize';
+            this.$refs.canvas.setPointerCapture?.(event.pointerId);
+        },
+
+        drag(event) {
+            if (!this.mode || !this.active) {
+                return;
+            }
+
+            const room = this.active;
+            const cell = this.cellOf(event);
+
+            if (this.mode === 'draw') {
+                room.x = Math.min(this.anchor.x, cell.x);
+                room.y = Math.min(this.anchor.y, cell.y);
+                room.w = Math.abs(cell.x - this.anchor.x) + 1;
+                room.h = Math.abs(cell.y - this.anchor.y) + 1;
+            } else if (this.mode === 'move') {
+                room.x = Math.max(0, Math.min(this.cols - room.w, this.base.x + cell.x - this.anchor.x));
+                room.y = Math.max(0, Math.min(this.rows - room.h, this.base.y + cell.y - this.anchor.y));
+            } else {
+                room.w = Math.max(1, Math.min(this.cols - room.x, cell.x - room.x + 1));
+                room.h = Math.max(1, Math.min(this.rows - room.y, cell.y - room.y + 1));
+            }
+
+            this.sync();
+        },
+
+        end() {
+            if (!this.mode) {
+                return;
+            }
+
+            this.mode = '';
+            this.anchor = null;
+            this.base = null;
+            this.sync();
+        },
+
+        keys(event) {
+            if (!this.active) {
+                return;
+            }
+
+            const moves = {
+                ArrowLeft: [-1, 0],
+                ArrowRight: [1, 0],
+                ArrowUp: [0, -1],
+                ArrowDown: [0, 1],
+            }[event.key];
+
+            if (!moves) {
+                return;
+            }
+
+            event.preventDefault();
+            this.snapshot();
+
+            const room = this.active;
+
+            if (event.shiftKey) {
+                room.w = Math.max(1, Math.min(this.cols - room.x, room.w + moves[0]));
+                room.h = Math.max(1, Math.min(this.rows - room.y, room.h + moves[1]));
+            } else {
+                room.x = Math.max(0, Math.min(this.cols - room.w, room.x + moves[0]));
+                room.y = Math.max(0, Math.min(this.rows - room.h, room.y + moves[1]));
+            }
+
+            this.sync();
+        },
+
+        addRoom() {
+            this.snapshot();
+
+            const spot = this.freeSpot();
+            const room = {
+                id: this.nextId++,
+                floor: this.floor,
+                label: '',
+                x: spot.x,
+                y: spot.y,
+                w: 1,
+                h: 1,
+                tone: 'biasa',
+            };
+
+            this.rooms.push(room);
+            this.active = room;
+            this.sync();
+        },
+
+        // The first cell no room covers, so a keyboard-added room never lands on
+        // top of another one and gets refused on save.
+        freeSpot() {
+            const taken = (x, y) => this.rooms.some((room) => room.floor === this.floor
+                && x >= room.x && x < room.x + room.w
+                && y >= room.y && y < room.y + room.h);
+
+            for (let y = 0; y < this.rows; y++) {
+                for (let x = 0; x < this.cols; x++) {
+                    if (!taken(x, y)) {
+                        return { x, y };
+                    }
+                }
+            }
+
+            return { x: 0, y: 0 };
+        },
+
+        remove() {
+            if (!this.active) {
+                return;
+            }
+
+            this.snapshot();
+            this.rooms = this.rooms.filter((room) => room.id !== this.active.id);
+            this.active = null;
+            this.sync();
+        },
+
+        undo() {
+            const last = this.history.pop();
+
+            if (!last) {
+                return;
+            }
+
+            this.rooms = JSON.parse(last).map((room) => ({ id: this.nextId++, ...room }));
+            this.active = this.rooms.find((room) => room.floor === this.floor) ?? null;
+            this.sync();
+        },
+
+        selectFloor(n) {
+            this.floor = n;
+            this.active = this.rooms.find((room) => room.floor === n) ?? null;
+        },
+
+        addFloor() {
+            if (this.floors >= 99) {
+                return;
+            }
+
+            this.floors += 1;
+            this.selectFloor(this.floors);
+        },
+    }));
 });
 
 Alpine.start();

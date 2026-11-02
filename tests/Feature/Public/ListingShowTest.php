@@ -225,10 +225,10 @@ class ListingShowTest extends TestCase
 
         $this->get('/properti/rumah-dua-lantai')
             ->assertOk()
-            ->assertSee('Luas tanah')
-            ->assertSee('120 m²')
-            ->assertSee('Jumlah lantai')
-            ->assertSee('2 lantai');
+            ->assertSee('Luas tanah m²')
+            ->assertSee('>120</dd>', false)
+            ->assertSee('Lantai')
+            ->assertSee('>2</dd>', false);
     }
 
     public function test_an_apartment_does_not_show_land_area_or_floors(): void
@@ -243,10 +243,10 @@ class ListingShowTest extends TestCase
 
         $this->get('/properti/apartemen-sudirman')
             ->assertOk()
-            ->assertSee('Luas unit')
+            ->assertSee('Luas unit m²')
             ->assertDontSee('Luas tanah')
             ->assertDontSee('Luas bangunan')
-            ->assertDontSee('Jumlah lantai');
+            ->assertDontSee('Lantai');
     }
 
     public function test_a_land_listing_shows_land_area_instead_of_building_area(): void
@@ -260,8 +260,8 @@ class ListingShowTest extends TestCase
 
         $this->get('/properti/tanah-ciputat')
             ->assertOk()
-            ->assertSee('Luas tanah')
-            ->assertSee('500 m²')
+            ->assertSee('Luas tanah m²')
+            ->assertSee('>500</dd>', false)
             ->assertDontSee('Luas bangunan');
     }
 

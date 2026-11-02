@@ -4,8 +4,10 @@ namespace App\Http\Requests;
 
 use App\Models\Listing;
 use App\Models\ListingOption;
+use App\Models\ListingRoom;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class ListingRequest extends FormRequest
 {
@@ -57,6 +59,19 @@ class ListingRequest extends FormRequest
             'images.*.label' => ['nullable', 'string', 'max:60'],
             'images.*.alt' => ['nullable', 'string', 'max:255'],
             'images.*.sort_order' => ['nullable', 'integer', 'between:0,999'],
+
+            // The editor posts one JSON string; prepareForValidation decodes it.
+            'rooms' => ['nullable', 'array', 'max:'.ListingRoom::MAX],
+            'rooms.*.floor' => ['required', 'integer', 'between:1,99'],
+            'rooms.*.label' => ['required', 'string', 'max:40'],
+            'rooms.*.x' => ['required', 'integer', 'between:0,'.(ListingRoom::COLS - 1)],
+            'rooms.*.y' => ['required', 'integer', 'between:0,'.(ListingRoom::ROWS - 1)],
+            'rooms.*.w' => ['required', 'integer', 'between:1,'.ListingRoom::COLS],
+            'rooms.*.h' => ['required', 'integer', 'between:1,'.ListingRoom::ROWS],
+            'rooms.*.tone' => ['required', Rule::in(array_keys(ListingRoom::TONES))],
+
+            'floor_plan' => ['nullable', 'file', 'mimetypes:image/jpeg,image/png,image/webp', 'max:5120'],
+            'remove_floor_plan' => ['boolean'],
         ];
     }
 
@@ -68,6 +83,9 @@ class ListingRequest extends FormRequest
         return [
             'latitude.required' => 'Tandai titik lokasi di peta sebelum listing diterbitkan.',
             'photos.max' => 'Maksimal '.$this->maxUploads().' foto bisa ditambahkan sekarang; batas tiap listing '.Listing::MAX_PHOTOS.' foto.',
+            'rooms.max' => 'Maksimal '.ListingRoom::MAX.' ruangan per listing.',
+            'rooms.*.label.required' => 'Setiap ruangan perlu nama.',
+            'rooms.*.label.max' => 'Nama ruangan maksimal 40 karakter.',
         ];
     }
 
@@ -82,6 +100,60 @@ class ListingRequest extends FormRequest
 
         return $this->boolean('is_published')
             && (! $listing instanceof Listing || ! $listing->is_published);
+    }
+
+    /**
+     * The editor draws rectangles on a cell grid; the request only checks the
+     * shape, so a room that leaves the box or covers another one is refused.
+     */
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            $rooms = $this->input('rooms');
+
+            if (! is_array($rooms) || $rooms === []) {
+                return;
+            }
+
+            foreach ($rooms as $room) {
+                if (! is_array($room) || ! isset($room['x'], $room['y'], $room['w'], $room['h'], $room['floor'])) {
+                    return;
+                }
+
+                if ((int) $room['x'] + (int) $room['w'] > ListingRoom::COLS
+                    || (int) $room['y'] + (int) $room['h'] > ListingRoom::ROWS) {
+                    $validator->errors()->add('rooms', 'Ada ruangan yang melewati batas kotak denah.');
+
+                    return;
+                }
+            }
+
+            foreach ($rooms as $outer => $first) {
+                foreach ($rooms as $inner => $second) {
+                    if ($inner <= $outer || (int) $first['floor'] !== (int) $second['floor']) {
+                        continue;
+                    }
+
+                    if ($this->overlaps($first, $second)) {
+                        $validator->errors()->add('rooms', 'Ada ruangan yang bertumpuk di lantai '.$first['floor'].'. Geser atau kecilkan salah satunya.');
+
+                        return;
+                    }
+                }
+            }
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $a
+     * @param  array<string, mixed>  $b
+     */
+    private function overlaps(array $a, array $b): bool
+    {
+        return (int) $a['x'] < (int) $b['x'] + (int) $b['w']
+            && (int) $b['x'] < (int) $a['x'] + (int) $a['w']
+            && (int) $a['y'] < (int) $b['y'] + (int) $b['h']
+            && (int) $b['y'] < (int) $a['y'] + (int) $a['h'];
     }
 
     /**
@@ -106,11 +178,15 @@ class ListingRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        $rooms = $this->input('rooms');
+
         $this->merge([
             'price' => preg_replace('/\D+/', '', (string) $this->input('price')),
+            'rooms' => is_string($rooms) ? json_decode($rooms, true) : $rooms,
             'is_featured' => $this->boolean('is_featured'),
             'is_published' => $this->boolean('is_published'),
             'show_kpr' => $this->boolean('show_kpr'),
+            'remove_floor_plan' => $this->boolean('remove_floor_plan'),
         ]);
     }
 }

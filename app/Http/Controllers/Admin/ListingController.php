@@ -9,6 +9,7 @@ use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\ListingOption;
+use App\Models\ListingRoom;
 use App\Models\Location;
 use App\Models\User;
 use App\Services\ImageService;
@@ -87,7 +88,10 @@ class ListingController extends Controller
 
     public function create(): View
     {
-        return view('admin.listings.create', ['listing' => new Listing, 'currentLocation' => $this->currentLocation(null)] + $this->formOptions());
+        return view('admin.listings.create', [
+            'listing' => tap(new Listing)->setRelation('rooms', collect()),
+            'currentLocation' => $this->currentLocation(null),
+        ] + $this->formOptions());
     }
 
     public function store(ListingRequest $request): RedirectResponse
@@ -102,6 +106,8 @@ class ListingController extends Controller
             Slug::save($listing, $data['title'], 'properti');
 
             $this->storePhotos($listing, (array) $request->file('photos', []));
+            $this->syncRooms($listing, (array) ($data['rooms'] ?? []));
+            $this->storeFloorPlan($request, $listing);
 
             return $listing;
         });
@@ -116,7 +122,7 @@ class ListingController extends Controller
     {
         Gate::authorize('update', $listing);
 
-        $listing->load('images');
+        $listing->load(['images', 'rooms']);
 
         return view('admin.listings.edit', ['listing' => $listing, 'currentLocation' => $this->currentLocation($listing)] + $this->formOptions());
     }
@@ -142,6 +148,8 @@ class ListingController extends Controller
             }
 
             $this->storePhotos($listing, (array) $request->file('photos', []));
+            $this->syncRooms($listing, (array) ($data['rooms'] ?? []));
+            $this->storeFloorPlan($request, $listing);
         });
 
         return redirect()
@@ -199,6 +207,63 @@ class ListingController extends Controller
 
             $listing->images()->create(['path' => $path, 'sort_order' => $sort++]);
         }
+    }
+
+    /**
+     * The denah is replaced whole: the editor always posts every room, so a
+     * diff would cost more than it saves on a listing with a couple of rooms.
+     *
+     * @param  array<int, array<string, mixed>>  $rooms
+     */
+    private function syncRooms(Listing $listing, array $rooms): void
+    {
+        $listing->rooms()->delete();
+
+        foreach ($rooms as $room) {
+            $listing->rooms()->create([
+                'floor' => $room['floor'],
+                'label' => $room['label'],
+                'x' => $room['x'],
+                'y' => $room['y'],
+                'w' => $room['w'],
+                'h' => $room['h'],
+                'tone' => $room['tone'],
+            ]);
+        }
+    }
+
+    /**
+     * A developer's own denah image. It wins over the drawn rooms on the page,
+     * so an agent uploads one when the plan already exists as a picture.
+     */
+    private function storeFloorPlan(ListingRequest $request, Listing $listing): void
+    {
+        if ($request->boolean('remove_floor_plan')) {
+            $this->deleteFloorPlanFile($listing->floor_plan_path);
+            $listing->floor_plan_path = null;
+        }
+
+        if ($file = $request->file('floor_plan')) {
+            $this->deleteFloorPlanFile($listing->floor_plan_path);
+            $listing->floor_plan_path = $this->images->store($file, 'images/floor-plans/'.$listing->id);
+        }
+
+        if ($listing->isDirty()) {
+            $listing->save();
+        }
+    }
+
+    private function deleteFloorPlanFile(?string $path): void
+    {
+        if (! $path) {
+            return;
+        }
+
+        Storage::disk('uploads')->delete([
+            $path,
+            ImageService::thumbPath($path),
+            ImageService::mediumPath($path),
+        ]);
     }
 
     /**

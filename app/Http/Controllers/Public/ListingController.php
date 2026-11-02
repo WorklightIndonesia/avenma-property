@@ -94,7 +94,7 @@ class ListingController extends Controller
     {
         abort_unless($listing->is_published, 404);
 
-        $listing->load(['location', 'developer', 'creator', 'images']);
+        $listing->load(['location', 'developer', 'creator', 'images', 'rooms']);
 
         // Listing phone wins; blank falls back to the office number in settings.
         $phone = $listing->contact_phone ?: SiteSetting::whatsappNumber();

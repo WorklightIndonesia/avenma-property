@@ -428,6 +428,8 @@
         </div>
     </section>
 
+    @include('admin.listings._floor_plan')
+
     <div class="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-line bg-sand px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <x-primary-button>{{ $listing->exists ? 'Simpan perubahan' : 'Simpan listing' }}</x-primary-button>
         <a href="{{ route('admin.listings.index') }}" class="inline-flex min-h-11 items-center rounded border border-line bg-white px-5 text-sm font-semibold text-ink-950 hover:bg-paper">Batal</a>
