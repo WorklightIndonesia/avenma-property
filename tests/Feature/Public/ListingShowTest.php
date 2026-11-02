@@ -275,6 +275,19 @@ class ListingShowTest extends TestCase
             ->assertDontSee('rumah_kosongan');
     }
 
+    public function test_the_breadcrumb_links_back_to_the_filtered_catalog(): void
+    {
+        $this->listing(['slug' => 'rumah-breadcrumb']);
+
+        $this->get('/properti/rumah-breadcrumb')
+            ->assertOk()
+            ->assertSee(route('public.listings.index', [
+                'provinsi' => 'Banten',
+                'kota' => 'Kota Tangerang Selatan',
+                'kecamatan' => 'Pondok Aren',
+            ]));
+    }
+
     public function test_the_certificate_is_listed_with_the_specs(): void
     {
         $this->listing(['slug' => 'rumah-sertifikat', 'certificate' => 'Surat Balik Nama']);

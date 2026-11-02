@@ -76,6 +76,16 @@
 
     $eyebrow = collect([$listing->developer?->name, $listing->location?->name, $type, $listing->typeLabel()])->filter()->implode(' · ');
 
+    // The breadcrumb's location level opens the catalog already filtered to
+    // this kecamatan; all three levels keep the region picker in step.
+    $locationFilterUrl = $listing->location
+        ? route('public.listings.index', [
+            'provinsi' => $listing->location->province,
+            'kota' => $listing->location->city,
+            'kecamatan' => $listing->location->name,
+        ])
+        : null;
+
     $showKpr = $listing->show_kpr && $listing->status !== 'disewa';
 
     // The denah is its own block so it can sit above the KPR card on mobile.
@@ -106,7 +116,7 @@
                     @endif
                     @if ($listing->location)
                         <li aria-hidden="true">/</li>
-                        <li>{{ $listing->location->name }}</li>
+                        <li><a href="{{ $locationFilterUrl }}" class="hover:text-ink-950">{{ $listing->location->name }}</a></li>
                     @endif
                     <li aria-hidden="true">/</li>
                     <li aria-current="page" class="font-medium text-ink-950">{{ $listing->title }}</li>
