@@ -9,8 +9,8 @@
 
 @section('content')
     <section class="bg-paper">
-        <div class="mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-            <h1 class="text-3xl font-semibold tracking-tight">Blog</h1>
+        <div class="mx-auto max-w-[90rem] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+            <h1 class="text-4xl font-semibold tracking-tight">Blog</h1>
             <p class="mt-1 text-sm text-ink-500">Panduan singkat untuk membeli, menjual, dan merawat properti.</p>
 
             <form

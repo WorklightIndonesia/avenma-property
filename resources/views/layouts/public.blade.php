@@ -38,26 +38,31 @@
 
         <header x-data="{ open: false }" class="sticky top-0 z-50 border-b border-line bg-paper">
             <div class="px-4 sm:px-6 lg:px-8">
-                <div class="flex h-16 items-center justify-between">
+                <div class="flex h-16 items-center justify-between gap-3">
                     <x-brand />
 
-                    <nav class="hidden lg:flex items-center gap-8 whitespace-nowrap text-sm font-medium text-ink-600">
-                        <a href="{{ url('/') }}" class="hover:text-ink-950">Beranda</a>
-                        <a href="{{ url('/properti') }}" class="hover:text-ink-950">Properti</a>
-                        <a href="{{ url('/blog') }}" class="hover:text-ink-950">Blog</a>
-                        <a href="{{ url('/kontak') }}" class="hover:text-ink-950">Kontak</a>
-                        <a href="{{ route('public.hubungi-kami') }}" target="_blank" rel="noopener" class="inline-flex items-center rounded bg-gold-500 px-4 py-2.5 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white">
+                    <div class="flex items-center gap-3 sm:gap-4 lg:gap-8">
+                        <nav class="hidden lg:flex items-center gap-8 whitespace-nowrap text-sm font-medium text-ink-600">
+                            <a href="{{ url('/') }}" class="hover:text-ink-950">Beranda</a>
+                            <a href="{{ url('/properti') }}" class="hover:text-ink-950">Properti</a>
+                            <a href="{{ url('/blog') }}" class="hover:text-ink-950">Blog</a>
+                            <a href="{{ url('/kontak') }}" class="hover:text-ink-950">Kontak</a>
+                        </nav>
+
+                        {{-- Stays in the bar at every width: below lg it sits left of
+                             the menu button instead of inside the menu. --}}
+                        <a href="{{ route('public.hubungi-kami') }}" target="_blank" rel="noopener" class="inline-flex shrink-0 items-center whitespace-nowrap rounded bg-gold-500 px-3 py-2 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white sm:px-4 sm:py-2.5">
                             Hubungi Kami
                         </a>
-                    </nav>
 
-                    <button @click="open = !open" class="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 hover:bg-sand" :aria-expanded="open" aria-controls="mobile-menu" aria-label="Buka menu" :aria-label="open ? 'Tutup menu' : 'Buka menu'">
-                        <span class="relative block h-5 w-6" aria-hidden="true">
-                            <span class="absolute left-0 top-0 h-0.5 w-6 rounded bg-current transition-transform duration-300" :class="open ? 'translate-y-[9px] rotate-45' : ''"></span>
-                            <span class="absolute left-0 top-[9px] h-0.5 w-6 rounded bg-current transition-opacity duration-300" :class="open ? 'opacity-0' : ''"></span>
-                            <span class="absolute left-0 top-[18px] h-0.5 w-6 rounded bg-current transition-transform duration-300" :class="open ? '-translate-y-[9px] -rotate-45' : ''"></span>
-                        </span>
-                    </button>
+                        <button @click="open = !open" class="lg:hidden inline-flex h-11 w-11 items-center justify-center rounded text-ink-600 hover:bg-sand" :aria-expanded="open" aria-controls="mobile-menu" aria-label="Buka menu" :aria-label="open ? 'Tutup menu' : 'Buka menu'">
+                            <span class="relative block h-5 w-6" aria-hidden="true">
+                                <span class="absolute left-0 top-0 h-0.5 w-6 rounded bg-current transition-transform duration-300" :class="open ? 'translate-y-[9px] rotate-45' : ''"></span>
+                                <span class="absolute left-0 top-[9px] h-0.5 w-6 rounded bg-current transition-opacity duration-300" :class="open ? 'opacity-0' : ''"></span>
+                                <span class="absolute left-0 top-[18px] h-0.5 w-6 rounded bg-current transition-transform duration-300" :class="open ? '-translate-y-[9px] -rotate-45' : ''"></span>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -78,7 +83,6 @@
                     <a href="{{ url('/properti') }}" class="block rounded px-3 py-3 hover:bg-sand">Properti</a>
                     <a href="{{ url('/blog') }}" class="block rounded px-3 py-3 hover:bg-sand">Blog</a>
                     <a href="{{ url('/kontak') }}" class="block rounded px-3 py-3 hover:bg-sand">Kontak</a>
-                    <a href="{{ route('public.hubungi-kami') }}" target="_blank" rel="noopener" class="mt-2 flex items-center justify-center rounded bg-gold-500 px-4 py-3 font-semibold text-ink-950 hover:bg-gold-700 hover:text-white">Hubungi Kami</a>
                 </div>
             </div>
         </header>

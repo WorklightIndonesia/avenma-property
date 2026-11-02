@@ -938,6 +938,13 @@ document.addEventListener('alpine:init', () => {
         startLeft: 0,
         moving: false,
         dragged: false,
+        index: 0,
+
+        // The scrolling element may be a child when the component also owns
+        // the dot row underneath the cards.
+        row() {
+            return this.$refs.row || this.$el;
+        },
 
         begin(event) {
             if (event.pointerType !== 'mouse') {
@@ -947,7 +954,7 @@ document.addEventListener('alpine:init', () => {
             this.moving = true;
             this.dragged = false;
             this.startX = event.clientX;
-            this.startLeft = this.$el.scrollLeft;
+            this.startLeft = this.row().scrollLeft;
         },
 
         move(event) {
@@ -961,11 +968,53 @@ document.addEventListener('alpine:init', () => {
                 this.dragged = true;
             }
 
-            this.$el.scrollLeft = this.startLeft - distance;
+            this.row().scrollLeft = this.startLeft - distance;
         },
 
         end() {
             this.moving = false;
+        },
+
+        // One dot per screenful. The row scrolls freely, so the dots follow the
+        // scroll position instead of owning it; the last dot lands at the end
+        // where the scroll clamps.
+        pages: 1,
+
+        init() {
+            this.measure = () => {
+                const row = this.row();
+                this.pages = Math.max(1, Math.ceil((row.scrollWidth - 1) / row.clientWidth));
+                this.sync();
+            };
+
+            this.observer = new ResizeObserver(this.measure);
+            this.observer.observe(this.row());
+            this.$nextTick(() => this.measure());
+        },
+
+        destroy() {
+            this.observer?.disconnect();
+        },
+
+        // The row can only scroll (scrollWidth - clientWidth), which is often
+        // less than a full page, so dots spread over that distance.
+        maxScroll() {
+            const row = this.row();
+
+            return Math.max(1, row.scrollWidth - row.clientWidth);
+        },
+
+        sync() {
+            this.index = this.pages > 1
+                ? Math.max(0, Math.min(this.pages - 1, Math.round(this.row().scrollLeft / this.maxScroll() * (this.pages - 1))))
+                : 0;
+        },
+
+        go(index) {
+            this.row().scrollTo({
+                left: this.pages > 1 ? index * this.maxScroll() / (this.pages - 1) : 0,
+                behavior: 'smooth',
+            });
         },
 
         swallowClick(event) {

@@ -7,5 +7,5 @@
 
 <a {{ $attributes->merge(['class' => 'inline-flex shrink-0 items-center gap-2.5 whitespace-nowrap']) }} href="{{ url('/') }}">
     <img src="{{ asset('images/brand/'.$mark) }}" alt="" width="56" height="40" class="h-10 w-14" onerror="this.remove()">
-    <span class="text-lg font-semibold tracking-tight {{ $text }}">Avenma Properti</span>
+    <span class="hidden text-lg font-semibold tracking-tight sm:inline {{ $text }}">Avenma Properti</span>
 </a>

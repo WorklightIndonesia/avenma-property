@@ -34,12 +34,14 @@
 
     @if ($pageKey !== 'kontak')
         <section class="bg-paper">
-            <div class="mx-auto max-w-[90rem] px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-                <div class="grid items-center gap-10 lg:grid-cols-[1.4fr_1fr] lg:gap-16">
+            <div class="mx-auto max-w-[90rem] px-4 pb-4 pt-6 sm:px-6 sm:pb-8 sm:pt-10 lg:px-8 lg:pb-10 lg:pt-10">
+                <div class="grid items-center gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start lg:gap-16">
                 <div>
-                    <p class="text-sm text-ink-500">{{ $isHome ? 'Properti primer dan sekunder' : $page->title }}</p>
+                    @unless ($isHome)
+                        <p class="mb-2 text-sm text-ink-500">{{ $page->title }}</p>
+                    @endunless
 
-                    <h1 class="mt-4 max-w-2xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+                    <h1 class="max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
                         {{ $hero?->heading ?: $page->title }}
                     </h1>
 
@@ -171,9 +173,9 @@
 
     @foreach ($rest as $section)
         <section class="border-t border-line bg-paper">
-            <div class="mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+            <div class="mx-auto max-w-[90rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
                 @if (filled($section->heading))
-                    <h2 class="text-2xl font-semibold tracking-tight">{{ $section->heading }}</h2>
+                    <h2 class="text-3xl font-semibold tracking-tight">{{ $section->heading }}</h2>
                 @endif
 
                 @if (filled($section->body))
@@ -206,7 +208,7 @@
         @endphp
 
         <section class="bg-paper">
-            <div class="mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+            <div class="mx-auto max-w-[90rem] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
                 <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
                     <div>
                         <h1 class="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">{{ $contactCopy?->heading ?: 'Hubungi Kami' }}</h1>
@@ -351,12 +353,11 @@
     @endif
 
     @if ($isHome && $listings->isNotEmpty())
-        <section class="relative bg-sand">
-            <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-paper to-sand"></div>
-            <div class="relative mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <section class="bg-sand">
+            <div class="mx-auto max-w-[90rem] px-4 py-4 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
                 <div class="flex flex-wrap items-end justify-between gap-4">
                     <div>
-                        <h2 class="text-2xl font-semibold tracking-tight">Properti pilihan</h2>
+                        <h2 class="text-3xl font-semibold tracking-tight">Properti pilihan</h2>
                         <p class="mt-1 text-sm text-ink-500">Lima properti terbaru, unggulan lebih dulu.</p>
                     </div>
 
@@ -375,60 +376,78 @@
     @endif
 
     @if ($isHome && $recentPosts->isNotEmpty())
-        <section class="relative bg-paper">
-            <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-sand to-paper"></div>
-            <div class="relative mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <section class="bg-paper">
+            <div class="mx-auto max-w-[90rem] px-4 py-4 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
                 <div class="flex flex-wrap items-end justify-between gap-4">
-                    <h2 class="text-2xl font-semibold tracking-tight">Artikel Terkini</h2>
+                    <h2 class="text-3xl font-semibold tracking-tight">Artikel Terkini</h2>
 
                     <a href="{{ route('public.blog.index') }}" class="text-sm font-semibold text-ink-950 underline hover:text-gold-700">
                         Lihat artikel lainnya →
                     </a>
                 </div>
 
-                {{-- One row that scrolls sideways; the scrollbar stays hidden. --}}
-                <div
-                    class="mt-8 flex cursor-grab gap-6 overflow-x-auto pb-2 select-none active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-                    x-data="dragScroll"
-                    @pointerdown="begin($event)"
-                    @pointermove="move($event)"
-                    @pointerup="end()"
-                    @pointerleave="end()"
-                    @click.capture="swallowClick($event)"
-                >
-                    @foreach ($recentPosts as $post)
-                        @php($date = ($post->published_at ?? $post->created_at)->locale('id')->translatedFormat('j F Y'))
+                {{-- One row that scrolls sideways; the scrollbar stays hidden.
+                     The dots under it mirror the scroll position. --}}
+                <div class="mt-8" x-data="dragScroll">
+                    <div
+                        x-ref="row"
+                        class="flex cursor-grab gap-6 overflow-x-auto pb-2 select-none active:cursor-grabbing [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        @pointerdown="begin($event)"
+                        @pointermove="move($event)"
+                        @pointerup="end()"
+                        @pointerleave="end()"
+                        @scroll.passive="sync()"
+                        @click.capture="swallowClick($event)"
+                    >
+                        @foreach ($recentPosts as $post)
+                            @php($date = ($post->published_at ?? $post->created_at)->locale('id')->translatedFormat('j F Y'))
 
-                        <article class="flex w-72 shrink-0 flex-col border border-line bg-white">
-                            @if ($post->cover_image)
-                                <img src="{{ asset($post->cover_image) }}" alt="{{ $post->title }}" class="aspect-[16/9] w-full object-cover" loading="lazy">
-                            @endif
-
-                            <div class="flex flex-1 flex-col p-5">
-                                <p class="text-xs text-ink-500">{{ $date }}@if ($post->creator) · {{ $post->creator->name }}@endif</p>
-
-                                <h3 class="mt-2 text-lg font-semibold leading-snug">
-                                    <a href="{{ route('public.blog.show', $post) }}">{{ $post->title }}</a>
-                                </h3>
-
-                                @if (filled($post->excerpt))
-                                    <p class="mt-2 line-clamp-3 text-sm leading-relaxed text-ink-600">{{ $post->excerpt }}</p>
+                            <article class="flex w-72 shrink-0 flex-col border border-line bg-white">
+                                @if ($post->cover_image)
+                                    <img src="{{ asset($post->cover_image) }}" alt="{{ $post->title }}" class="aspect-[16/9] w-full object-cover" loading="lazy">
                                 @endif
 
-                                <a href="{{ route('public.blog.show', $post) }}" class="mt-auto inline-block self-start pt-4 text-sm font-semibold text-ink-950 transition duration-150 hover:scale-105 hover:underline motion-reduce:transition-none motion-reduce:hover:scale-100">Baca Artikel →</a>
-                            </div>
-                        </article>
-                    @endforeach
+                                <div class="flex flex-1 flex-col p-5">
+                                    <p class="text-xs text-ink-500">{{ $date }}@if ($post->creator) · {{ $post->creator->name }}@endif</p>
+
+                                    <h3 class="mt-2 text-lg font-semibold leading-snug">
+                                        <a href="{{ route('public.blog.show', $post) }}">{{ $post->title }}</a>
+                                    </h3>
+
+                                    @if (filled($post->excerpt))
+                                        <p class="mt-2 line-clamp-3 text-sm leading-relaxed text-ink-600">{{ $post->excerpt }}</p>
+                                    @endif
+
+                                    <a href="{{ route('public.blog.show', $post) }}" class="mt-auto inline-block self-start pt-4 text-sm font-semibold text-ink-950 transition duration-150 hover:scale-105 hover:underline motion-reduce:transition-none motion-reduce:hover:scale-100">Baca Artikel →</a>
+                                </div>
+                            </article>
+                        @endforeach
+                    </div>
+
+                    @if ($recentPosts->count() > 1)
+                        <div class="mt-2 flex items-center justify-center gap-2" x-show="pages > 1" x-cloak>
+                            <template x-for="p in pages" :key="p">
+                                <button
+                                    type="button"
+                                    @click="go(p - 1)"
+                                    class="inline-flex items-center justify-center p-1"
+                                    :aria-current="index === p - 1 ? 'true' : 'false'"
+                                    :aria-label="'Halaman ' + p + ' dari ' + pages"
+                                >
+                                    <span class="h-1.5 rounded-full transition-all duration-300 motion-reduce:transition-none" :class="index === p - 1 ? 'w-6 bg-ink-500' : 'w-1.5 bg-line'"></span>
+                                </button>
+                            </template>
+                        </div>
+                    @endif
                 </div>
             </div>
         </section>
     @endif
 
     @if ($isHome)
-        <section class="relative bg-sand">
-            <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-paper to-sand"></div>
-            <div class="relative mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-                <h2 class="text-2xl font-semibold tracking-tight">Simulasi KPR</h2>
+        <section class="bg-sand">
+            <div class="mx-auto max-w-[90rem] px-4 py-4 sm:px-6 sm:py-8 lg:px-8 lg:py-10">
+                <h2 class="text-3xl font-semibold tracking-tight">Simulasi KPR</h2>
 
                 <div class="mt-6">
                     <x-kpr-simulation

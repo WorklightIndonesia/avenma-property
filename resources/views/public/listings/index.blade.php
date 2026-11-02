@@ -9,8 +9,8 @@
 
 @section('content')
     <section class="bg-paper">
-        <div class="mx-auto max-w-[90rem] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-            <h1 class="text-3xl font-semibold tracking-tight">Properti</h1>
+        <div class="mx-auto max-w-[90rem] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+            <h1 class="text-4xl font-semibold tracking-tight">Daftar Properti</h1>
             <p class="mt-1 text-sm text-ink-500">{{ $listings->total() }} properti ditemukan</p>
 
             <div class="mt-8 grid gap-8 lg:grid-cols-[15rem_1fr] lg:items-start lg:gap-10">
