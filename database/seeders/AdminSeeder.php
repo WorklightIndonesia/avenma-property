@@ -13,7 +13,7 @@ class AdminSeeder extends Seeder
     /**
      * The launch account, and the author BlogPostSeeder pins the articles to.
      */
-    public const EMAIL = 'avenma.properti@gmail.com';
+    public const EMAIL = 'admin.avenmaproperti@apfianigroup.com';
 
     public function run(): void
     {

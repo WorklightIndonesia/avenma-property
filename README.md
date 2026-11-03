@@ -53,7 +53,7 @@ Buka `http://127.0.0.1:8000`; CMS ada di `/login`.
 
 | Hal | Nilai |
 |---|---|
-| Email | `avenma.properti@gmail.com` |
+| Email | `admin.avenmaproperti@apfianigroup.com` |
 | Password | Nilai `ADMIN_PASSWORD` yang Anda isi sendiri |
 | Role | `admin` |
 
@@ -263,7 +263,7 @@ Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang 
    php artisan migrate --seed
    ```
 
-   Hasilnya: 7.285 kecamatan resmi Kemendagri, pengaturan situs dan default KPR, halaman Beranda dan Kontak, 5 developer contoh, 20 listing contoh, 10 artikel blog bertanggal hari itu, dan satu akun admin `avenma.properti@gmail.com` dengan password dari `ADMIN_PASSWORD`.
+   Hasilnya: 7.285 kecamatan resmi Kemendagri, pengaturan situs dan default KPR, halaman Beranda dan Kontak, 5 developer contoh, 20 listing contoh, 10 artikel blog bertanggal hari itu, dan satu akun admin `admin.avenmaproperti@apfianigroup.com` dengan password dari `ADMIN_PASSWORD`.
 
 7. Jalankan server development. Satu perintah untuk server, queue, log, dan Vite sekaligus:
 
@@ -327,7 +327,7 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `avenma.properti@gmail.com` (role `admin`, nama `Avenma Properti`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar dan kecil, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
+Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `admin.avenmaproperti@apfianigroup.com` (role `admin`, nama `Avenma Properti`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar dan kecil, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
 
 ## Testing dan Build
 
@@ -388,7 +388,7 @@ Semua perintah dijalankan lewat SSH, di dalam folder aplikasi di server.
    php artisan db:seed --class=BlogPostSeeder --force
    ```
 
-   Jangan `php artisan db:seed` tanpa `--class`: `DatabaseSeeder` ikut memasukkan lima developer dan 20 listing contoh. Hasil yang benar: 7.285 kecamatan, pengaturan situs, halaman Beranda dan Kontak, satu akun `avenma.properti@gmail.com`, dan sepuluh artikel blog bertanggal hari seed.
+   Jangan `php artisan db:seed` tanpa `--class`: `DatabaseSeeder` ikut memasukkan lima developer dan 20 listing contoh. Hasil yang benar: 7.285 kecamatan, pengaturan situs, halaman Beranda dan Kontak, satu akun `admin.avenmaproperti@apfianigroup.com`, dan sepuluh artikel blog bertanggal hari seed.
 
 5. Izin folder dan cache:
 
@@ -402,7 +402,7 @@ Semua perintah dijalankan lewat SSH, di dalam folder aplikasi di server.
 6. Uji SMTP sebelum menyerahkan akun:
 
    ```bash
-   php artisan tinker --execute="Mail::raw('tes', fn(\$m) => \$m->to('avenma.properti@gmail.com')->subject('SMTP Avenma'));"
+   php artisan tinker --execute="Mail::raw('tes', fn(\$m) => \$m->to('admin.avenmaproperti@apfianigroup.com')->subject('SMTP Avenma'));"
    ```
 
    Halaman Lupa Password tetap menampilkan "tautan sudah dikirim" walau SMTP salah, jadi uji ini satu-satunya bukti email benar-benar keluar. Setelah akun dibuat, kosongkan `ADMIN_PASSWORD` di `.env`.

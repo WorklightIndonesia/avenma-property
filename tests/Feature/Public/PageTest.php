@@ -145,7 +145,7 @@ class PageTest extends TestCase
             ->assertSee('mailto:halo@avenma.id', false)
             ->assertSee('maps.google.com/maps?q='.rawurlencode('Jl. Contoh No. 1, Jakarta'), false)
             ->assertDontSee('avenmaproperti', false)
-            ->assertDontSee('avenma.properti@gmail.com', false)
+            ->assertDontSee('admin.avenmaproperti@apfianigroup.com', false)
             ->assertDontSee('maps.app.goo.gl', false);
     }
 

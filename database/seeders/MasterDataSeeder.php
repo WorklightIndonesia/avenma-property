@@ -21,7 +21,7 @@ class MasterDataSeeder extends Seeder
             'maps_url' => 'https://maps.app.goo.gl/yvhXuc3mnWkUjua56',
             'address' => 'Jl. Raya Kelapa Hybrida Blok PD 14 No.28, Pegangsaan Dua, Kelapa Gading, Jakarta Utara 14250',
             'instagram' => 'avenma.properti',
-            'email' => 'avenma.properti@gmail.com',
+            'email' => 'admin.avenmaproperti@apfianigroup.com',
         ]);
     }
 }
