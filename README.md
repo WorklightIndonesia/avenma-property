@@ -5,10 +5,10 @@ Website company profile dan katalog properti untuk Avenma Property. Website mena
 ## Overview
 
 - **Pengunjung:** melihat katalog properti, memfilter berdasarkan wilayah, tipe, harga, kamar, dan status; membaca detail properti dan artikel blog; menghubungi tim lewat tautan WhatsApp.
-- **Admin:** semua akses Agen, ditambah pengelolaan akun, konten halaman, dan pengaturan situs.
-- **Agen:** mengelola listing miliknya sendiri, artikel blog, dan developer.
+- **Admin:** satu-satunya jenis akun CMS. Setiap admin dapat mengelola seluruh listing, blog, halaman, layanan, agen, developer, pengaturan situs, dan akun admin lain.
+- **Agen:** data kontak, bukan akun login. Nama, jabatan, nomor, dan foto tampil pada listing yang ditugaskan.
 
-Status saat ini: Phase 1–3 selesai dan Phase 4 siap deploy. Katalog properti, detail listing, blog, dan CMS admin sudah berjalan. Task 17 (bilingual ID/EN) ditunda dan di luar cakupan peluncuran. Lihat `tasks/todo.md` untuk acceptance criteria per task dan `tasks/plan.md` untuk rencana implementasi.
+Status saat ini: katalog properti, detail listing, blog, CMS admin, akun admin, dan riwayat perubahan sudah berjalan. Task 17 (bilingual ID/EN) ditunda dan di luar cakupan peluncuran. Lihat `tasks/todo.md` untuk acceptance criteria per task dan `tasks/plan.md` untuk rencana implementasi.
 
 ## Untuk Reviewer
 
@@ -55,27 +55,30 @@ Buka `http://127.0.0.1:8000`; CMS ada di `/login`.
 |---|---|
 | Email | `admin.avenmaproperti@apfianigroup.com` |
 | Password | Nilai `ADMIN_PASSWORD` yang Anda isi sendiri |
-| Role | `admin` |
+| Akses | Admin penuh |
 
-Registrasi publik dimatikan. Akun agen dibuat dari panel admin, dan role `agen` wajib punya nomor telepon.
+Registrasi publik dimatikan. Tambah admin lain dari `/admin/users`. Agen adalah data kontak, bukan akun login.
 
 ### Yang perlu dicek
 
-- `/properti`: 20 listing contoh, tombol filter yang membuka panel, dan chip filter setelah memilih satu opsi.
+- `/properti`: 5 properti dari klien, tombol filter yang membuka panel, dan chip filter setelah memilih satu opsi.
 - Satu detail listing: galeri, peta, chip status dan `Baru`, tombol WhatsApp, dan Simulasi KPR (hanya listing `dijual`).
 - `/blog`: 10 artikel bertanggal hari seeder dijalankan.
 - `/kontak`, halaman 404, dan `/hubungi-kami` yang langsung mengarah ke WhatsApp nomor kantor.
-- Login, lalu `/admin/listings`, `/admin/blog`, `/admin/pages`, `/admin/users`, `/admin/settings`, dan `/admin/pengaturan-listing` (developer serta opsi listing dikelola di sini).
+- Login, lalu `/admin/listings`, `/admin/blog`, `/admin/pages`, `/admin/users`, `/admin/audit`, `/admin/settings`, dan `/admin/pengaturan-listing` (developer serta opsi listing dikelola di sini).
+- `/admin/users`: tambah admin kedua, lalu coba hapus akun terakhir. Penghapusan harus ditolak.
+- Buka layar yang punya tombol hapus setelah 30 menit: CMS meminta password lagi.
 - Buat satu listing memakai tiga picker wilayah; unggah satu foto. Bila `gd` dengan WebP aktif, muncul tiga berkas (asli, `-medium.webp`, `-thumb.webp`).
 - Keluar, lalu buka `/admin/listings` lagi: harus diarahkan ke halaman login.
-- `php artisan test`: 312 test lulus.
+- `php artisan test`: 337 test lulus.
 
 ### Yang memang belum ada
 
 - Bilingual ID/EN (Task 17). Seluruh antarmuka berbahasa Indonesia; kolom `_en` ada di database tetapi belum dipakai.
 - Environment staging. Uji di lokal atau langsung di produksi.
 - Dokumen audit di `.scratch/` tidak ikut repo.
-- Lima developer dan 20 listing adalah data contoh, bukan isi katalog asli. Kembalikan dengan `php artisan migrate:fresh --seed`.
+- 2FA dan peran terbatas. Setiap akun CMS adalah admin penuh.
+- Katalog masih berisi 5 properti dari klien, bukan katalog lengkap. Kembalikan data awal dengan `php artisan migrate:fresh --seed`.
 
 `composer run setup` bukan jalur lokal: skrip itu menyalin `.env.example` apa adanya (nilai production) lalu menjalankan migrasi ke MySQL.
 
@@ -86,7 +89,7 @@ Registrasi publik dimatikan. Akun agen dibuat dari panel admin, dan role `agen` 
 | Backend | Laravel 12.70, PHP >= 8.2 | Production Hostinger memakai PHP 8.3 |
 | Frontend | Blade, TailwindCSS 3, Alpine.js 3 | Tanpa React/Vue |
 | Build tool | Vite 7 | `npm run dev` / `npm run build` |
-| Auth | Laravel Breeze 2.4 | Role `admin` dan `agen` via middleware |
+| Auth | Laravel Breeze 2.4 | Satu peran: setiap akun CMS adalah admin |
 | Database | SQLite (lokal), MariaDB 10.5 (production) | Eloquent ORM |
 | Testing | PHPUnit 11 | `php artisan test` |
 | Code style | Laravel Pint | `./vendor/bin/pint` |
@@ -102,14 +105,14 @@ Registrasi publik dimatikan. Akun agen dibuat dari panel admin, dan role `agen` 
 │   │   ├── Controllers/
 │   │   │   ├── Auth/               # Controller auth dari Breeze
 │   │   │   ├── Public/             # Beranda, katalog, detail, blog, sitemap
-│   │   │   └── Admin/              # CMS: listing, blog, halaman, developer, akun, pengaturan
-│   │   ├── Middleware/             # Role.php (admin/agen), SecurityHeaders.php
+│   │   │   └── Admin/              # CMS: listing, blog, halaman, developer, agen, layanan, akun, riwayat
+│   │   ├── Middleware/             # SecurityHeaders.php: header keamanan dan nonce CSP
 │   │   └── Requests/               # Validasi form admin
-│   ├── Models/
+│   ├── Models/                     # Eloquent, termasuk AuditLog
 │   ├── Providers/
 │   └── Services/                   # ImageService: WebP, varian, orientasi EXIF
 ├── bootstrap/
-│   └── app.php                     # Middleware, alias 'role', health check /up
+│   └── app.php                     # Middleware global dan health check /up
 ├── config/
 ├── database/
 │   ├── data/                       # wilayah.csv (7.285 kecamatan) dan generatornya
@@ -127,7 +130,7 @@ Registrasi publik dimatikan. Akun agen dibuat dari panel admin, dan role `agen` 
 │       ├── public/                 # Halaman publik (beranda, katalog, blog)
 │       ├── admin/                  # Halaman CMS
 │       ├── components/             # Komponen Blade reusable
-│       ├── auth/                   # Login, reset password, verifikasi email
+│       ├── auth/                   # Login, reset password, konfirmasi password
 │       └── profile/                # Halaman profil admin
 ├── routes/
 │   ├── web.php                     # Route publik, admin, sitemap, robots
@@ -263,7 +266,7 @@ Panduan ini dimulai dari folder kosong dan berakhir dengan situs serta CMS yang 
    php artisan migrate --seed
    ```
 
-   Hasilnya: 7.285 kecamatan resmi Kemendagri, pengaturan situs dan default KPR, halaman Beranda dan Kontak, 5 developer contoh, 20 listing contoh, 10 artikel blog bertanggal hari itu, dan satu akun admin `admin.avenmaproperti@apfianigroup.com` dengan password dari `ADMIN_PASSWORD`.
+   Hasilnya: 7.285 kecamatan resmi Kemendagri, pengaturan situs dan default KPR, halaman Beranda dan Kontak, 5 developer, 5 properti dari klien, 10 artikel blog bertanggal hari itu, dan satu akun admin `admin.avenmaproperti@apfianigroup.com` dengan password dari `ADMIN_PASSWORD`.
 
 7. Jalankan server development. Satu perintah untuk server, queue, log, dan Vite sekaligus:
 
@@ -315,6 +318,7 @@ Semua konfigurasi disalin dari `.env.example`. File `.env` tidak pernah di-commi
 | `CACHE_STORE` | `database` | Tabel cache dibuat oleh migrasi |
 | `QUEUE_CONNECTION` | `sync` | Tidak ada worker di shared hosting |
 | `MAIL_MAILER` | `log` | Email ditulis ke log saat development; `smtp` di production |
+| `AUTH_PASSWORD_TIMEOUT` | `1800` | Detik sebelum layar CMS yang berisiko meminta password lagi |
 
 Untuk MariaDB, buat database lalu isi `DB_*`:
 
@@ -327,12 +331,12 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `admin.avenmaproperti@apfianigroup.com` (role `admin`, nama `Avenma Properti`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar dan kecil, angka, simbol). Registrasi publik dimatikan, jadi akun agen berikutnya dibuat lewat panel admin.
+Seeder data contoh berjalan dengan `php artisan db:seed` setelah migrasi. Seeder membuat satu akun: `admin.avenmaproperti@apfianigroup.com` (nama `Avenma Properti`). Password dibaca dari `ADMIN_PASSWORD` di `.env`; seeder berhenti bila kosong atau tidak memenuhi aturan (min 8 karakter, huruf besar dan kecil, angka, simbol). Registrasi publik dimatikan. Tambah admin lain dari `/admin/users`; agen adalah data kontak, bukan akun.
 
 ## Testing dan Build
 
 ```bash
-# Test (312 test, 1816 assertion)
+# Test (337 test, 2206 assertion)
 php artisan test
 
 # Sama, lewat skrip Composer yang membersihkan cache config dulu
@@ -388,7 +392,7 @@ Semua perintah dijalankan lewat SSH, di dalam folder aplikasi di server.
    php artisan db:seed --class=BlogPostSeeder --force
    ```
 
-   Jangan `php artisan db:seed` tanpa `--class`: `DatabaseSeeder` ikut memasukkan lima developer dan 20 listing contoh. Hasil yang benar: 7.285 kecamatan, pengaturan situs, halaman Beranda dan Kontak, satu akun `admin.avenmaproperti@apfianigroup.com`, dan sepuluh artikel blog bertanggal hari seed.
+   Jangan `php artisan db:seed` tanpa `--class`: `DatabaseSeeder` ikut memasukkan lima developer dan lima properti contoh. Hasil yang benar: 7.285 kecamatan, pengaturan situs, halaman Beranda dan Kontak, satu akun `admin.avenmaproperti@apfianigroup.com`, dan sepuluh artikel blog bertanggal hari seed.
 
 5. Izin folder dan cache:
 
@@ -412,6 +416,8 @@ Semua perintah dijalankan lewat SSH, di dalam folder aplikasi di server.
    - `/up` mengembalikan 200.
    - `/`, `/properti`, satu detail listing, `/blog`, dan `/kontak` tampil.
    - Login admin berhasil; unggah satu foto menghasilkan tiga berkas (asli, `-medium.webp`, `-thumb.webp`) dan tidak miring.
+   - `/admin/audit` menampilkan riwayat perubahan dan percobaan masuk.
+   - Layar yang punya tombol hapus meminta password lagi setelah `AUTH_PASSWORD_TIMEOUT`.
    - `/sitemap.xml` dan `/robots.txt` memakai domain asli.
    - Header `Cache-Control` aset mengikuti aturan di `public/.htaccess`.
 
