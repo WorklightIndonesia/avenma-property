@@ -72,7 +72,7 @@ class BlogTest extends TestCase
 
     public function test_cards_show_the_date_without_naming_the_author(): void
     {
-        $penulis = User::factory()->create(['name' => 'Agen Penulis', 'role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+        $penulis = User::factory()->create(['name' => 'Agen Penulis', 'phone' => '089630999996']);
 
         $post = $this->article([
             'title' => 'Artikel Berpenulis',
@@ -139,7 +139,7 @@ class BlogTest extends TestCase
     private function article(array $attributes = []): BlogPost
     {
         return BlogPost::create(array_merge([
-            'created_by' => User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996'])->id,
+            'created_by' => User::factory()->create(['phone' => '089630999996'])->id,
             'title' => 'Artikel Uji',
             'slug' => 'artikel-uji',
             'excerpt' => 'Ringkasan.',

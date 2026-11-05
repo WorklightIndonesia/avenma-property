@@ -28,6 +28,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // The login just proved the password, so do not ask again until the
+        // timeout on the sensitive screens expires.
+        $request->session()->put('auth.password_confirmed_at', time());
+
         return redirect()->intended(route('admin.dashboard', absolute: false));
     }
 

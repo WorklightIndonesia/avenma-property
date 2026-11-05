@@ -117,7 +117,7 @@
 @endphp
 
 @push('head')
-    <script type="application/ld+json">
+    <script type="application/ld+json" nonce="{{ $cspNonce }}">
         {!! json_encode([
             '@'.'context' => 'https://schema.org',
             '@type' => 'BreadcrumbList',
@@ -162,7 +162,7 @@
                         </x-photo-gallery>
                     @else
                         <div class="relative flex aspect-[4/3] items-center justify-center bg-white">
-                            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="80" height="56" class="h-14 w-20" onerror="this.remove()">
+                            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="80" height="56" class="h-14 w-20">
                             <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>
                             @if ($listing->isNew())
                                 <span class="absolute left-3 top-3 rounded bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>

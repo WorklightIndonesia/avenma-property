@@ -16,16 +16,6 @@ class ServiceCrudTest extends TestCase
         $this->get('/admin/layanan')->assertRedirect('/login');
     }
 
-    public function test_agen_cannot_reach_the_service_screens(): void
-    {
-        $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
-        $service = $this->service();
-
-        $this->actingAs($agen)->get('/admin/layanan')->assertForbidden();
-        $this->actingAs($agen)->get('/admin/layanan/create')->assertForbidden();
-        $this->actingAs($agen)->get(route('admin.services.edit', $service))->assertForbidden();
-    }
-
     public function test_admin_sees_the_service_screens(): void
     {
         $service = $this->service();
@@ -115,7 +105,7 @@ class ServiceCrudTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function service(array $attributes = []): Service

@@ -111,18 +111,6 @@ class ListingPhotoTest extends TestCase
         $this->assertModelExists($image);
     }
 
-    public function test_agen_cannot_delete_a_photo_on_another_agens_listing(): void
-    {
-        $listing = $this->listing(['created_by' => $this->agen()->id]);
-        $image = $listing->images()->create(['path' => 'images/properties/foto-1.webp']);
-
-        $this->actingAs($this->agen())
-            ->delete(route('admin.listings.photos.destroy', [$listing, $image]))
-            ->assertForbidden();
-
-        $this->assertModelExists($image);
-    }
-
     public function test_the_edit_form_offers_a_drag_handle_instead_of_an_order_dropdown(): void
     {
         $agen = $this->agen();
@@ -171,7 +159,7 @@ class ListingPhotoTest extends TestCase
 
     private function agen(array $attributes = []): User
     {
-        return User::factory()->create(array_merge(['role' => User::ROLE_AGEN], $attributes));
+        return User::factory()->create($attributes);
     }
 
     private function listing(array $attributes = []): Listing

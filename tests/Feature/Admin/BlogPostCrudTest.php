@@ -103,25 +103,6 @@ class BlogPostCrudTest extends TestCase
         $this->assertDatabaseHas('blog_posts', ['slug' => 'artikel-sama-2']);
     }
 
-    public function test_agen_sees_and_edits_only_their_own_articles(): void
-    {
-        $agen = $this->agen();
-        $other = $this->agen();
-
-        $mine = $this->article(['created_by' => $agen->id, 'title' => 'Milik Saya', 'slug' => 'milik-saya']);
-        $theirs = $this->article(['created_by' => $other->id, 'title' => 'Milik Agen Lain', 'slug' => 'milik-agen-lain']);
-
-        $this->actingAs($agen)->get('/admin/blog')
-            ->assertOk()
-            ->assertSee('Milik Saya')
-            ->assertDontSee('Milik Agen Lain');
-
-        $this->actingAs($agen)->get(route('admin.blog.edit', $mine))->assertOk();
-        $this->actingAs($agen)->get(route('admin.blog.edit', $theirs))->assertForbidden();
-        $this->actingAs($agen)->put(route('admin.blog.update', $theirs), $this->payload())->assertForbidden();
-        $this->actingAs($agen)->delete(route('admin.blog.destroy', $theirs))->assertForbidden();
-    }
-
     public function test_admin_manages_every_article(): void
     {
         $post = $this->article(['created_by' => $this->agen()->id, 'title' => 'Milik Agen Lain', 'slug' => 'milik-agen-lain']);
@@ -279,11 +260,11 @@ class BlogPostCrudTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function agen(): User
     {
-        return User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+        return User::factory()->create(['phone' => '089630999996']);
     }
 }

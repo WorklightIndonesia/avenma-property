@@ -8,7 +8,7 @@
             <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">Listing</h1>
             <p class="mt-1 text-sm text-ink-500">
-                {{ auth()->user()->role === App\Models\User::ROLE_ADMIN ? 'Semua listing di website.' : 'Listing yang Anda buat.' }}
+                Semua listing di website.
             </p>
         </div>
 
@@ -177,11 +177,7 @@
                 @if ($heroListings->contains($listing->id))
                     <p class="mt-3 border-l-4 border-gold-700 bg-sand px-4 py-3 text-sm text-ink-950">
                         Salah satu foto listing ini dipakai di galeri beranda. Setelah dihapus, foto itu tidak tampil lagi di beranda.
-                        @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
-                            Ganti dulu di <a href="{{ route('admin.pages.index') }}" class="font-semibold underline hover:text-gold-700">Halaman</a> bila fotonya harus tetap ada.
-                        @else
-                            Minta admin menggantinya bila foto itu harus tetap tampil.
-                        @endif
+                        Ganti dulu di <a href="{{ route('admin.pages.index') }}" class="font-semibold underline hover:text-gold-700">Halaman</a> bila fotonya harus tetap ada.
                     </p>
                 @endif
 

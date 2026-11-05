@@ -27,16 +27,6 @@ class AgentCrudTest extends TestCase
         $this->get('/admin/agents')->assertRedirect('/login');
     }
 
-    public function test_agen_cannot_reach_the_agent_screens(): void
-    {
-        $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
-        $agent = $this->agent();
-
-        $this->actingAs($agen)->get('/admin/agents')->assertForbidden();
-        $this->actingAs($agen)->get('/admin/agents/create')->assertForbidden();
-        $this->actingAs($agen)->get(route('admin.agents.edit', $agent))->assertForbidden();
-    }
-
     public function test_admin_sees_the_agent_screens(): void
     {
         $agent = $this->agent();
@@ -144,7 +134,7 @@ class AgentCrudTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function agent(array $attributes = []): Agent

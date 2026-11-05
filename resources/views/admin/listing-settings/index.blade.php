@@ -3,8 +3,6 @@
 @section('title', 'Pengaturan Listing')
 
 @section('content')
-    @php($isAdmin = auth()->user()->role === App\Models\User::ROLE_ADMIN)
-
     <div>
         <h1 class="text-xl font-semibold text-ink-950">Pengaturan Listing</h1>
         <p class="mt-1 text-sm text-ink-500">Pilihan yang muncul di formulir listing. Sebuah opsi bisa dihapus selama belum dipakai listing.</p>
@@ -33,19 +31,16 @@
                             <span class="block text-xs text-ink-500">{{ $developer->listings_count }} listing</span>
                         </span>
 
-                        @if ($isAdmin)
-                            <span class="flex shrink-0 items-center gap-3 text-xs font-semibold">
-                                <a href="{{ route('admin.developers.edit', $developer) }}" class="text-ink-500 hover:text-ink-950">Edit</a>
-                                <button type="button" x-on:click="$dispatch('open-modal', 'delete-setting-developer-{{ $developer->id }}')" class="text-ink-500 hover:text-danger">Hapus</button>
-                            </span>
-                        @endif
+                        <span class="flex shrink-0 items-center gap-3 text-xs font-semibold">
+                            <a href="{{ route('admin.developers.edit', $developer) }}" class="text-ink-500 hover:text-ink-950">Edit</a>
+                            <button type="button" x-on:click="$dispatch('open-modal', 'delete-setting-developer-{{ $developer->id }}')" class="text-ink-500 hover:text-danger">Hapus</button>
+                        </span>
                     </li>
                 @empty
                     <li class="text-sm text-ink-500">Belum ada developer.</li>
                 @endforelse
             </ul>
 
-            @if ($isAdmin)
             @foreach ($developers as $developer)
                 <x-modal name="delete-setting-developer-{{ $developer->id }}" labelledby="delete-setting-developer-title-{{ $developer->id }}" max-width="md" focusable>
                     <form method="POST" action="{{ route('admin.listing-settings.developers.destroy', $developer) }}" class="p-6">
@@ -64,7 +59,6 @@
                     </form>
                 </x-modal>
             @endforeach
-            @endif
 
             <form method="POST" action="{{ route('admin.listing-settings.developers.store') }}" class="mt-4 space-y-2 border-t border-line pt-4">
                 @csrf

@@ -4,7 +4,7 @@
 
 @push('scripts')
     <script src="{{ asset('vendor/quill/quill.js') }}"></script>
-    <script>
+    <script nonce="{{ $cspNonce }}">
         document.querySelectorAll('[data-quill]').forEach((host) => {
             const input = document.getElementById('input-' + host.dataset.quill);
 

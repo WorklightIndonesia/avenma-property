@@ -12,7 +12,7 @@
         {{-- No database, no session, no SiteSetting: this layout must survive the
              failure it is reporting. A 500 caused by a dead connection still renders. --}}
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet">
         <noscript><link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet"></noscript>
 
         @vite(['resources/css/app.css'])

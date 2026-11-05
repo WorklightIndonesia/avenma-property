@@ -4,29 +4,36 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Headers the framework does not send. The policy pins where assets and frames
- * may come from; it is not a substitute for escaping, because the inline Alpine
- * and Quill scripts need script-src 'unsafe-inline' and 'unsafe-eval'.
+ * Headers the framework does not send. Inline scripts carry a per-request
+ * nonce, so script-src no longer needs 'unsafe-inline'. Alpine still evaluates
+ * its expressions, so 'unsafe-eval' stays until the CSP build is adopted.
  */
 class SecurityHeaders
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $nonce = bin2hex(random_bytes(16));
+
+        // The nonce must exist before the view renders, which happens inside
+        // $next; the header is attached to the finished response afterwards.
+        View::share('cspNonce', $nonce);
+
         $response = $next($request);
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
         $response->headers->set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-        $response->headers->set('Content-Security-Policy', $this->policy());
+        $response->headers->set('Content-Security-Policy', $this->policy($nonce));
 
         return $response;
     }
 
-    private function policy(): string
+    private function policy(string $nonce): string
     {
         // Vite serves assets and the HMR socket from its own origin during
         // `npm run dev`; production reads the built files from /build.
@@ -36,7 +43,7 @@ class SecurityHeaders
 
         return implode('; ', [
             "default-src 'self'",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval'".$dev,
+            "script-src 'self' 'nonce-{$nonce}' 'unsafe-eval'".$dev,
             "style-src 'self' 'unsafe-inline' https://fonts.bunny.net",
             "font-src 'self' https://fonts.bunny.net",
             "img-src 'self' data:",

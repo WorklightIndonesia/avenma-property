@@ -73,6 +73,6 @@ class FlashMessageTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 }

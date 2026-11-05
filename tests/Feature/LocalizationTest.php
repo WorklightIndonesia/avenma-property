@@ -22,7 +22,7 @@ class LocalizationTest extends TestCase
 
     public function test_form_errors_are_indonesian_and_use_the_field_label(): void
     {
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_AGEN]))
+        $this->actingAs(User::factory()->create())
             ->post('/admin/listings', [])
             ->assertSessionHasErrors([
                 'title' => 'Judul wajib diisi.',
@@ -35,7 +35,7 @@ class LocalizationTest extends TestCase
     {
         Storage::fake('uploads');
 
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_AGEN]))
+        $this->actingAs(User::factory()->create())
             ->post('/admin/listings', [
                 'title' => 'Rumah Uji',
                 'description' => 'Deskripsi uji.',

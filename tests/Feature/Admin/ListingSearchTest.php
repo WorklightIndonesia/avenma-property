@@ -86,18 +86,6 @@ class ListingSearchTest extends TestCase
             ->assertDontSee('Rumah Bandung');
     }
 
-    public function test_agen_filters_stay_inside_their_own_listings(): void
-    {
-        $agen = $this->agen();
-        $this->listing(['title' => 'Rumah Milik Budi', 'created_by' => $agen->id]);
-        $this->listing(['title' => 'Rumah Agen Lain', 'created_by' => $this->agen()->id]);
-
-        $this->actingAs($agen)
-            ->get('/admin/listings?properti=Rumah')
-            ->assertSee('Rumah Milik Budi')
-            ->assertDontSee('Rumah Agen Lain');
-    }
-
     public function test_filters_survive_pagination_links(): void
     {
         foreach (range(1, 21) as $number) {
@@ -138,12 +126,12 @@ class ListingSearchTest extends TestCase
 
     private function agen(): User
     {
-        return User::factory()->create(['role' => User::ROLE_AGEN]);
+        return User::factory()->create();
     }
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function listing(array $attributes = []): Listing

@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Services\ImageService;
+use App\Support\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class Agent extends Model
 {
+    use RecordsActivity;
+
     /** Shown when a listing has no agent, and the photo used in its place. */
     public const FALLBACK_NAME = 'Avenma Properti';
 

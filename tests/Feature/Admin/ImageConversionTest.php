@@ -81,7 +81,7 @@ class ImageConversionTest extends TestCase
 
     public function test_a_blog_cover_is_converted_through_the_service(): void
     {
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]))
+        $this->actingAs(User::factory()->create())
             ->post('/admin/blog', [
                 'title' => 'Artikel Bersampul',
                 'excerpt' => 'Ringkasan.',

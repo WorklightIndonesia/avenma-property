@@ -129,21 +129,6 @@ class ListingFloorPlanTest extends TestCase
             ->assertSessionHasErrors('rooms.0.label');
     }
 
-    public function test_agen_cannot_save_a_denah_on_another_agens_listing(): void
-    {
-        $listing = $this->listing(['created_by' => $this->agen()->id]);
-
-        $this->actingAs($this->agen())
-            ->put(route('admin.listings.update', $listing), $this->payload([
-                'rooms' => json_encode([
-                    ['floor' => 1, 'label' => 'R. Tamu', 'x' => 0, 'y' => 0, 'w' => 2, 'h' => 2, 'tone' => 'biasa'],
-                ]),
-            ]))
-            ->assertForbidden();
-
-        $this->assertDatabaseCount('listing_rooms', 0);
-    }
-
     public function test_the_public_page_draws_the_rooms_and_the_land_caption(): void
     {
         $listing = $this->listing(['slug' => 'rumah-denah', 'land_area' => 60]);
@@ -225,7 +210,7 @@ class ListingFloorPlanTest extends TestCase
 
     private function agen(array $attributes = []): User
     {
-        return User::factory()->create(array_merge(['role' => User::ROLE_AGEN], $attributes));
+        return User::factory()->create($attributes);
     }
 
     private function listing(array $attributes = []): Listing

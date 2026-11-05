@@ -3,12 +3,15 @@
 namespace App\Models;
 
 use App\Support\HtmlSanitizer;
+use App\Support\RecordsActivity;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class PageSection extends Model
 {
+    use RecordsActivity;
+
     protected $fillable = [
         'key',
         'heading',

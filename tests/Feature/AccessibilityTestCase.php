@@ -144,7 +144,7 @@ abstract class AccessibilityTestCase extends TestCase
         ]);
 
         BlogPost::create([
-            'created_by' => User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996'])->id,
+            'created_by' => User::factory()->create(['phone' => '089630999996'])->id,
             'title' => 'Artikel Uji',
             'slug' => 'artikel-uji',
             'excerpt' => 'Ringkasan.',

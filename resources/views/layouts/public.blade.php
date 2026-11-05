@@ -24,7 +24,7 @@
         <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/plus-jakarta-sans/files/plus-jakarta-sans-latin-400-normal.woff2">
         <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.bunny.net/plus-jakarta-sans/files/plus-jakarta-sans-latin-600-normal.woff2">
         <link rel="preload" as="style" href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap">
-        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+        <link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet">
         <noscript><link href="https://fonts.bunny.net/css?family=plus-jakarta-sans:400,500,600&display=swap" rel="stylesheet"></noscript>
 
         @vite(['resources/css/app.css', 'resources/js/app.js'])

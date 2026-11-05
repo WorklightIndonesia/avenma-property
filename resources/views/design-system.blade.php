@@ -140,7 +140,7 @@
                                 </div>
                             </div>
                             <div class="flex aspect-[4/3] flex-col items-center justify-center bg-sand">
-                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                                 <p class="mt-3 text-xs text-ink-500">Foto properti utama</p>
                             </div>
                         </div>
@@ -164,7 +164,7 @@
                             @foreach (array_slice($listings, 0, 3) as $listing)
                                 <article class="border border-line bg-white">
                                     <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
-                                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                                         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $statusBadge[$listing['status']] }}">{{ $listing['status'] }}</span>
                                         @if (! empty($listing['baru']))
                                             <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
@@ -227,7 +227,7 @@
                         @foreach ($listings as $listing)
                             <article class="border border-line bg-white">
                                 <div class="relative flex aspect-[4/3] items-center justify-center bg-sand">
-                                    <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                                    <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                                     <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $statusBadge[$listing['status']] }}">{{ $listing['status'] }}</span>
                                     @if (! empty($listing['baru']))
                                         <span class="absolute left-3 top-3 rounded bg-gold-300 px-2 py-0.5 text-xs font-semibold text-ink-950">Baru</span>
@@ -418,14 +418,14 @@
 
                     <div class="mt-4">
                         <div class="relative flex h-72 flex-col items-center justify-center bg-sand sm:h-96">
-                            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                             <p class="mt-3 text-xs text-ink-500">Foto utama</p>
                             <span class="absolute left-3 top-3 rounded border border-ink-950 bg-paper px-2 py-0.5 text-xs font-semibold text-ink-950">Dijual</span>
                         </div>
                         <div class="mt-2 grid grid-cols-3 gap-2">
                             @foreach ([1, 2, 3] as $thumbnail)
                                 <div class="flex h-24 items-center justify-center bg-sand">
-                                    <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-8 w-auto" onerror="this.remove()">
+                                    <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-8 w-auto">
                                 </div>
                             @endforeach
                         </div>
@@ -597,7 +597,7 @@
                     <div class="flex justify-center bg-paper p-5">
                         <article class="w-full max-w-xs border border-line bg-white">
                             <div class="flex aspect-[4/3] items-center justify-center bg-sand">
-                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                             </div>
                             <div class="space-y-1 p-3">
                                 <p class="text-lg font-semibold leading-snug">Rumah Cluster Bintaro</p>
@@ -615,7 +615,7 @@
                     <div class="flex justify-center bg-paper p-5">
                         <article class="w-full max-w-xs overflow-hidden rounded-[10px] border border-line bg-white">
                             <div class="flex aspect-[4/3] items-center justify-center bg-sand">
-                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto" onerror="this.remove()">
+                                <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-auto">
                             </div>
                             <div class="space-y-1 p-3">
                                 <p class="text-lg font-semibold leading-snug">Rumah Cluster Bintaro</p>

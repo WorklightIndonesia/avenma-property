@@ -22,7 +22,6 @@ class AdminSeeder extends Seeder
                 'name' => 'Avenma Properti',
                 'email' => self::EMAIL,
                 'phone' => '081299900387',
-                'role' => User::ROLE_ADMIN,
                 'password' => $this->password(),
             ],
         ];

@@ -11,7 +11,6 @@ use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\ListingOption;
 use App\Models\Location;
-use App\Models\User;
 use App\Services\ImageService;
 use App\Support\Slug;
 use Illuminate\Http\RedirectResponse;
@@ -34,7 +33,6 @@ class ListingController extends Controller
 
         $listings = Listing::query()
             ->with(['location', 'agent', 'images'])
-            ->when($request->user()->role !== User::ROLE_ADMIN, fn ($query) => $query->where('created_by', $request->user()->id))
             ->search($filters)
             ->sorted($sort)
             ->paginate(20)
@@ -44,7 +42,7 @@ class ListingController extends Controller
             'listings' => $listings,
             'filters' => $filters,
             'sort' => $sort,
-            'featured' => $request->user()->role === User::ROLE_ADMIN ? $this->featuredSummary() : null,
+            'featured' => $this->featuredSummary(),
             'heroListings' => $this->heroListingIds($listings->getCollection()->pluck('id')->all()),
         ]);
     }
@@ -96,7 +94,7 @@ class ListingController extends Controller
 
     public function store(ListingRequest $request): RedirectResponse
     {
-        $data = $this->withoutAdminFields($request);
+        $data = $request->validated();
 
         $listing = DB::transaction(function () use ($request, $data) {
             $listing = new Listing($data);
@@ -129,7 +127,7 @@ class ListingController extends Controller
     {
         Gate::authorize('update', $listing);
 
-        $data = $this->withoutAdminFields($request);
+        $data = $request->validated();
 
         DB::transaction(function () use ($request, $listing, $data) {
             $listing->fill($data);
@@ -155,26 +153,15 @@ class ListingController extends Controller
             ->with('status', 'Perubahan disimpan.');
     }
 
-    public function destroy(Request $request, Listing $listing): RedirectResponse
+    public function destroy(Listing $listing): RedirectResponse
     {
         Gate::authorize('delete', $listing);
 
-        // The photo row survives a soft delete, so the hero loses the slide.
-        // An agen cannot open the Pages screen, hence the message instead of a
-        // block; an admin is warned in the dialog before pressing delete.
-        $inHero = $listing->hasHeroPhoto();
-
         $listing->delete();
 
-        $response = redirect()
+        return redirect()
             ->route('admin.listings.index')
             ->with('status', 'Listing dihapus.');
-
-        if ($inHero && $request->user()->role !== User::ROLE_ADMIN) {
-            $response->with('warning', 'Salah satu foto listing ini dipakai di galeri beranda, jadi beranda kehilangan foto itu. Minta admin menggantinya.');
-        }
-
-        return $response;
     }
 
     public function destroyPhoto(Listing $listing, ListingImage $image): RedirectResponse
@@ -262,23 +249,6 @@ class ListingController extends Controller
             ImageService::thumbPath($path),
             ImageService::mediumPath($path),
         ]);
-    }
-
-    /**
-     * Only an admin may flag a listing as featured; agen keeps whatever the
-     * admin set because the key is dropped before fill.
-     *
-     * @return array<string, mixed>
-     */
-    private function withoutAdminFields(ListingRequest $request): array
-    {
-        $data = $request->validated();
-
-        if ($request->user()->role !== User::ROLE_ADMIN) {
-            unset($data['is_featured']);
-        }
-
-        return $data;
     }
 
     /**

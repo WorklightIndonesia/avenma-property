@@ -132,7 +132,7 @@ class HomeFeaturedTest extends TestCase
 
         foreach (range(1, 7) as $index) {
             BlogPost::create([
-                'created_by' => User::factory()->create(['role' => User::ROLE_AGEN])->id,
+                'created_by' => User::factory()->create()->id,
                 'title' => 'Artikel Nomor '.$index,
                 'slug' => 'artikel-nomor-'.$index,
                 'excerpt' => 'Ringkasan.',

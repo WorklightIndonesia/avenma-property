@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,13 +27,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
+        $request->user()->fill($request->validated())->save();
 
         return Redirect::route('profile.edit')->with('status', 'Profil disimpan.');
     }
@@ -45,6 +40,14 @@ class ProfileController extends Controller
         $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);
+
+        // Deleting the last account locks everyone out of the CMS.
+        if (User::query()->count() <= 1) {
+            return back()->withErrors(
+                ['password' => 'Akun admin terakhir tidak bisa dihapus.'],
+                'userDeletion',
+            );
+        }
 
         $user = $request->user();
 

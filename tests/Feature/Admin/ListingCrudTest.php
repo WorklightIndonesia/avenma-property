@@ -19,19 +19,6 @@ class ListingCrudTest extends TestCase
         $this->get('/admin/listings')->assertRedirect('/login');
     }
 
-    public function test_agen_sees_only_their_own_listings(): void
-    {
-        $agen = $this->agen();
-        $this->listing(['title' => 'Milik Budi', 'created_by' => $agen->id]);
-        $this->listing(['title' => 'Milik Agen Lain', 'created_by' => $this->agen()->id]);
-
-        $this->actingAs($agen)
-            ->get('/admin/listings')
-            ->assertOk()
-            ->assertSee('Milik Budi')
-            ->assertDontSee('Milik Agen Lain');
-    }
-
     public function test_admin_sees_every_listing(): void
     {
         $this->listing(['title' => 'Milik Budi', 'created_by' => $this->agen()->id]);
@@ -44,45 +31,17 @@ class ListingCrudTest extends TestCase
             ->assertSee('Milik Agen Lain');
     }
 
-    public function test_only_admin_can_flag_a_listing_as_featured(): void
+    public function test_an_admin_can_flag_a_listing_as_featured(): void
     {
-        $agen = $this->agen();
-
-        $this->actingAs($agen)
+        $this->actingAs($this->admin())
             ->post('/admin/listings', $this->payload(['is_featured' => '1']))
             ->assertRedirect();
 
-        $this->assertFalse(Listing::firstOrFail()->is_featured);
-
-        $this->actingAs($this->admin())
-            ->post('/admin/listings', $this->payload(['is_featured' => '1', 'title' => 'Rumah Pilihan']))
-            ->assertRedirect();
-
-        $this->assertTrue(Listing::where('title', 'Rumah Pilihan')->firstOrFail()->is_featured);
+        $this->assertTrue(Listing::firstOrFail()->is_featured);
     }
 
-    public function test_an_agen_edit_keeps_the_featured_flag_the_admin_set(): void
+    public function test_the_listing_form_offers_the_featured_checkbox(): void
     {
-        $agen = $this->agen();
-        $listing = $this->listing(['created_by' => $agen->id, 'is_featured' => true]);
-
-        $this->actingAs($agen)
-            ->put("/admin/listings/{$listing->slug}", $this->payload(['title' => 'Judul Baru']))
-            ->assertRedirect();
-
-        $listing->refresh();
-
-        $this->assertSame('Judul Baru', $listing->title);
-        $this->assertTrue($listing->is_featured);
-    }
-
-    public function test_the_agen_form_hides_the_featured_checkbox(): void
-    {
-        $this->actingAs($this->agen())
-            ->get('/admin/listings/create')
-            ->assertOk()
-            ->assertDontSee('Tandai sebagai unggulan');
-
         $this->actingAs($this->admin())
             ->get('/admin/listings/create')
             ->assertOk()
@@ -261,26 +220,6 @@ class ListingCrudTest extends TestCase
         $this->assertSame('rumah-baru', $listing->slug);
     }
 
-    public function test_agen_cannot_open_another_agens_listing(): void
-    {
-        $listing = $this->listing(['created_by' => $this->agen()->id]);
-
-        $this->actingAs($this->agen())
-            ->get(route('admin.listings.edit', $listing))
-            ->assertForbidden();
-    }
-
-    public function test_agen_cannot_update_another_agens_listing(): void
-    {
-        $listing = $this->listing(['created_by' => $this->agen()->id]);
-
-        $this->actingAs($this->agen())
-            ->put(route('admin.listings.update', $listing), $this->payload(['title' => 'Dibajak']))
-            ->assertForbidden();
-
-        $this->assertSame('Rumah Uji', $listing->refresh()->title);
-    }
-
     public function test_admin_can_open_any_listing(): void
     {
         $listing = $this->listing(['created_by' => $this->agen()->id]);
@@ -301,17 +240,6 @@ class ListingCrudTest extends TestCase
             ->assertRedirect(route('admin.listings.index'));
 
         $this->assertSoftDeleted($listing);
-    }
-
-    public function test_agen_cannot_delete_another_agens_listing(): void
-    {
-        $listing = $this->listing(['created_by' => $this->agen()->id]);
-
-        $this->actingAs($this->agen())
-            ->delete(route('admin.listings.destroy', $listing))
-            ->assertForbidden();
-
-        $this->assertNotSoftDeleted($listing);
     }
 
     public function test_the_delete_dialog_warns_when_a_photo_is_in_the_hero(): void
@@ -335,21 +263,6 @@ class ListingCrudTest extends TestCase
             ->get('/admin/listings')
             ->assertOk()
             ->assertDontSee('dipakai di galeri beranda');
-    }
-
-    public function test_an_agen_is_told_after_deleting_a_listing_used_in_the_hero(): void
-    {
-        $agen = $this->agen();
-        $listing = $this->listing(['created_by' => $agen->id]);
-        $photo = $listing->images()->create(['path' => 'images/listings/hero.webp', 'sort_order' => 1]);
-        HomeGalleryPhoto::create(['listing_image_id' => $photo->id, 'sort_order' => 0]);
-
-        $this->actingAs($agen)
-            ->delete(route('admin.listings.destroy', $listing))
-            ->assertRedirect(route('admin.listings.index'))
-            ->assertSessionHas('warning', 'Salah satu foto listing ini dipakai di galeri beranda, jadi beranda kehilangan foto itu. Minta admin menggantinya.');
-
-        $this->assertSoftDeleted($listing);
     }
 
     public function test_an_admin_deletes_without_the_agen_message(): void
@@ -465,12 +378,12 @@ class ListingCrudTest extends TestCase
 
     private function agen(array $attributes = []): User
     {
-        return User::factory()->create(array_merge(['role' => User::ROLE_AGEN], $attributes));
+        return User::factory()->create($attributes);
     }
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function listing(array $attributes = []): Listing

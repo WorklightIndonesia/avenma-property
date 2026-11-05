@@ -162,7 +162,7 @@
                     >
                 @else
                     <div class="flex aspect-[16/9] flex-col items-center justify-center bg-sand lg:aspect-[4/3]">
-                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-14" onerror="this.remove()">
+                        <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-14">
                         <p class="mt-3 text-xs text-ink-500">{{ $isHome ? 'Foto properti utama' : 'Foto halaman' }}</p>
                     </div>
                 @endif

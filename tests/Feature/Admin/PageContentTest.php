@@ -26,16 +26,6 @@ class PageContentTest extends TestCase
         $this->seed(PageContentSeeder::class);
     }
 
-    public function test_agen_cannot_open_or_save_pages(): void
-    {
-        $agen = $this->agen();
-        $page = $this->page('kontak');
-
-        $this->actingAs($agen)->get('/admin/pages')->assertForbidden();
-        $this->actingAs($agen)->get("/admin/pages/{$page->id}/edit")->assertForbidden();
-        $this->actingAs($agen)->put("/admin/pages/{$page->id}", $this->payload('kontak'))->assertForbidden();
-    }
-
     public function test_admin_sees_every_page_in_the_skeleton(): void
     {
         $this->actingAs($this->admin())
@@ -524,11 +514,11 @@ class PageContentTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function agen(): User
     {
-        return User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+        return User::factory()->create(['phone' => '089630999996']);
     }
 }

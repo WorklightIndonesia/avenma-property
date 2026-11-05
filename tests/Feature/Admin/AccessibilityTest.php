@@ -13,7 +13,7 @@ class AccessibilityTest extends AccessibilityTestCase
     {
         $this->seedContent();
 
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]));
+        $this->actingAs(User::factory()->create());
 
         $page = PageContent::where('key', 'kontak')->firstOrFail();
 
@@ -36,6 +36,8 @@ class AccessibilityTest extends AccessibilityTestCase
             '/admin/blog/artikel-uji/edit',
             '/admin/agents',
             '/admin/agents/create',
+            '/admin/users',
+            '/admin/users/create',
             '/admin/layanan',
             '/admin/layanan/create',
             '/admin/pages',
@@ -50,7 +52,7 @@ class AccessibilityTest extends AccessibilityTestCase
 
     public function test_the_sidebar_leaves_the_tab_order_when_it_is_closed(): void
     {
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]))
+        $this->actingAs(User::factory()->create())
             ->get('/admin/dashboard')
             ->assertOk()
             // Off-canvas is not the same as hidden: without inert, eight links

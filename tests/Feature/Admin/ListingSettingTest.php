@@ -13,18 +13,16 @@ class ListingSettingTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_and_agen_open_the_settings_page(): void
+    public function test_an_admin_opens_the_settings_page(): void
     {
-        foreach ([User::ROLE_ADMIN, User::ROLE_AGEN] as $role) {
-            $this->actingAs(User::factory()->create(['role' => $role]))
-                ->get('/admin/pengaturan-listing')
-                ->assertOk()
-                ->assertSee('Pengaturan Listing')
-                ->assertSee('Tipe properti')
-                ->assertSee('Status')
-                ->assertSee('Tambah developer')
-                ->assertSee('Rumah Siap Huni');
-        }
+        $this->actingAs(User::factory()->create())
+            ->get('/admin/pengaturan-listing')
+            ->assertOk()
+            ->assertSee('Pengaturan Listing')
+            ->assertSee('Tipe properti')
+            ->assertSee('Status')
+            ->assertSee('Tambah developer')
+            ->assertSee('Rumah Siap Huni');
     }
 
     public function test_each_section_has_a_search_box(): void
@@ -117,7 +115,7 @@ class ListingSettingTest extends TestCase
 
     public function test_an_agen_adds_a_developer_here(): void
     {
-        $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
+        $agen = User::factory()->create();
 
         $this->actingAs($agen)
             ->post('/admin/pengaturan-listing/developer', [
@@ -159,17 +157,6 @@ class ListingSettingTest extends TestCase
         $this->assertSame(['sama', 'sama-2'], Developer::orderBy('id')->pluck('slug')->all());
     }
 
-    public function test_an_agen_cannot_delete_a_developer_here(): void
-    {
-        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
-
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_AGEN]))
-            ->delete("/admin/pengaturan-listing/developer/{$developer->id}")
-            ->assertForbidden();
-
-        $this->assertModelExists($developer);
-    }
-
     public function test_an_admin_gets_an_edit_link_next_to_each_developer(): void
     {
         $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
@@ -178,16 +165,6 @@ class ListingSettingTest extends TestCase
             ->get('/admin/pengaturan-listing')
             ->assertOk()
             ->assertSee(route('admin.developers.edit', $developer));
-    }
-
-    public function test_an_agen_gets_no_developer_edit_link(): void
-    {
-        $developer = Developer::create(['name' => 'Lepas', 'slug' => 'lepas']);
-
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_AGEN]))
-            ->get('/admin/pengaturan-listing')
-            ->assertOk()
-            ->assertDontSee(route('admin.developers.edit', $developer));
     }
 
     public function test_an_admin_deletes_an_unused_developer_here(): void
@@ -229,7 +206,7 @@ class ListingSettingTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function listing(array $attributes = []): Listing

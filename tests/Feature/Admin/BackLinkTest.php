@@ -22,8 +22,8 @@ class BackLinkTest extends TestCase
 
     public function test_every_admin_screen_links_back_to_its_parent(): void
     {
-        $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
-        $agen = User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+        $admin = User::factory()->create();
+        $agen = User::factory()->create(['phone' => '089630999996']);
         $agent = Agent::create([
             'name' => 'Budi',
             'phone' => '089630999996',

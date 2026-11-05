@@ -29,7 +29,7 @@
                 @if ($priority) fetchpriority="high" @else loading="lazy" decoding="async" @endif
             >
         @else
-            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-14" onerror="this.remove()">
+            <img src="{{ asset('images/brand/avenma-logo-mark-112.png') }}" alt="" width="56" height="40" class="h-10 w-14">
         @endif
 
         <span class="absolute right-3 top-3 rounded px-2 py-0.5 text-xs font-semibold {{ $badge }}">{{ $listing->statusLabel() }}</span>

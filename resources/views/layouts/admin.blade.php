@@ -57,20 +57,24 @@
                     <a href="{{ route('admin.blog.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.blog.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Blog
                     </a>
-                    @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
-                        <a href="{{ route('admin.pages.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.pages.*') ? 'bg-paper/10 text-paper' : '' }}">
-                            Halaman
-                        </a>
-                        <a href="{{ route('admin.services.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.services.*') ? 'bg-paper/10 text-paper' : '' }}">
-                            Layanan
-                        </a>
-                        <a href="{{ route('admin.agents.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.agents.*') ? 'bg-paper/10 text-paper' : '' }}">
-                            Agen
-                        </a>
-                        <a href="{{ route('admin.settings.edit') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.settings.*') ? 'bg-paper/10 text-paper' : '' }}">
-                            Kontak Avenma
-                        </a>
-                    @endif
+                    <a href="{{ route('admin.pages.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.pages.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Halaman
+                    </a>
+                    <a href="{{ route('admin.services.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.services.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Layanan
+                    </a>
+                    <a href="{{ route('admin.agents.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.agents.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Agen
+                    </a>
+                    <a href="{{ route('admin.users.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.users.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Akun
+                    </a>
+                    <a href="{{ route('admin.audit.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.audit.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Riwayat
+                    </a>
+                    <a href="{{ route('admin.settings.edit') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.settings.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Kontak Avenma
+                    </a>
                     <a href="{{ url('/') }}" target="_blank" rel="noopener" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 hover:text-paper">
                         Lihat Website
                     </a>
@@ -116,7 +120,7 @@
         <x-toast />
 
         {{-- Textareas sized by rows clip their own content; grow them to fit instead. --}}
-        <script>
+        <script nonce="{{ $cspNonce }}">
             document.querySelectorAll('[data-autogrow]').forEach((field) => {
                 const grow = () => {
                     field.style.height = 'auto';

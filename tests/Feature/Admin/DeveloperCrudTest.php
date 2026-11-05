@@ -25,15 +25,6 @@ class DeveloperCrudTest extends TestCase
         $this->get(route('admin.developers.edit', $developer))->assertRedirect('/login');
     }
 
-    public function test_agen_cannot_open_the_edit_screen(): void
-    {
-        $developer = Developer::create(['name' => 'Ciputra', 'slug' => 'ciputra']);
-
-        $this->actingAs($this->agen())
-            ->get(route('admin.developers.edit', $developer))
-            ->assertForbidden();
-    }
-
     public function test_the_edit_form_carries_the_contact_fields(): void
     {
         $developer = Developer::create([
@@ -50,17 +41,6 @@ class DeveloperCrudTest extends TestCase
             ->assertSee('name="email"', false)
             ->assertSee('081234567890')
             ->assertSee('halo@ciputra.test');
-    }
-
-    public function test_agen_cannot_update_a_developer(): void
-    {
-        $developer = Developer::create(['name' => 'Lama', 'slug' => 'lama']);
-
-        $this->actingAs($this->agen())
-            ->put(route('admin.developers.update', $developer), ['name' => 'Baru'])
-            ->assertForbidden();
-
-        $this->assertSame('Lama', $developer->refresh()->name);
     }
 
     public function test_admin_can_update_a_developer(): void
@@ -87,11 +67,11 @@ class DeveloperCrudTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function agen(): User
     {
-        return User::factory()->create(['role' => User::ROLE_AGEN]);
+        return User::factory()->create();
     }
 }

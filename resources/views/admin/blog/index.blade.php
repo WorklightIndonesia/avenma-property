@@ -23,7 +23,7 @@
             <x-back-link :href="route('admin.dashboard')">Dashboard</x-back-link>
             <h1 class="text-xl font-semibold text-ink-950">Blog</h1>
             <p class="mt-1 text-sm text-ink-500">
-                {{ auth()->user()->role === App\Models\User::ROLE_ADMIN ? 'Semua artikel di website.' : 'Artikel yang Anda tulis.' }}
+                Semua artikel di website.
             </p>
         </div>
 

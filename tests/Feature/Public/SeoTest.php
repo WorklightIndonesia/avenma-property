@@ -161,7 +161,7 @@ class SeoTest extends TestCase
     private function article(array $attributes = []): BlogPost
     {
         return BlogPost::create(array_merge([
-            'created_by' => User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996'])->id,
+            'created_by' => User::factory()->create(['phone' => '089630999996'])->id,
             'title' => 'Artikel Uji',
             'slug' => Str::random(10),
             'excerpt' => 'Ringkasan.',

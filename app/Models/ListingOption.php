@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,6 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ListingOption extends Model
 {
+    use RecordsActivity;
+
     public const GROUPS = [
         'property_type' => 'Tipe properti',
         'listing_type' => 'Jenis penawaran',

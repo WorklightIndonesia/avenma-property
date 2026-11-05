@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Support\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PageContent extends Model
 {
+    use RecordsActivity;
+
     protected $fillable = [
         'key',
         'title',

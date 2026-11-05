@@ -27,16 +27,6 @@ class ErrorPageTest extends TestCase
             ->assertSee('Halaman tidak ditemukan');
     }
 
-    public function test_an_agen_gets_the_branded_forbidden_page(): void
-    {
-        $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
-
-        $this->actingAs($agen)
-            ->get('/admin/agents')
-            ->assertForbidden()
-            ->assertSee('Anda tidak punya akses ke halaman ini');
-    }
-
     public function test_every_error_page_uses_one_h1_and_the_shared_shell(): void
     {
         foreach (['403', '404', '419', '429', '500', '503'] as $code) {

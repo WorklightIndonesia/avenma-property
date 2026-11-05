@@ -43,7 +43,7 @@ class SelectComponentTest extends TestCase
     {
         $this->seed(PageContentSeeder::class);
 
-        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMIN]))
+        $this->actingAs(User::factory()->create())
             ->get('/admin/listings/create')
             ->assertOk()
             ->assertSee('data-name="property_type"', false)

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlogPostRequest;
 use App\Models\BlogPost;
-use App\Models\User;
 use App\Services\ImageService;
 use App\Support\HtmlSanitizer;
 use App\Support\Slug;
@@ -28,7 +27,6 @@ class BlogPostController extends Controller
 
         $posts = BlogPost::query()
             ->with('creator')
-            ->when($request->user()->role !== User::ROLE_ADMIN, fn ($query) => $query->where('created_by', $request->user()->id))
             ->when($title !== '', fn ($query) => $query->where('title', 'like', "%{$title}%"))
             ->when($sort === 'terlama', fn ($query) => $query->orderBy('published_at')->orderBy('id'), fn ($query) => $query
                 ->orderByDesc('published_at')

@@ -26,12 +26,6 @@ class SettingsTest extends TestCase
         $this->get('/admin/settings')->assertRedirect('/login');
     }
 
-    public function test_agen_cannot_reach_the_settings_screen(): void
-    {
-        $this->actingAs($this->agen())->get('/admin/settings')->assertForbidden();
-        $this->actingAs($this->agen())->put('/admin/settings', ['whatsapp' => '087736786969'])->assertForbidden();
-    }
-
     public function test_admin_sees_the_current_number(): void
     {
         SiteSetting::create(['whatsapp' => '087736786969']);
@@ -216,11 +210,11 @@ class SettingsTest extends TestCase
 
     private function admin(): User
     {
-        return User::factory()->create(['role' => User::ROLE_ADMIN]);
+        return User::factory()->create();
     }
 
     private function agen(): User
     {
-        return User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+        return User::factory()->create(['phone' => '089630999996']);
     }
 }

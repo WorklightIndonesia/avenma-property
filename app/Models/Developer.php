@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Support\RecordsActivity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Developer extends Model
 {
+    use RecordsActivity;
+
     protected $fillable = [
         'name',
         'name_en',

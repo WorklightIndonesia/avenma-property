@@ -356,12 +356,10 @@
                 </x-checkbox>
                 <p class="text-xs text-ink-500">Muncul di halaman detail properti. Listing berstatus disewa tidak menampilkannya.</p>
 
-                @if (auth()->user()->role === App\Models\User::ROLE_ADMIN)
-                    <x-checkbox id="is_featured" name="is_featured" :checked="old('is_featured', $listing->is_featured ?? false)">
-                        Tandai sebagai unggulan
-                    </x-checkbox>
-                    <p class="text-xs text-ink-500">Unggulan tampil lebih dulu di beranda. Hanya admin yang dapat menandainya.</p>
-                @endif
+                <x-checkbox id="is_featured" name="is_featured" :checked="old('is_featured', $listing->is_featured ?? false)">
+                    Tandai sebagai unggulan
+                </x-checkbox>
+                <p class="text-xs text-ink-500">Unggulan tampil lebih dulu di beranda.</p>
             </div>
         </div>
     </section>

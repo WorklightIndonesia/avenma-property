@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\Role;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,10 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prepend(SecurityHeaders::class);
-
-        $middleware->alias([
-            'role' => Role::class,
-        ]);
 
         // Someone already signed in who opens /login belongs in the admin area,
         // where the Keluar button is, not back on the public home page.

@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Support\RecordsActivity;
 use App\Support\WhatsApp;
 use Illuminate\Database\Eloquent\Model;
 
 class SiteSetting extends Model
 {
+    use RecordsActivity;
+
     protected $fillable = [
         'whatsapp',
         'email',

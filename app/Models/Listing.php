@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\RecordsActivity;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Listing extends Model
 {
-    use SoftDeletes;
+    use RecordsActivity, SoftDeletes;
 
     /**
      * Price filter buckets in rupiah. One source for both the select options and the query range.
