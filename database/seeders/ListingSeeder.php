@@ -2,377 +2,257 @@
 
 namespace Database\Seeders;
 
-use App\Models\Developer;
+use App\Models\Agent;
 use App\Models\Listing;
 use App\Models\Location;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
+/**
+ * The five properties the client sent in November 2026. Photos live in
+ * public/images/properties/<slug>/ and are numbered so 01 is the cover.
+ */
 class ListingSeeder extends Seeder
 {
     public function run(): void
     {
         $owner = User::query()->firstOrFail();
+        $agents = Agent::query()->orderBy('id')->get();
 
-        $listings = [
-            [
-                'title' => 'Rumah Cluster Bintaro',
-                'kecamatan' => 'Pondok Aren',
-                'city' => 'Kota Tangerang Selatan',
-                'developer' => 'Bintaro Development',
-                'price' => 1_250_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 120],
-                'status' => 'dijual',
-                'listing_type' => 'primary',
-                'property_type' => 'rumah_siap_huni',
-                'certificate' => 'Surat Hak Milik',
-                'address' => 'Jl. Bintaro Utama IV No. 12, Pondok Aren, Tangerang Selatan',
-                'description' => 'Rumah dua lantai di dalam cluster dengan akses satu gerbang. Pasar modern dan stasiun Bintaro berada dalam 10 menit berkendara. Sertifikat SHM, hadap utara.',
-            ],
-            [
-                'title' => 'Apartemen Sudirman Park',
-                'kecamatan' => 'Setiabudi',
-                'city' => 'Kota Administrasi Jakarta Selatan',
-                'developer' => null,
-                'price' => 850_000_000,
-                'specs' => ['bedrooms' => 2, 'bathrooms' => 2, 'carport' => 1, 'building_area' => 68],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'apartemen_siap_huni',
-                'address' => 'Jl. K.H. Mas Mansyur, Setiabudi, Jakarta Selatan',
-                'description' => 'Unit dua kamar di lantai menengah dengan pemandangan kota. Fasilitas kolam renang, gym, dan akses langsung ke area perkantoran Sudirman.',
-            ],
-            [
-                'title' => 'Townhouse Serpong Garden',
-                'kecamatan' => 'Serpong',
-                'city' => 'Kota Tangerang Selatan',
-                'developer' => 'Graha Nusantara',
-                'price' => 1_480_000_000,
-                'specs' => ['bedrooms' => 4, 'bathrooms' => 3, 'carport' => 2, 'land_area' => 150],
-                'status' => 'dijual',
-                'listing_type' => 'primary',
-                'property_type' => 'rumah_kosongan',
-                'certificate' => 'Surat Balik Nama',
-                'address' => 'Serpong Garden, Serpong, Tangerang Selatan',
-                'description' => 'Townhouse baru tiga lantai dengan dua carport dan taman kecil di belakang. Cluster berpagar dengan keamanan 24 jam, dekat akses tol BSD.',
-            ],
-            [
-                'title' => 'Rumah Minimalis Cipete',
-                'kecamatan' => 'Cilandak',
-                'city' => 'Kota Administrasi Jakarta Selatan',
-                'developer' => 'Cipete Properti',
-                'price' => 2_350_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 3, 'carport' => 2, 'land_area' => 180],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Cipete Raya, Cilandak, Jakarta Selatan',
-                'description' => 'Rumah satu lantai yang sudah direnovasi di kawasan Cipete. Halaman depan cukup untuk dua mobil, jarak ke MRT Cipete sekitar 800 meter.',
-            ],
-            [
-                'title' => 'Apartemen Kemang Village',
-                'kecamatan' => 'Mampang Prapatan',
-                'city' => 'Kota Administrasi Jakarta Selatan',
-                'developer' => 'Kemang Properti',
-                'price' => 1_750_000_000,
-                'specs' => ['bedrooms' => 2, 'bathrooms' => 2, 'carport' => 1, 'building_area' => 85],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'apartemen_siap_huni',
-                'address' => 'Jl. Pangeran Antasari, Mampang Prapatan, Jakarta Selatan',
-                'description' => 'Unit dua kamar fully furnished di kawasan Kemang. Terhubung dengan mal dan area komersial, cocok untuk hunian maupun sewa jangka panjang.',
-            ],
-            [
-                'title' => 'Rumah Taman Beverly',
-                'kecamatan' => 'Serpong',
-                'city' => 'Kota Tangerang Selatan',
-                'developer' => 'Beverly Group',
-                'price' => 1_950_000_000,
-                'specs' => ['bedrooms' => 4, 'bathrooms' => 3, 'carport' => 2, 'land_area' => 165],
-                'status' => 'dijual',
-                'listing_type' => 'primary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Taman Beverly, Serpong, Tangerang Selatan',
-                'description' => 'Rumah baru dua lantai di cluster Taman Beverly. Empat kamar tidur, dua carport, dan akses langsung ke jalan utama BSD.',
-            ],
-            [
-                'title' => 'Rumah Boulevard Kelapa Gading',
-                'kecamatan' => 'Kelapa Gading',
-                'city' => 'Kota Administrasi Jakarta Utara',
-                'developer' => null,
-                'price' => 3_200_000_000,
-                'specs' => ['bedrooms' => 4, 'bathrooms' => 3, 'carport' => 2, 'land_area' => 200],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Boulevard Raya Blok QJ 5, Kelapa Gading, Jakarta Utara',
-                'description' => 'Rumah tiga lantai di jalan boulevard dengan akses langsung ke mal dan jalan tol. Lantai dasar dipakai sebagai ruang usaha, lantai atas untuk hunian.',
-            ],
-            [
-                'title' => 'Apartemen Menteng Residences',
-                'kecamatan' => 'Menteng',
-                'city' => 'Kota Administrasi Jakarta Pusat',
-                'developer' => null,
-                'price' => 2_400_000_000,
-                'specs' => ['bedrooms' => 2, 'bathrooms' => 2, 'carport' => 1, 'building_area' => 92],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'apartemen_siap_huni',
-                'address' => 'Jl. Cikini Raya No. 72, Menteng, Jakarta Pusat',
-                'description' => 'Unit dua kamar di kawasan Menteng dengan pemandangan taman kota. Bangunan lama yang sudah direnovasi, plafon tinggi, dan satu parkir tetap.',
-            ],
-            [
-                'title' => 'Rumah Senopati Kebayoran',
-                'kecamatan' => 'Kebayoran Baru',
-                'city' => 'Kota Administrasi Jakarta Selatan',
-                'developer' => null,
-                'price' => 8_500_000_000,
-                'specs' => ['bedrooms' => 5, 'bathrooms' => 4, 'carport' => 2, 'land_area' => 320],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Senopati No. 41, Kebayoran Baru, Jakarta Selatan',
-                'description' => 'Rumah dua lantai di jalan utama Senopati, cocok untuk hunian maupun kantor. Lima kamar tidur, halaman belakang, dan dua carport di dalam pagar.',
-            ],
-            [
-                'title' => 'Rumah Tanjung Duren',
-                'kecamatan' => 'Grogol Petamburan',
-                'city' => 'Kota Administrasi Jakarta Barat',
-                'developer' => null,
-                'price' => 950_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 96],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Tanjung Duren Raya No. 18, Grogol Petamburan, Jakarta Barat',
-                'description' => 'Rumah satu lantai di dalam gang lebar, dekat kampus dan pasar Tanjung Duren. Sudah renovasi atap dan lantai, sertifikat SHM.',
-            ],
-            [
-                'title' => 'Rumah Duren Sawit Baru',
-                'kecamatan' => 'Duren Sawit',
-                'city' => 'Kota Administrasi Jakarta Timur',
-                'developer' => null,
-                'price' => 780_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 84],
-                'status' => 'dijual',
-                'listing_type' => 'primary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Duren Sawit Baru No. 7, Duren Sawit, Jakarta Timur',
-                'description' => 'Rumah baru siap huni di kawasan Duren Sawit. Tiga kamar tidur, dapur bersih terpisah, dan jarak ke halte TransJakarta sekitar 600 meter.',
-            ],
-            [
-                'title' => 'Apartemen Pluit Selatan',
-                'kecamatan' => 'Penjaringan',
-                'city' => 'Kota Administrasi Jakarta Utara',
-                'developer' => null,
-                'price' => 65_000_000,
-                'specs' => ['bedrooms' => 2, 'bathrooms' => 1, 'carport' => 1, 'building_area' => 45],
-                'status' => 'disewa',
-                'listing_type' => 'secondary',
-                'property_type' => 'apartemen_siap_huni',
-                'address' => 'Jl. Pluit Selatan Raya No. 2, Penjaringan, Jakarta Utara',
-                'description' => 'Unit dua kamar semi furnished dengan harga sewa satu tahun. Dekat akses tol Pluit dan area perkantoran, sudah termasuk biaya pemeliharaan.',
-            ],
-            [
-                'title' => 'Rumah Ciledug Permai',
-                'kecamatan' => 'Ciledug',
-                'city' => 'Kota Tangerang',
-                'developer' => null,
-                'price' => 620_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 90],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Raden Patah No. 88, Ciledug, Tangerang',
-                'description' => 'Rumah satu lantai di kompleks perumahan Ciledug, jalan lingkungan sudah beton. Dekat akses JORR dan pasar Ciledug.',
-            ],
-            [
-                'title' => 'Rumah Boulevard Karawaci',
-                'kecamatan' => 'Karawaci',
-                'city' => 'Kota Tangerang',
-                'developer' => null,
-                'price' => 1_150_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 3, 'carport' => 2, 'land_area' => 132],
-                'status' => 'dijual',
-                'listing_type' => 'primary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Boulevard Diponegoro No. 105, Karawaci, Tangerang',
-                'description' => 'Rumah baru dua lantai di cluster kecil berisi 24 unit. Dekat kampus dan rumah sakit, keamanan satu gerbang.',
-            ],
-            [
-                'title' => 'Rumah Juanda Ciputat',
-                'kecamatan' => 'Ciputat',
-                'city' => 'Kota Tangerang Selatan',
-                'developer' => 'Cipete Properti',
-                'price' => 890_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 105],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Ir. H. Juanda No. 23, Ciputat, Tangerang Selatan',
-                'description' => 'Rumah satu lantai di jalan Juanda, dekat kampus UIN dan pasar Ciputat. Halaman belakang luas, sumur bor dan PDAM aktif.',
-            ],
-            [
-                'title' => 'Rumah Margonda Beji',
-                'kecamatan' => 'Beji',
-                'city' => 'Kota Depok',
-                'developer' => null,
-                'price' => 1_050_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 110],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Margonda Raya No. 312, Beji, Depok',
-                'description' => 'Rumah dua lantai di Margonda dengan akses langsung ke jalur utama Depok–Jakarta. Dekat stasiun UI dan kampus.',
-            ],
-            [
-                'title' => 'Apartemen Kartini Sukmajaya',
-                'kecamatan' => 'Sukmajaya',
-                'city' => 'Kota Depok',
-                'developer' => null,
-                'price' => 420_000_000,
-                'specs' => ['bedrooms' => 1, 'bathrooms' => 1, 'carport' => 1, 'building_area' => 32],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'apartemen_siap_huni',
-                'address' => 'Jl. Kartini No. 9, Sukmajaya, Depok',
-                'description' => 'Studio satu kamar di lantai lima dengan balkon kecil. Cocok untuk mahasiswa atau pekerja yang naik KRL setiap hari.',
-            ],
-            [
-                'title' => 'Rumah Perjuangan Bekasi Utara',
-                'kecamatan' => 'Bekasi Utara',
-                'city' => 'Kota Bekasi',
-                'developer' => null,
-                'price' => 730_000_000,
-                'specs' => ['bedrooms' => 3, 'bathrooms' => 2, 'carport' => 1, 'land_area' => 88],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Perjuangan No. 56, Bekasi Utara, Bekasi',
-                'description' => 'Rumah satu lantai di kawasan Perjuangan, dekat pusat perbelanjaan dan akses tol Bekasi Barat. Sertifikat sudah pecah.',
-            ],
-            [
-                'title' => 'Rumah Sholeh Iskandar',
-                'kecamatan' => 'Tanah Sareal',
-                'city' => 'Kota Bogor',
-                'developer' => null,
-                'price' => 1_350_000_000,
-                'specs' => ['bedrooms' => 4, 'bathrooms' => 3, 'carport' => 2, 'land_area' => 160],
-                'status' => 'dijual',
-                'listing_type' => 'primary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. K.H. Sholeh Iskandar No. 14, Tanah Sareal, Bogor',
-                'description' => 'Rumah baru dua lantai dengan view Gunung Salak dari lantai atas. Cluster berisi 18 unit, bebas banjir, akses langsung ke Jalan Sholeh Iskandar.',
-            ],
-            [
-                'title' => 'Rumah Semeru Bogor Barat',
-                'kecamatan' => 'Bogor Barat',
-                'city' => 'Kota Bogor',
-                'developer' => null,
-                'price' => 560_000_000,
-                'specs' => ['bedrooms' => 2, 'bathrooms' => 1, 'carport' => 1, 'land_area' => 75],
-                'status' => 'dijual',
-                'listing_type' => 'secondary',
-                'property_type' => 'rumah_siap_huni',
-                'address' => 'Jl. Dr. Semeru No. 30, Bogor Barat, Bogor',
-                'description' => 'Rumah satu lantai di kawasan Semeru, dekat pasar Bogor dan terminal Bubulak. Cocok untuk pasangan muda atau rumah sewa.',
-            ],
-        ];
-
-        // shortcut: Pexels sample photos stand in until the client sends real files (Task 14)
-        $photos = [
-            'rumah-cluster-bintaro' => [
-                ['pexels-1396122.webp', 'Tampak depan', 'Rumah dua lantai dengan dua carport di Bintaro'],
-                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa dan meja kopi'],
-                ['pexels-1080721.webp', 'Dapur', 'Dapur putih dengan pulau dan kursi bar'],
-                ['pexels-1648776.webp', 'Ruang santai', 'Ruang keluarga dengan sofa cokelat dan jendela besar'],
-                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
-                ['pexels-1571460.webp', 'Area tangga', 'Ruang keluarga dengan tangga kayu dan jendela tinggi'],
-            ],
-            'apartemen-sudirman-park' => [
-                ['pexels-1571460.webp', 'Ruang keluarga', 'Ruang keluarga apartemen dengan tangga dan jendela tinggi'],
-                ['pexels-2724749.webp', 'Dapur', 'Dapur apartemen dengan kabinet putih'],
-                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
-            ],
-            'townhouse-serpong-garden' => [
-                ['pexels-259588.webp', 'Tampak depan', 'Townhouse batu dua lantai dengan jalan masuk'],
-                ['pexels-1648776.webp', 'Ruang santai', 'Ruang keluarga dengan sofa cokelat'],
-                ['pexels-2724749.webp', 'Dapur', 'Dapur dengan kabinet putih'],
-                ['pexels-1571460.webp', 'Area tangga', 'Ruang keluarga dengan tangga kayu'],
-            ],
-            'rumah-minimalis-cipete' => [
-                ['pexels-106399.webp', 'Tampak depan', 'Rumah dengan halaman depan dan garasi'],
-                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa abu-abu'],
-                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
-                ['pexels-1080721.webp', 'Dapur', 'Dapur putih dengan pulau dan kursi bar'],
-            ],
-            'apartemen-kemang-village' => [
-                ['pexels-1571460.webp', 'Ruang keluarga', 'Ruang keluarga apartemen dengan tangga dan jendela tinggi'],
-                ['pexels-1080721.webp', 'Dapur', 'Dapur apartemen dengan kabinet putih'],
-                ['pexels-2724749.webp', 'Dapur tamu', 'Dapur apartemen dengan pulau'],
-                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
-            ],
-            'rumah-taman-beverly' => [
-                ['pexels-259600.webp', 'Tampak depan', 'Rumah bata dua lantai dengan taman'],
-                ['pexels-1029599.webp', 'Taman depan', 'Rumah putih dengan pagar dan halaman'],
-                ['pexels-1648776.webp', 'Ruang santai', 'Ruang keluarga dengan sofa cokelat'],
-                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa abu-abu'],
-            ],
-        ];
-
-        // Listings added later reuse the same pool: three photos each, chosen by
-        // property type so the label still matches the picture.
-        $defaults = [
-            'rumah_siap_huni' => [
-                ['pexels-323780.webp', 'Tampak depan', 'Rumah dengan halaman dan garasi'],
-                ['pexels-1643383.webp', 'Ruang keluarga', 'Ruang keluarga dengan sofa abu-abu'],
-                ['pexels-1080721.webp', 'Dapur', 'Dapur putih dengan pulau'],
-            ],
-            'apartemen_siap_huni' => [
-                ['pexels-1571460.webp', 'Ruang keluarga', 'Ruang keluarga apartemen dengan jendela tinggi'],
-                ['pexels-2724749.webp', 'Dapur', 'Dapur apartemen dengan kabinet putih'],
-                ['pexels-1457842.webp', 'Ruang TV', 'Ruang keluarga dengan TV dan jendela lebar'],
-            ],
-        ];
-
-        foreach ($listings as $data) {
+        foreach ($this->listings() as $data) {
             $listing = Listing::updateOrCreate(
-                ['slug' => Str::slug($data['title'])],
+                ['slug' => $data['slug']],
                 [
                     'location_id' => Location::where('name', $data['kecamatan'])
                         ->where('city', $data['city'])
                         ->firstOrFail()
                         ->id,
-                    'developer_id' => $data['developer']
-                        ? Developer::where('name', $data['developer'])->value('id')
-                        : null,
+                    // The land listing stays unassigned so the Avenma fallback
+                    // is visible without deleting an agent.
+                    'agent_id' => $data['agent'] === null || $agents->isEmpty()
+                        ? null
+                        : $agents[$data['agent'] % $agents->count()]->id,
                     'created_by' => $owner->id,
                     'title' => $data['title'],
                     'description' => $data['description'],
-                    'listing_type' => $data['listing_type'],
+                    'listing_type' => 'secondary',
                     'property_type' => $data['property_type'],
-                    'show_kpr' => str_starts_with($data['property_type'], 'rumah'),
-                    'certificate' => $data['certificate'] ?? null,
-                    'status' => $data['status'],
+                    'show_kpr' => $data['property_type'] !== 'kavling',
+                    'certificate' => $data['certificate'],
+                    'status' => 'dijual',
                     'price' => $data['price'],
-                    'bedrooms' => $data['specs']['bedrooms'],
-                    'bathrooms' => $data['specs']['bathrooms'],
-                    'carport' => $data['specs']['carport'],
-                    'land_area' => $data['specs']['land_area'] ?? null,
-                    'building_area' => $data['specs']['building_area'] ?? null,
+                    'bedrooms' => $data['bedrooms'],
+                    'bathrooms' => $data['bathrooms'],
+                    'carport' => $data['carport'],
+                    'land_area' => $data['land_area'],
+                    'building_area' => $data['building_area'],
+                    'floors' => $data['floors'],
                     'address' => $data['address'],
+                    'latitude' => $data['latitude'],
+                    'longitude' => $data['longitude'],
+                    'is_featured' => $data['featured'],
+                    'is_published' => true,
                 ]
             );
 
-            $images = $photos[$listing->slug] ?? $defaults[$data['property_type']] ?? $defaults['rumah_siap_huni'];
-
-            foreach ($images as $sort => [$file, $label, $alt]) {
-                $listing->images()->updateOrCreate(
-                    ['path' => 'images/properties/'.$file],
-                    ['label' => $label, 'alt' => $alt, 'sort_order' => $sort + 1]
-                );
-            }
+            $this->photos($listing);
         }
+    }
+
+    /**
+     * The folder is the source of truth, so adding a photo means dropping a
+     * numbered file in and re-running. Variants are written by the conversion
+     * pass, not here.
+     */
+    private function photos(Listing $listing): void
+    {
+        $files = glob(public_path('images/properties/'.$listing->slug.'/[0-9][0-9].webp')) ?: [];
+        sort($files);
+
+        foreach ($files as $sort => $file) {
+            $listing->images()->updateOrCreate(
+                ['path' => 'images/properties/'.$listing->slug.'/'.basename($file)],
+                [
+                    'alt' => $listing->title.' — foto '.($sort + 1),
+                    'sort_order' => $sort + 1,
+                ]
+            );
+        }
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    private function listings(): array
+    {
+        return [
+            [
+                'slug' => 'tanah-strategis-kebon-jeruk',
+                'title' => 'Tanah Strategis Kebon Jeruk',
+                'kecamatan' => 'Kebon Jeruk',
+                'city' => 'Kota Administrasi Jakarta Barat',
+                'property_type' => 'kavling',
+                'price' => 40_200_000_000,
+                'land_area' => 1340,
+                'building_area' => null,
+                'bedrooms' => null,
+                'bathrooms' => null,
+                'carport' => null,
+                'floors' => null,
+                'certificate' => null,
+                'address' => 'Kebon Jeruk, Jakarta Barat',
+                'latitude' => -6.1938,
+                'longitude' => 106.7690,
+                'agent' => null,
+                'featured' => false,
+                'description' => <<<'TEXT'
+                Tanah seluas 1.340 m² di Kebon Jeruk, Jakarta Barat, dijual dengan harga Rp 30 juta per meter. Lokasinya dikelilingi tiga stasiun televisi, sehingga cocok untuk kantor, studio, atau usaha yang butuh akses cepat dari jalan utama.
+
+                Bentuk lahan relatif rata dan sudah berpagar keliling. Akses masuk dari jalan lingkungan yang cukup untuk kendaraan operasional.
+
+                Lokasi terdekat:
+                - 5 menit ke transportasi Kebon Jeruk
+                - 6 menit ke tol Kebon Jeruk
+                - 8 menit ke Universitas Esa Unggul
+                - 12 menit ke Mal Taman Anggrek
+                - 14 menit ke Central Park
+                TEXT,
+            ],
+            [
+                'slug' => 'rumah-3-lantai-petojo',
+                'title' => 'Rumah 3 Lantai Petojo',
+                'kecamatan' => 'Gambir',
+                'city' => 'Kota Administrasi Jakarta Pusat',
+                'property_type' => 'rumah_kosongan',
+                'price' => 3_700_000_000,
+                'land_area' => 171,
+                'building_area' => 510,
+                'bedrooms' => 4,
+                'bathrooms' => 5,
+                'carport' => null,
+                'floors' => 3,
+                'certificate' => 'SHM',
+                'address' => 'Petojo, Gambir, Jakarta Pusat',
+                'latitude' => -6.1678,
+                'longitude' => 106.8145,
+                'agent' => 0,
+                'featured' => false,
+                'description' => <<<'TEXT'
+                Rumah tiga lantai di Petojo, Jakarta Pusat, dengan luas tanah 171 m² (9 x 19) dan luas bangunan 510 m². Lokasinya di dalam gang yang tenang, tetapi tetap dekat ke pusat kota.
+
+                Bangunan perlu renovasi. Dapur sudah furnished, dan tata ruangnya memungkinkan empat kamar tidur serta lima kamar mandi. Sertifikat SHM.
+
+                Lokasi terdekat:
+                - 5 menit ke RS Tarakan
+                - 9 menit ke Stasiun Duri
+                - 10 menit ke Mal Taman Anggrek
+                - 10 menit ke RS Sumber Waras
+                - 12 menit ke Universitas Kristen Indonesia
+                - 15 menit ke Universitas Esa Unggul
+                - 20 menit ke gerbang Tol Dalam Kota
+                - 40 menit ke Bandara Soekarno-Hatta
+                TEXT,
+            ],
+            [
+                'slug' => 'rumah-pondok-indah-dekat-pim',
+                'title' => 'Rumah Pondok Indah Dekat PIM',
+                'kecamatan' => 'Kebayoran Lama',
+                'city' => 'Kota Administrasi Jakarta Selatan',
+                'property_type' => 'rumah_siap_huni',
+                'price' => 25_000_000_000,
+                'land_area' => 427,
+                'building_area' => 444,
+                'bedrooms' => 5,
+                'bathrooms' => 3,
+                'carport' => 1,
+                'floors' => null,
+                'certificate' => 'SHM',
+                'address' => 'Pondok Indah, Kebayoran Lama, Jakarta Selatan',
+                'latitude' => -6.2665,
+                'longitude' => 106.7833,
+                'agent' => 1,
+                'featured' => false,
+                'description' => <<<'TEXT'
+                Rumah di Pondok Indah, Jakarta Selatan, dengan luas tanah 427 m² dan luas bangunan 444 m². Lima kamar tidur, tiga kamar mandi, dan garasi untuk satu mobil.
+
+                Rumah menghadap selatan, semi furnished, dengan daya listrik 13.200 watt. Jalan di depan cukup untuk dua mobil berpapasan. Sertifikat SHM.
+
+                Lokasi terdekat:
+                - 4 menit ke Pondok Indah Mall
+                - 7 menit ke MRT Cipete Raya
+                - 10 menit ke Terminal Pondok Pinang
+                - 10 menit ke Jakarta Intercultural School
+                - 10 menit ke gerbang tol Lebak Bulus
+                - 12 menit ke Siloam Hospital
+                TEXT,
+            ],
+            [
+                'slug' => 'rumah-renovasi-kayu-putih',
+                'title' => 'Rumah Renovasi Kayu Putih',
+                'kecamatan' => 'Pulogadung',
+                'city' => 'Kota Administrasi Jakarta Timur',
+                'property_type' => 'rumah_siap_huni',
+                'price' => 3_000_000_000,
+                'land_area' => 135,
+                'building_area' => 200,
+                'bedrooms' => 4,
+                'bathrooms' => 4,
+                'carport' => 1,
+                'floors' => 2,
+                'certificate' => 'SHM',
+                'address' => 'Kayu Putih, Pulogadung, Jakarta Timur',
+                'latitude' => -6.1830,
+                'longitude' => 106.8870,
+                'agent' => 2,
+                'featured' => false,
+                'description' => <<<'TEXT'
+                Rumah 2,5 lantai di Kayu Putih, Jakarta Timur, sudah direnovasi dan siap huni. Luas tanah 135 m², luas bangunan 200 m², dengan empat kamar tidur dan empat kamar mandi.
+
+                Semi furnished, carport untuk satu mobil, dan jalan depan cukup untuk dua mobil. Air PAM, listrik 3.500 watt, sertifikat SHM.
+
+                Lokasi terdekat:
+                - 2 menit ke Universitas Jayabaya
+                - 3 menit ke RS EMC Pulomas
+                - 4 menit ke Sekolah Don Bosco 2
+                - 5 menit ke RS Columbia Asia
+                - 6 menit ke Universitas Negeri Jakarta
+                - 6 menit ke Stasiun LRT Velodrome
+                - 7 menit ke tol Pulomas
+                TEXT,
+            ],
+            [
+                'slug' => 'rumah-2-lantai-kelapa-gading',
+                'title' => 'Rumah 2 Lantai Kelapa Gading',
+                'kecamatan' => 'Kelapa Gading',
+                'city' => 'Kota Administrasi Jakarta Utara',
+                'property_type' => 'rumah_siap_huni',
+                'price' => 1_800_000_000,
+                'land_area' => 90,
+                'building_area' => 135,
+                'bedrooms' => 3,
+                'bathrooms' => 3,
+                'carport' => 2,
+                'floors' => 2,
+                'certificate' => 'SHM',
+                'address' => 'Kelapa Gading, Jakarta Utara',
+                'latitude' => -6.1570,
+                'longitude' => 106.9055,
+                'agent' => 3,
+                'featured' => true,
+                'description' => <<<'TEXT'
+                Rumah dua lantai di Kelapa Gading, Jakarta Utara, siap huni. Luas tanah 90 m² (6 x 15) dan luas bangunan 135 m², dengan tiga kamar tidur dan tiga kamar mandi.
+
+                Semi furnished, menghadap selatan, carport untuk dua mobil. Air PAM, listrik 2.200 watt, sertifikat SHM.
+
+                Lokasi terdekat:
+                - 5 menit ke Mal Kelapa Gading
+                - 5 menit ke LRT Boulevard Selatan
+                - 5 menit ke Sekolah Al-Azhar
+                - 5 menit ke BPK Penabur
+                - 8 menit ke Raffles Christian School
+                - 8 menit ke gerbang tol Kelapa Gading
+                TEXT,
+            ],
+        ];
     }
 }

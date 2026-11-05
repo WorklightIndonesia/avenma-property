@@ -68,6 +68,7 @@ class Listing extends Model
     protected $fillable = [
         'location_id',
         'developer_id',
+        'agent_id',
         'created_by',
         'title',
         'title_en',
@@ -88,7 +89,6 @@ class Listing extends Model
         'address',
         'latitude',
         'longitude',
-        'contact_phone',
         'is_featured',
         'is_published',
         'show_kpr',
@@ -130,6 +130,11 @@ class Listing extends Model
     public function developer(): BelongsTo
     {
         return $this->belongsTo(Developer::class);
+    }
+
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(Agent::class);
     }
 
     public function creator(): BelongsTo

@@ -15,27 +15,50 @@ class SitemapController extends Controller
         $urls = [];
 
         // A page in the skeleton without a row would 404, so only advertise
-        // the ones that exist.
-        $existing = PageContent::query()
+        // the ones that exist. The row also carries the copy's edit time.
+        $pages = PageContent::query()
             ->whereIn('key', array_keys(config('pages')))
-            ->pluck('key');
+            ->get(['key', 'updated_at'])
+            ->keyBy('key');
 
         foreach (config('pages') as $key => $page) {
-            if (! $existing->contains($key)) {
+            $row = $pages->get($key);
+
+            if (! $row) {
                 continue;
             }
 
             $urls[] = [
                 'loc' => url($page['path']),
+                'lastmod' => $row->updated_at?->toAtomString(),
                 'changefreq' => $key === 'home' ? 'weekly' : 'monthly',
                 'priority' => $key === 'home' ? '1.0' : '0.6',
             ];
         }
 
-        $urls[] = ['loc' => route('public.listings.index'), 'changefreq' => 'daily', 'priority' => '0.9'];
-        $urls[] = ['loc' => route('public.blog.index'), 'changefreq' => 'weekly', 'priority' => '0.7'];
+        $listings = Listing::query()->published()->get();
+        $posts = BlogPost::query()->published()->get();
 
-        foreach (Listing::query()->published()->get() as $listing) {
+        // The index pages change whenever their newest entry does, so they
+        // carry the newest stamp instead of none.
+        $urls[] = [
+            'loc' => route('public.listings.index'),
+            'lastmod' => $listings->max('updated_at')?->toAtomString(),
+            'changefreq' => 'daily',
+            'priority' => '0.9',
+        ];
+
+        $urls[] = [
+            'loc' => route('public.blog.index'),
+            'lastmod' => $posts->max('updated_at')?->toAtomString(),
+            'changefreq' => 'weekly',
+            'priority' => '0.7',
+        ];
+
+        // The services live in config/layanan.php, so there is no row to date.
+        $urls[] = ['loc' => route('public.layanan.index'), 'changefreq' => 'monthly', 'priority' => '0.7'];
+
+        foreach ($listings as $listing) {
             $urls[] = [
                 'loc' => route('public.listings.show', $listing),
                 'lastmod' => $listing->updated_at?->toAtomString(),
@@ -44,10 +67,12 @@ class SitemapController extends Controller
             ];
         }
 
-        foreach (BlogPost::query()->published()->get() as $post) {
+        foreach ($posts as $post) {
             $urls[] = [
                 'loc' => route('public.blog.show', $post),
-                'lastmod' => ($post->published_at ?? $post->updated_at)?->toAtomString(),
+                // Edits matter to a crawler: published_at stays in the past
+                // after the article is rewritten.
+                'lastmod' => $post->updated_at?->toAtomString(),
                 'changefreq' => 'monthly',
                 'priority' => '0.6',
             ];

@@ -28,4 +28,15 @@ return [
             'kontak' => ['label' => 'Keterangan kontak'],
         ],
     ],
+
+    'layanan' => [
+        'label' => 'Layanan',
+        'path' => '/layanan',
+        'route' => 'public.layanan.index',
+        'sections' => [
+            // The button opens WhatsApp with a fixed template, so only its
+            // label is editable here.
+            'hero' => ['label' => 'Bagian pembuka', 'cta' => 1, 'cta_url' => false],
+        ],
+    ],
 ];

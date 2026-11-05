@@ -15,8 +15,10 @@ class DatabaseSeeder extends Seeder
             MasterDataSeeder::class,
             WilayahSeeder::class,
             AdminSeeder::class,
+            AgentSeeder::class,
             DeveloperSeeder::class,
             ListingSeeder::class,
+            ServiceSeeder::class,
             PageContentSeeder::class,
             BlogPostSeeder::class,
         ]);

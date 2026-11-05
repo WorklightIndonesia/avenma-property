@@ -331,10 +331,18 @@
 
         <div class="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
-                <x-input-label for="contact_phone" value="Nomor WhatsApp agen" />
-                <x-text-input id="contact_phone" name="contact_phone" type="tel" class="mt-1 block w-full" :value="old('contact_phone', $listing->contact_phone)" placeholder="{{ auth()->user()->phone }}" />
-                <p class="mt-1 text-xs text-ink-500">Kosongkan untuk memakai nomor Anda. Bila nomor Anda juga kosong, dipakai nomor kantor.</p>
-                <x-input-error class="mt-2" :messages="$errors->get('contact_phone')" />
+                <x-input-label for="agent_id" value="Agen penanggung jawab" />
+                <x-select
+                    id="agent_id"
+                    name="agent_id"
+                    :options="$agents"
+                    :value="old('agent_id', $listing->agent_id)"
+                    placeholder="Avenma Properti (default)"
+                    aria-label="Agen penanggung jawab"
+                    class="mt-1"
+                />
+                <p class="mt-1 text-xs text-ink-500">Foto, nama, dan nomor agen ini tampil di halaman properti. Tanpa agen, dipakai kontak Avenma.</p>
+                <x-input-error class="mt-2" :messages="$errors->get('agent_id')" />
             </div>
 
             <div class="space-y-3 sm:pt-7">

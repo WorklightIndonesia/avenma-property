@@ -49,6 +49,12 @@
         $stats[] = ['value' => $listing->carport, 'label' => 'Carport'];
     }
 
+    // A tile rather than a footnote: the certificate is the first thing a
+    // buyer checks, so it carries the same weight as the other specs.
+    if ($listing->certificate) {
+        $stats[] = ['value' => $listing->certificate, 'label' => 'Kelengkapan surat'];
+    }
+
     $cover = $listing->images->first();
     $photoAlt = $listing->title.($listing->location ? ' di '.$listing->location->name : '');
     $gallery = $listing->images->map(fn ($image) => [
@@ -96,7 +102,29 @@
     $monthly = \App\Support\KprCalculator::monthly($kpr['price'] - $dpAmount, $kpr['rate'], $months);
 
     $fill = fn (float $value, float $min, float $max) => round(max(0, min(100, ($value - $min) / max(1, $max - $min) * 100)), 1);
+
+    // Mirrors the visible breadcrumb. The developer crumb has no page of its
+    // own, so it stays out of the schema instead of inventing a URL.
+    $breadcrumbItems = [
+        ['@type' => 'ListItem', 'position' => 1, 'name' => 'Semua properti', 'item' => route('public.listings.index')],
+    ];
+
+    if ($listing->location && $locationFilterUrl) {
+        $breadcrumbItems[] = ['@type' => 'ListItem', 'position' => 2, 'name' => $listing->location->name, 'item' => $locationFilterUrl];
+    }
+
+    $breadcrumbItems[] = ['@type' => 'ListItem', 'position' => count($breadcrumbItems) + 1, 'name' => $listing->title];
 @endphp
+
+@push('head')
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@'.'context' => 'https://schema.org',
+            '@type' => 'BreadcrumbList',
+            'itemListElement' => $breadcrumbItems,
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG) !!}
+    </script>
+@endpush
 
 @section('content')
     <section class="bg-sand/60">
@@ -153,6 +181,13 @@
                     {{-- Only a teaser; the full copy sits below, so short text is not shown twice. --}}
                     @if (Str::length(strip_tags($listing->description)) > 200)
                         <p class="mt-5 max-w-2xl text-sm leading-7 text-ink-600">{{ Str::limit(strip_tags($listing->description), 200) }}</p>
+
+                        <a href="#deskripsi" class="mt-3 inline-flex min-h-11 items-center gap-2 rounded border border-line px-4 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-sand">
+                            Baca selengkapnya
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-4 w-4">
+                                <path d="M12 5v14m0 0 6-6m-6 6-6-6" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </a>
                     @endif
                 </div>
 
@@ -171,6 +206,32 @@
                                 {{ $price }} · harga {{ $listing->updated_at->locale('id')->translatedFormat('F Y') }},
                                 belum termasuk BPHTB &amp; biaya KPR
                             </p>
+
+                            <div class="mt-5 flex items-center gap-3 border-t border-paper/15 pt-5">
+                                {{-- The brand mark is wider than a circle, so the
+                                     fallback is fitted inside it instead of cropped. --}}
+                                <img
+                                    src="{{ $contact['photo'] }}"
+                                    alt=""
+                                    @class([
+                                        'h-14 w-14 shrink-0 rounded-full border border-paper/20',
+                                        'object-cover' => $contact['has_photo'],
+                                        'bg-paper/10 object-contain p-2' => ! $contact['has_photo'],
+                                    ])
+                                >
+
+                                <div class="min-w-0">
+                                    <p class="font-semibold text-paper">{{ $contact['name'] }}</p>
+
+                                    @if ($contact['title'])
+                                        <p class="text-xs text-paper/60">{{ $contact['title'] }}</p>
+                                    @endif
+
+                                    <p class="mt-0.5 text-xs break-words text-paper/60">
+                                        {{ $contact['phone'] ?: '—' }} | {{ $contact['email'] ?: '—' }}
+                                    </p>
+                                </div>
+                            </div>
 
                             @if ($whatsappUrl)
                                 <div class="mt-5 grid gap-2">
@@ -425,10 +486,6 @@
                                 </div>
                             @endforeach
                         </dl>
-
-                        @if ($listing->certificate)
-                            <p class="mt-3 text-xs text-ink-500">Kelengkapan surat: <span class="font-semibold text-ink-950">{{ $listing->certificate }}</span></p>
-                        @endif
                     @endif
                 </div>
 
@@ -471,7 +528,7 @@
 
                 <div class="order-6 min-w-0 lg:col-start-1">
                     @if ($listing->description)
-                        <section>
+                        <section id="deskripsi" class="scroll-mt-24">
                             <h2 class="text-3xl font-semibold tracking-tight">Deskripsi dan fasilitas</h2>
                             <p class="mt-3 whitespace-pre-line text-sm leading-7 text-ink-700">{{ $listing->description }}</p>
                         </section>

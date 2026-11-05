@@ -257,15 +257,21 @@ class PageContentController extends Controller
             'gallery.*' => ['integer', 'exists:listing_images,id'],
         ];
 
-        foreach (array_keys($skeleton) as $key) {
+        foreach ($skeleton as $key => $meta) {
             $rules["sections.$key.heading"] = ['nullable', 'string', 'max:255'];
             $rules["sections.$key.body"] = ['nullable', 'string'];
 
-            $buttons = (int) ($skeleton[$key]['cta'] ?? 0);
+            $buttons = (int) ($meta['cta'] ?? 0);
+            // A section whose button target is generated (a WhatsApp link, for
+            // one) only exposes the label.
+            $editableUrl = $meta['cta_url'] ?? true;
 
             if ($buttons >= 1) {
                 $rules["sections.$key.cta_label"] = ['nullable', 'string', 'max:60'];
-                $rules["sections.$key.cta_url"] = ['nullable', 'string', 'regex:/^(https?:\/\/|\/)/i', 'max:2048'];
+
+                if ($editableUrl) {
+                    $rules["sections.$key.cta_url"] = ['nullable', 'string', 'regex:/^(https?:\/\/|\/)/i', 'max:2048'];
+                }
             }
 
             if ($buttons >= 2) {

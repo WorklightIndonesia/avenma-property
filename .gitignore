@@ -23,3 +23,9 @@ AGENTS.md
 Avenma_Felix_Brief_Kerja.md
 SPK_Freelance_Avenma_Property_Fellix_14_Oktober_2026.md
 skills-lock.json
+
+# Static demo export (scripts/export-static.ps1)
+/dist
+/.vercel
+/.impeccable
+

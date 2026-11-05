@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth [scroll-padding-top:5rem]">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -45,13 +45,55 @@
                         <nav class="hidden lg:flex items-center gap-8 whitespace-nowrap text-sm font-medium text-ink-600">
                             <a href="{{ url('/') }}" class="hover:text-ink-950">Beranda</a>
                             <a href="{{ url('/properti') }}" class="hover:text-ink-950">Properti</a>
+
+                            {{-- Two of the three service lines are other sites, so they
+                                 sit behind one label instead of widening the bar. --}}
+                            <div
+                                class="relative flex h-16 items-center"
+                                x-data="{ open: false }"
+                                @click.outside="open = false"
+                                @keydown.escape.window="open = false"
+                            >
+                                <button
+                                    type="button"
+                                    @click="open = !open"
+                                    :aria-expanded="open"
+                                    aria-haspopup="true"
+                                    aria-controls="nav-layanan"
+                                    @if (request()->is('layanan')) aria-current="page" @endif
+                                    class="inline-flex items-center gap-1.5 transition-colors duration-150 hover:text-ink-950 aria-[current=page]:text-ink-950"
+                                    :class="open ? 'text-ink-950' : ''"
+                                >
+                                    Layanan
+                                    <svg class="h-3 w-3 transition-transform duration-150" :class="open ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                </button>
+
+                                <div id="nav-layanan" x-show="open" x-cloak class="absolute left-0 top-full z-50 mt-3 w-64 border border-line bg-paper shadow-float">
+                                    <a href="{{ url('/layanan') }}" class="flex min-h-11 items-center px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
+                                        Layanan Kami
+                                    </a>
+
+                                    <a href="https://startspace.co.id" target="_blank" rel="noopener" class="flex min-h-11 items-center justify-between gap-3 border-t border-line px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
+                                        Virtual Office
+                                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <span class="sr-only">(tab baru)</span>
+                                    </a>
+
+                                    <a href="https://worklight.id" target="_blank" rel="noopener" class="flex min-h-11 items-center justify-between gap-3 border-t border-line px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
+                                        IT &amp; Business Solutions
+                                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <span class="sr-only">(tab baru)</span>
+                                    </a>
+                                </div>
+                            </div>
+
                             <a href="{{ url('/blog') }}" class="hover:text-ink-950">Blog</a>
                             <a href="{{ url('/kontak') }}" class="hover:text-ink-950">Kontak</a>
                         </nav>
 
                         {{-- Stays in the bar at every width: below lg it sits left of
                              the menu button instead of inside the menu. --}}
-                        <a href="{{ route('public.hubungi-kami') }}" target="_blank" rel="noopener" class="inline-flex shrink-0 items-center whitespace-nowrap rounded bg-gold-500 px-3 py-2 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white sm:px-4 sm:py-2.5">
+                        <a href="{{ route('public.hubungi-kami') }}" target="_blank" rel="noopener" class="inline-flex min-h-10 shrink-0 items-center whitespace-nowrap rounded bg-gold-500 px-3 py-2 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white sm:px-4 sm:py-2.5">
                             Hubungi Kami
                         </a>
 
@@ -81,6 +123,17 @@
                 <div class="space-y-1 px-4 py-4 text-sm font-medium text-ink-600">
                     <a href="{{ url('/') }}" class="block rounded px-3 py-3 hover:bg-sand">Beranda</a>
                     <a href="{{ url('/properti') }}" class="block rounded px-3 py-3 hover:bg-sand">Properti</a>
+                    <a href="{{ url('/layanan') }}" class="block rounded px-3 py-3 hover:bg-sand">Layanan Kami</a>
+                    <a href="https://startspace.co.id" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 rounded px-3 py-3 hover:bg-sand">
+                        Virtual Office
+                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        <span class="sr-only">(tab baru)</span>
+                    </a>
+                    <a href="https://worklight.id" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 rounded px-3 py-3 hover:bg-sand">
+                        IT &amp; Business Solutions
+                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                        <span class="sr-only">(tab baru)</span>
+                    </a>
                     <a href="{{ url('/blog') }}" class="block rounded px-3 py-3 hover:bg-sand">Blog</a>
                     <a href="{{ url('/kontak') }}" class="block rounded px-3 py-3 hover:bg-sand">Kontak</a>
                 </div>
@@ -99,7 +152,7 @@
                     <div>
                         <x-brand variant="dark" />
                         <p class="mt-4 max-w-xs text-sm leading-6">
-                            Katalog properti primer dan sekunder pilihan di Indonesia.
+                            Jual beli, sewa, dan pengelolaan properti di Jabodetabek.
                         </p>
 
                         <div class="mt-6 flex items-center gap-3">
@@ -138,13 +191,36 @@
                         </div>
                     </div>
 
-                    <div class="md:text-right">
-                        <h2 class="text-sm font-semibold text-paper">Navigasi</h2>
-                        <ul class="mt-4 space-y-2 text-sm">
-                            <li><a href="{{ url('/properti') }}" class="hover:text-paper">Properti</a></li>
-                            <li><a href="{{ url('/blog') }}" class="hover:text-paper">Blog</a></li>
-                            <li><a href="{{ url('/kontak') }}" class="hover:text-paper">Kontak</a></li>
-                        </ul>
+                    <div class="flex flex-col gap-10 md:flex-row md:gap-16">
+                        <div class="md:text-right">
+                            <h2 class="text-sm font-semibold text-paper">Layanan</h2>
+                            <ul class="mt-4 space-y-2 text-sm">
+                                <li><a href="{{ url('/layanan') }}" class="hover:text-paper">Layanan Kami</a></li>
+                                <li>
+                                    <a href="https://startspace.co.id" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 hover:text-paper">
+                                        Virtual Office
+                                        <svg class="h-3.5 w-3.5 shrink-0 text-paper/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <span class="sr-only">(tab baru)</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="https://worklight.id" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 hover:text-paper">
+                                        IT &amp; Business Solutions
+                                        <svg class="h-3.5 w-3.5 shrink-0 text-paper/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                        <span class="sr-only">(tab baru)</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="md:text-right">
+                            <h2 class="text-sm font-semibold text-paper">Navigasi</h2>
+                            <ul class="mt-4 space-y-2 text-sm">
+                                <li><a href="{{ url('/properti') }}" class="hover:text-paper">Properti</a></li>
+                                <li><a href="{{ url('/blog') }}" class="hover:text-paper">Blog</a></li>
+                                <li><a href="{{ url('/kontak') }}" class="hover:text-paper">Kontak</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
 

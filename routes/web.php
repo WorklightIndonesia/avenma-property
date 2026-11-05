@@ -1,14 +1,16 @@
 <?php
 
+use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\ListingSettingController;
 use App\Http\Controllers\Admin\PageContentController;
+use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SiteSettingController;
-use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\BlogController;
+use App\Http\Controllers\Public\LayananController;
 use App\Http\Controllers\Public\ListingController;
 use App\Http\Controllers\Public\PageController;
 use App\Http\Controllers\Public\SitemapController;
@@ -25,6 +27,8 @@ Route::get('/properti/{listing}', [ListingController::class, 'show'])->name('pub
 
 Route::get('/blog', [BlogController::class, 'index'])->name('public.blog.index');
 Route::get('/blog/{post}', [BlogController::class, 'show'])->name('public.blog.show');
+
+Route::get('/layanan', [LayananController::class, 'index'])->name('public.layanan.index');
 
 Route::get('/sitemap.xml', SitemapController::class)->name('public.sitemap');
 
@@ -78,9 +82,18 @@ Route::middleware(['auth', 'role:'.User::ROLE_ADMIN.','.User::ROLE_AGEN])->group
         Route::delete('/admin/pengaturan-listing/developer/{developer}', [ListingSettingController::class, 'destroyDeveloper'])
             ->name('admin.listing-settings.developers.destroy');
 
-        Route::resource('/admin/users', UserController::class)
+        Route::resource('/admin/agents', AgentController::class)
             ->except('show')
-            ->names('admin.users');
+            ->names('admin.agents');
+
+        Route::resource('/admin/layanan', ServiceController::class)
+            ->except('show')
+            ->parameters(['layanan' => 'service'])
+            ->names('admin.services');
+
+        Route::post('/admin/layanan/{service}/{direction}', [ServiceController::class, 'move'])
+            ->whereIn('direction', ['up', 'down'])
+            ->name('admin.services.move');
 
         Route::get('/admin/pages', [PageContentController::class, 'index'])->name('admin.pages.index');
         Route::get('/admin/pages/{page}/edit', [PageContentController::class, 'edit'])->name('admin.pages.edit');

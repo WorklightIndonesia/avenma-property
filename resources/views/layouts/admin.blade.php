@@ -61,8 +61,11 @@
                         <a href="{{ route('admin.pages.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.pages.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Halaman
                         </a>
-                        <a href="{{ route('admin.users.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.users.*') ? 'bg-paper/10 text-paper' : '' }}">
-                            Akun
+                        <a href="{{ route('admin.services.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.services.*') ? 'bg-paper/10 text-paper' : '' }}">
+                            Layanan
+                        </a>
+                        <a href="{{ route('admin.agents.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.agents.*') ? 'bg-paper/10 text-paper' : '' }}">
+                            Agen
                         </a>
                         <a href="{{ route('admin.settings.edit') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.settings.*') ? 'bg-paper/10 text-paper' : '' }}">
                             Kontak Avenma

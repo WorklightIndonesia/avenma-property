@@ -61,11 +61,11 @@ class FlashMessageTest extends TestCase
     public function test_an_error_toast_stays_longer_than_a_success_toast(): void
     {
         $this->actingAs($this->admin())
-            ->from('/admin/users/create')
-            ->post('/admin/users', ['name' => '', 'email' => '', 'role' => User::ROLE_AGEN])
-            ->assertRedirect('/admin/users/create');
+            ->from('/admin/agents/create')
+            ->post('/admin/agents', ['name' => '', 'email' => '', 'phone' => ''])
+            ->assertRedirect('/admin/agents/create');
 
-        $page = $this->get('/admin/users/create')->assertOk()->getContent();
+        $page = $this->get('/admin/agents/create')->assertOk()->getContent();
 
         $this->assertStringContainsString('10000', $page);
         $this->assertStringNotContainsString('6000', $page);

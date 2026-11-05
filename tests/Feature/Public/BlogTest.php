@@ -70,13 +70,28 @@ class BlogTest extends TestCase
         $this->get('/blog/artikel-bersampul')->assertOk()->assertSee('/images/blog/sampul.jpg', false);
     }
 
-    public function test_every_card_names_the_author(): void
+    public function test_cards_show_the_date_without_naming_the_author(): void
     {
         $penulis = User::factory()->create(['name' => 'Agen Penulis', 'role' => User::ROLE_AGEN, 'phone' => '089630999996']);
 
-        $this->article(['title' => 'Artikel Berpenulis', 'slug' => 'artikel-berpenulis', 'created_by' => $penulis->id]);
+        $post = $this->article([
+            'title' => 'Artikel Berpenulis',
+            'slug' => 'artikel-berpenulis',
+            'created_by' => $penulis->id,
+            'published_at' => now()->subDay(),
+        ]);
 
-        $this->get('/blog')->assertOk()->assertSee('Agen Penulis');
+        $date = $post->published_at->locale('id')->translatedFormat('j F Y');
+
+        $this->get('/blog')
+            ->assertOk()
+            ->assertSee($date)
+            ->assertDontSee('Agen Penulis');
+
+        $this->get('/blog/artikel-berpenulis')
+            ->assertOk()
+            ->assertSee($date)
+            ->assertDontSee('Agen Penulis');
     }
 
     public function test_the_search_box_narrows_the_list(): void

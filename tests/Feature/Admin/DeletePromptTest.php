@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Agent;
 use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\User;
@@ -51,19 +52,18 @@ class DeletePromptTest extends TestCase
             ->assertDontSee('Hapus developer?');
     }
 
-    public function test_the_account_table_opens_a_dialog_naming_the_account(): void
+    public function test_the_agent_table_opens_a_dialog_naming_the_agent(): void
     {
-        $agen = User::factory()->create([
-            'role' => User::ROLE_AGEN,
-            'phone' => '089630999996',
+        $agent = Agent::create([
             'name' => 'Budi',
+            'phone' => '089630999996',
             'email' => 'agenbudi@gmail.com',
         ]);
 
-        $this->actingAs($this->admin())->get('/admin/users')
+        $this->actingAs($this->admin())->get('/admin/agents')
             ->assertOk()
-            ->assertSee("open-modal', 'delete-user-{$agen->id}", false)
-            ->assertSee('Hapus akun?')
+            ->assertSee("open-modal', 'delete-agent-{$agent->id}", false)
+            ->assertSee('Hapus agen?')
             ->assertSee('agenbudi@gmail.com')
             ->assertDontSee('return confirm', false);
     }

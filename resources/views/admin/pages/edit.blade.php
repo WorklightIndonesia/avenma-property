@@ -261,11 +261,13 @@
                                         <x-input-error class="mt-2" :messages="$errors->get($path.'.'.$labelKey)" />
                                     </div>
 
-                                    <div>
-                                        <x-input-label :for="'cta-url-'.$key.$suffix" :value="'Tujuan tombol '.$slotName.' (opsional)'" />
-                                        <x-text-input :id="'cta-url-'.$key.$suffix" :name="$field.'['.$urlKey.']'" type="text" class="mt-1 block w-full" :value="$urlValue" placeholder="Contoh: /properti" />
-                                        <x-input-error class="mt-2" :messages="$errors->get($path.'.'.$urlKey)" />
-                                    </div>
+                                    @if ($meta['cta_url'] ?? true)
+                                        <div>
+                                            <x-input-label :for="'cta-url-'.$key.$suffix" :value="'Tujuan tombol '.$slotName.' (opsional)'" />
+                                            <x-text-input :id="'cta-url-'.$key.$suffix" :name="$field.'['.$urlKey.']'" type="text" class="mt-1 block w-full" :value="$urlValue" placeholder="Contoh: /properti" />
+                                            <x-input-error class="mt-2" :messages="$errors->get($path.'.'.$urlKey)" />
+                                        </div>
+                                    @endif
                                 </div>
                             @endforeach
 
@@ -281,7 +283,7 @@
             </section>
         @endforeach
 
-        <div class="flex items-center gap-3">
+        <div class="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-line bg-sand px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <button type="submit" class="inline-flex min-h-11 items-center rounded bg-gold-500 px-5 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white">
                 Simpan
             </button>

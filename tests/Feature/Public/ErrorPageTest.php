@@ -32,7 +32,7 @@ class ErrorPageTest extends TestCase
         $agen = User::factory()->create(['role' => User::ROLE_AGEN]);
 
         $this->actingAs($agen)
-            ->get('/admin/users')
+            ->get('/admin/agents')
             ->assertForbidden()
             ->assertSee('Anda tidak punya akses ke halaman ini');
     }

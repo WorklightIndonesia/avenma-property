@@ -28,6 +28,7 @@ class ListingRequest extends FormRequest
             'description' => ['required', 'string'],
             'location_id' => ['required', 'integer', 'exists:locations,id'],
             'developer_id' => ['nullable', 'integer', 'exists:developers,id'],
+            'agent_id' => ['nullable', 'integer', 'exists:agents,id'],
             'listing_type' => ['required', Rule::in(array_keys(ListingOption::options('listing_type')))],
             'property_type' => ['required', Rule::in(array_keys(ListingOption::options('property_type')))],
             'certificate' => ['nullable', 'string', 'max:100'],
@@ -46,7 +47,6 @@ class ListingRequest extends FormRequest
             // otherwise shows Google's address search instead of the property.
             'latitude' => ['nullable', 'required_with:longitude', Rule::requiredIf(fn () => $this->publishesWithoutPoint()), 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'required_with:latitude', 'numeric', 'between:-180,180'],
-            'contact_phone' => ['nullable', 'string', 'max:30'],
             'is_featured' => ['boolean'],
             'is_published' => ['boolean'],
             'show_kpr' => ['boolean'],

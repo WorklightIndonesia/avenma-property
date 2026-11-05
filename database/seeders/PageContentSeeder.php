@@ -6,7 +6,7 @@ use App\Models\PageContent;
 use Illuminate\Database\Seeder;
 
 /**
- * Draft copy for the three public pages. Replace it through Admin > Halaman;
+ * Draft copy for the pages in config/pages.php. Replace it through Admin > Halaman;
  * the seeder only runs on a fresh database.
  */
 class PageContentSeeder extends Seeder
@@ -40,13 +40,13 @@ class PageContentSeeder extends Seeder
                 'meta_description' => 'Katalog properti primer dan sekunder di Jabodetabek, dengan lokasi resmi, luas, harga, dan simulasi KPR. Bandingkan tanpa membuka tab lain.',
                 'sections' => [
                     'hero' => [
-                        'heading' => 'Temukan properti yang tepat untuk Anda.',
-                        'body' => '<p>Setiap listing memuat lokasi resmi, luas, harga, dan perkiraan angsuran, jadi Anda bisa membandingkan tanpa membuka tab lain.</p>',
+                        'heading' => 'Properti yang tepat, untuk setiap rencana.',
+                        'body' => '<p>Jelajahi rumah, apartemen, ruko, dan kavling, atau percayakan jual beli, sewa, dan pengelolaan properti Anda kepada tim kami.</p>',
                         'image_alt' => 'Foto properti utama Avenma',
                         'cta_label' => 'Lihat Properti',
                         'cta_url' => '/properti',
-                        'cta_label_2' => 'Hubungi Kami',
-                        'cta_url_2' => '/hubungi-kami',
+                        'cta_label_2' => 'Layanan Kami',
+                        'cta_url_2' => '/layanan',
                     ],
                 ],
             ],
@@ -61,6 +61,20 @@ class PageContentSeeder extends Seeder
                         'heading' => 'Hubungi Kami',
                         'body' => '<p>WhatsApp adalah jalur tercepat. Pesan Anda langsung sampai ke tim yang memegang listing terkait. Sertakan nama properti atau link halamannya agar kami bisa menjawab tanpa bertanya balik.</p>'
                             .'<p>Untuk kerja sama developer atau pemasangan listing, tuliskan kebutuhan Anda pada pesan pertama.</p>',
+                    ],
+                ],
+            ],
+
+            [
+                'key' => 'layanan',
+                'title' => 'Layanan',
+                'meta_title' => 'Layanan Properti',
+                'meta_description' => 'Jual beli, sewa, pemasaran, konsultasi, dan pengelolaan properti. Satu tim Avenma Property untuk semuanya.',
+                'sections' => [
+                    'hero' => [
+                        'heading' => 'Dari menawarkan sampai mengurus properti.',
+                        'body' => '<p>Jual beli, sewa, pemasaran, konsultasi, dan pengelolaan properti harian. Satu tim yang bisa Anda hubungi untuk semuanya.</p>',
+                        'cta_label' => 'Diskusikan via WhatsApp',
                     ],
                 ],
             ],

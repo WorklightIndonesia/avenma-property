@@ -77,11 +77,11 @@ return [
 
     'attributes' => [
         'address' => 'Alamat',
+        'agent_id' => 'Agen',
         'bathrooms' => 'Kamar mandi',
         'bedrooms' => 'Kamar tidur',
         'building_area' => 'Luas bangunan',
         'carport' => 'Carport',
-        'contact_phone' => 'Nomor WhatsApp',
         'current_password' => 'Password saat ini',
         'description' => 'Deskripsi',
         'developer_id' => 'Developer',

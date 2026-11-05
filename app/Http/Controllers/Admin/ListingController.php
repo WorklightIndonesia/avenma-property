@@ -4,12 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ListingRequest;
+use App\Models\Agent;
 use App\Models\Developer;
 use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\ListingOption;
-use App\Models\ListingRoom;
 use App\Models\Location;
 use App\Models\User;
 use App\Services\ImageService;
@@ -33,7 +33,7 @@ class ListingController extends Controller
         $sort = (string) $request->query('urut');
 
         $listings = Listing::query()
-            ->with(['location', 'creator', 'images'])
+            ->with(['location', 'agent', 'images'])
             ->when($request->user()->role !== User::ROLE_ADMIN, fn ($query) => $query->where('created_by', $request->user()->id))
             ->search($filters)
             ->sorted($sort)
@@ -101,8 +101,6 @@ class ListingController extends Controller
         $listing = DB::transaction(function () use ($request, $data) {
             $listing = new Listing($data);
             $listing->created_by = $request->user()->id;
-            // Blank means "use my own number", as agreed for agen-created listings.
-            $listing->contact_phone = ($data['contact_phone'] ?? null) ?: $request->user()->phone;
             Slug::save($listing, $data['title'], 'properti');
 
             $this->storePhotos($listing, (array) $request->file('photos', []));
@@ -299,6 +297,7 @@ class ListingController extends Controller
     {
         return [
             'developers' => Developer::orderBy('name')->pluck('name', 'id'),
+            'agents' => Agent::orderBy('name')->pluck('name', 'id'),
             'listingTypes' => ListingOption::options('listing_type'),
             'propertyTypes' => ListingOption::options('property_type'),
             'statuses' => ListingOption::options('status'),

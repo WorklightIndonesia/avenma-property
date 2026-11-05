@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Public;
 
 use App\Http\Controllers\Controller;
+use App\Models\Agent;
 use App\Models\Developer;
 use App\Models\KprSetting;
 use App\Models\Listing;
@@ -94,15 +95,36 @@ class ListingController extends Controller
     {
         abort_unless($listing->is_published, 404);
 
-        $listing->load(['location', 'developer', 'creator', 'images', 'rooms']);
+        $listing->load(['location', 'developer', 'agent', 'images', 'rooms']);
 
-        // Listing phone wins; blank falls back to the office number in settings.
-        $phone = $listing->contact_phone ?: SiteSetting::whatsappNumber();
+        // The agent in charge wins; a listing without one falls back to the
+        // office contact in settings.
+        $agent = $listing->agent;
+        $settings = SiteSetting::current();
+
+        $contact = $agent
+            ? [
+                'name' => $agent->name,
+                'title' => $agent->title,
+                'photo' => $agent->photoUrl(),
+                'has_photo' => $agent->photo_path !== null,
+                'phone' => $agent->phone,
+                'email' => $agent->email,
+            ]
+            : [
+                'name' => Agent::FALLBACK_NAME,
+                'title' => null,
+                'photo' => asset(Agent::FALLBACK_PHOTO),
+                'has_photo' => false,
+                'phone' => $settings->whatsapp,
+                'email' => $settings->email,
+            ];
 
         return view('public.listings.show', [
             'listing' => $listing,
-            'whatsappUrl' => $this->whatsappUrl($phone, $listing),
-            'contactLabel' => $listing->contact_phone ? 'Hubungi Agen' : 'Hubungi Avenma',
+            'contact' => $contact,
+            'whatsappUrl' => $this->whatsappUrl($contact['phone'], $listing),
+            'contactLabel' => 'Hubungi '.$contact['name'],
             'kpr' => $this->kpr($listing),
         ]);
     }

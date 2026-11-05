@@ -74,12 +74,55 @@ class SeoTest extends TestCase
 
         $this->assertNotFalse(simplexml_load_string($content), 'Sitemap is not valid XML.');
 
+        $this->assertStringContainsString('<loc>'.url('/').'</loc>', $content);
+        $this->assertStringContainsString('<loc>'.url('/kontak').'</loc>', $content);
+        $this->assertStringContainsString('<loc>'.route('public.layanan.index').'</loc>', $content);
         $this->assertStringContainsString('<loc>'.route('public.listings.show', 'rumah-terbit').'</loc>', $content);
         $this->assertStringNotContainsString('rumah-draf', $content);
-        $this->assertStringContainsString('<loc>'.url('/kontak').'</loc>', $content);
         $this->assertStringContainsString('<loc>'.route('public.blog.index').'</loc>', $content);
         $this->assertStringContainsString('<loc>'.route('public.blog.show', 'artikel-terbit').'</loc>', $content);
         $this->assertStringNotContainsString('artikel-draf', $content);
+        $this->assertStringNotContainsString('layanan/arsitektur', $content);
+        $this->assertStringNotContainsString('layanan-lama', $content);
+    }
+
+    public function test_the_sitemap_dates_an_article_by_its_last_edit(): void
+    {
+        $this->seed(PageContentSeeder::class);
+
+        $post = $this->article(['slug' => 'artikel-lama', 'published_at' => now()->subMonths(3)]);
+        $post->update(['title' => 'Artikel lama, sudah direvisi']);
+        $post->refresh();
+
+        $this->get('/sitemap.xml')
+            ->assertOk()
+            ->assertSee('<lastmod>'.$post->updated_at->toAtomString().'</lastmod>', false);
+    }
+
+    public function test_a_listing_page_marks_up_its_breadcrumb(): void
+    {
+        $this->listing(['slug' => 'rumah-breadcrumb', 'title' => 'Rumah Breadcrumb']);
+
+        $this->get('/properti/rumah-breadcrumb')
+            ->assertOk()
+            ->assertSee('aria-label="Breadcrumb"', false)
+            ->assertSee('"@context":"https://schema.org"', false)
+            ->assertSee('"@type":"BreadcrumbList"', false)
+            ->assertSee('"name":"Semua properti"', false)
+            ->assertSee('"name":"Rumah Breadcrumb"', false);
+    }
+
+    public function test_an_article_marks_up_its_breadcrumb(): void
+    {
+        $this->article(['slug' => 'artikel-breadcrumb', 'title' => 'Artikel Breadcrumb']);
+
+        $this->get('/blog/artikel-breadcrumb')
+            ->assertOk()
+            ->assertSee('aria-label="Breadcrumb"', false)
+            ->assertSee('"@context":"https://schema.org"', false)
+            ->assertSee('"@type":"BreadcrumbList"', false)
+            ->assertSee('"name":"Beranda"', false)
+            ->assertSee('"name":"Blog"', false);
     }
 
     public function test_the_sitemap_skips_a_page_without_a_row(): void

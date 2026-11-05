@@ -23,7 +23,7 @@ class PageTest extends TestCase
         }
 
         $this->get('/')
-            ->assertSee('Temukan properti yang tepat untuk Anda.');
+            ->assertSee('Properti yang tepat, untuk setiap rencana.');
     }
 
     public function test_a_page_without_a_row_is_not_found(): void
@@ -41,6 +41,17 @@ class PageTest extends TestCase
             ->assertSee('href="https://wa.me/6287736786969"', false);
 
         $this->get('/hubungi-kami')->assertRedirect('https://wa.me/6287736786969');
+    }
+
+    public function test_the_secondary_hero_button_opens_the_services_page(): void
+    {
+        $this->seed(PageContentSeeder::class);
+
+        // The prose CTAs print the stored path as-is, so this only matches the
+        // hero button; nav and footer links go through url() and are absolute.
+        $this->get('/')
+            ->assertSee('href="/layanan"', false)
+            ->assertSee('Layanan Kami');
     }
 
     public function test_hubungi_kami_falls_back_to_the_contact_page_without_a_number(): void

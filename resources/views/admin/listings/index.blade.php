@@ -128,7 +128,7 @@
                         <td class="px-4 py-2 text-ink-600">{{ $listing->location?->name ?? '—' }}</td>
                         <td class="tabular whitespace-nowrap px-4 py-2 text-left">Rp {{ number_format($listing->price, 0, ',', '.') }}</td>
                         <td class="px-4 py-2 text-ink-600">{{ $listing->statusLabel() }}</td>
-                        <td class="px-4 py-2 text-ink-600">{{ $listing->creator?->name ?? '—' }}</td>
+                        <td class="px-4 py-2 text-ink-600">{{ $listing->agent?->name ?? App\Models\Agent::FALLBACK_NAME }}</td>
                         <td class="whitespace-nowrap px-4 py-1 text-center">
                             <a href="{{ route('admin.listings.edit', $listing) }}" class="inline-flex h-10 items-center rounded px-3 font-medium text-ink-950 hover:bg-sand">Edit</a>
 

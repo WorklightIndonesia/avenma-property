@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Public;
 
+use App\Models\Agent;
 use App\Models\Listing;
 use App\Models\SiteSetting;
 use App\Support\KprCalculator;
@@ -37,14 +38,24 @@ class ListingShowTest extends TestCase
         $this->get('/properti/tidak-ada')->assertNotFound();
     }
 
-    public function test_whatsapp_link_uses_the_listing_contact_phone(): void
+    public function test_whatsapp_link_uses_the_agent_in_charge(): void
     {
         SiteSetting::create(['whatsapp' => '087736786969']);
-        $this->listing(['slug' => 'rumah-bintaro', 'contact_phone' => '0812-3456-7890']);
+
+        $agent = Agent::create([
+            'name' => 'Budi',
+            'title' => 'Sales Representative',
+            'phone' => '081234567890',
+            'email' => 'budi@example.com',
+        ]);
+
+        $this->listing(['slug' => 'rumah-bintaro', 'agent_id' => $agent->id]);
 
         $this->get('/properti/rumah-bintaro')
             ->assertOk()
-            ->assertSee('Hubungi Agen')
+            ->assertSee('Hubungi Budi')
+            ->assertSee('Sales Representative')
+            ->assertSee('budi@example.com')
             ->assertDontSee('Hubungi Avenma')
             ->assertSee('https://wa.me/6281234567890?text=', false)
             ->assertSee(rawurlencode('Rumah Uji'), false);
@@ -52,12 +63,13 @@ class ListingShowTest extends TestCase
 
     public function test_whatsapp_link_falls_back_to_the_office_number(): void
     {
-        SiteSetting::create(['whatsapp' => '087736786969']);
+        SiteSetting::create(['whatsapp' => '087736786969', 'email' => 'halo@avenma.test']);
         $this->listing(['slug' => 'rumah-bintaro']);
 
         $this->get('/properti/rumah-bintaro')
             ->assertOk()
-            ->assertSee('Hubungi Avenma')
+            ->assertSee('Hubungi Avenma Properti')
+            ->assertSee('halo@avenma.test')
             ->assertSee('https://wa.me/6287736786969?text=', false);
     }
 

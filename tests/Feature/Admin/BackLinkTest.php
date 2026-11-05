@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Agent;
 use App\Models\BlogPost;
 use App\Models\Developer;
 use App\Models\Listing;
 use App\Models\PageContent;
+use App\Models\Service;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -22,6 +24,16 @@ class BackLinkTest extends TestCase
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMIN]);
         $agen = User::factory()->create(['role' => User::ROLE_AGEN, 'phone' => '089630999996']);
+        $agent = Agent::create([
+            'name' => 'Budi',
+            'phone' => '089630999996',
+            'email' => 'budi@example.com',
+        ]);
+
+        $service = Service::create([
+            'title' => 'Konsultasi Properti',
+            'description' => 'Memberikan pertimbangan harga pasar.',
+        ]);
 
         $post = BlogPost::create([
             'created_by' => $agen->id,
@@ -52,9 +64,12 @@ class BackLinkTest extends TestCase
             ['/admin/listings/create', 'admin.listings.index'],
             [route('admin.listings.edit', $listing), 'admin.listings.index'],
             [route('admin.developers.edit', $developer), 'admin.listing-settings.index'],
-            ['/admin/users', 'admin.dashboard'],
-            ['/admin/users/create', 'admin.users.index'],
-            [route('admin.users.edit', $agen), 'admin.users.index'],
+            ['/admin/agents', 'admin.dashboard'],
+            ['/admin/agents/create', 'admin.agents.index'],
+            [route('admin.agents.edit', $agent), 'admin.agents.index'],
+            ['/admin/layanan', 'admin.dashboard'],
+            ['/admin/layanan/create', 'admin.services.index'],
+            [route('admin.services.edit', $service), 'admin.services.index'],
             ['/admin/pages', 'admin.dashboard'],
             [route('admin.pages.edit', $page), 'admin.pages.index'],
             ['/admin/settings', 'admin.dashboard'],

@@ -408,7 +408,7 @@
                                 @endif
 
                                 <div class="flex flex-1 flex-col p-5">
-                                    <p class="text-xs text-ink-500">{{ $date }}@if ($post->creator) · {{ $post->creator->name }}@endif</p>
+                                    <p class="text-xs text-ink-500">{{ $date }}</p>
 
                                     <h3 class="mt-2 text-lg font-semibold leading-snug">
                                         <a href="{{ route('public.blog.show', $post) }}">{{ $post->title }}</a>

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Models\Agent;
 use App\Models\HomeGalleryPhoto;
 use App\Models\Listing;
 use App\Models\User;
@@ -149,7 +150,7 @@ class ListingCrudTest extends TestCase
         $listing = Listing::firstOrFail();
 
         $this->assertSame($agen->id, $listing->created_by);
-        $this->assertSame('081234567890', $listing->contact_phone);
+        $this->assertNull($listing->agent_id);
         $this->assertSame('rumah-uji', $listing->slug);
         $this->assertSame(1_250_000_000, $listing->price);
         $this->assertTrue($listing->is_published);
@@ -177,15 +178,26 @@ class ListingCrudTest extends TestCase
         $this->assertStringEndsWith('#foto', $response->headers->get('Location'));
     }
 
-    public function test_a_given_contact_phone_wins_over_the_agen_number(): void
+    public function test_the_chosen_agent_is_saved_on_the_listing(): void
     {
-        $agen = $this->agen(['phone' => '081234567890']);
+        $agent = Agent::create([
+            'name' => 'Budi',
+            'phone' => '081234567890',
+            'email' => 'budi@example.com',
+        ]);
 
-        $this->actingAs($agen)
-            ->post('/admin/listings', $this->payload(['contact_phone' => '0812-1111-2222']))
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['agent_id' => $agent->id]))
             ->assertRedirect();
 
-        $this->assertSame('0812-1111-2222', Listing::firstOrFail()->contact_phone);
+        $this->assertSame($agent->id, Listing::firstOrFail()->agent_id);
+    }
+
+    public function test_an_unknown_agent_is_rejected(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['agent_id' => 999]))
+            ->assertSessionHasErrors('agent_id');
     }
 
     public function test_duplicate_titles_get_a_distinct_slug(): void

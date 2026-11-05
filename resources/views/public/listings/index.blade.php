@@ -13,6 +13,10 @@
             <h1 class="text-4xl font-semibold tracking-tight">Daftar Properti</h1>
             <p class="mt-1 text-sm text-ink-500">{{ $listings->total() }} properti ditemukan</p>
 
+            <div class="mt-8">
+                <x-demo-notice />
+            </div>
+
             <div class="mt-8 grid gap-8 lg:grid-cols-[15rem_1fr] lg:items-start lg:gap-10">
                 <div>
                     @include('public.listings._filters', ['action' => route('public.listings.index')])

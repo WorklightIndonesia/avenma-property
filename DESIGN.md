@@ -70,9 +70,9 @@ Satu keluarga: **Plus Jakarta Sans**, bobot 400, 500, 600. Dimuat dari `fonts.bu
 
 | Peran | Ukuran | Bobot | Line height |
 |---|---|---|---|
-| display | 48–64 px, `clamp()` | 600 | 1.05 |
+| display | 48–72 px: 48 di ponsel, 72 mulai `xl` | 600 | 1.05 |
 | h1 | 36 px | 600 | 1.15 |
-| h2 | 28 px | 600 | 1.2 |
+| h2 | 30 px, 36 px mulai `sm` | 600 | 1.2 |
 | h3 | 20 px | 600 | 1.3 |
 | body | 16 px | 400 | 1.6 |
 | small | 14 px | 400 | 1.5 |
@@ -88,7 +88,7 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 - Skala kelipatan 4 px. Jarak yang dipakai: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
 - Container `max-w-[90rem]` (1440 px) dengan gutter 16 / 24 / 32 px.
-- Jarak antar-section 96 px (mobile) dan 128 px (desktop) — selalu lebih besar dari jarak di dalam section.
+- Jarak antar-section 48 px untuk blok yang berurutan dalam satu halaman (daftar layanan), 64–80 px untuk section besar di beranda dan halaman indeks. Selalu lebih besar dari jarak di dalam section (12–32 px). Halaman yang sudah ada adalah acuannya; ukur sebelum menyalin angka dari dokumen ini.
 - Radius kontrol: `6px` default untuk tombol, input, pilihan, dan badge. `4px` untuk elemen sangat kecil. Maksimum `12px`, hanya untuk panel besar.
 - Kartu, panel, dan bingkai foto tetap siku: tanpa `rounded`. Ini yang membuat katalog tetap terbaca sebagai grid, dan menghindari sudut foto yang ikut membulat.
 - Satu-satunya bentuk bulat penuh: thumb slider rentang (18 px) dan avatar. Thumb bulat karena ia pegangan, bukan bidang.
@@ -102,8 +102,25 @@ Tidak ada huruf kedua. Judul artikel, kutipan, harga, dan label semuanya Plus Ja
 
 - Tema terang: latar `paper`, teks `ink-950`, tanpa blok gelap. Footer tetap `ink-950`.
 - Dua kolom pada `lg`: teks di kiri, foto 4:3 di kanan; menumpuk di bawah `lg` dengan foto setelah teks pada rasio 16:9 agar tidak mendominasi layar.
-- Isi: label kecil `ink-500`, h1 36–48 px, satu paragraf 18 px `ink-600`, lalu `Lihat Properti` (gold) dan `Hubungi Kami` (outline).
+- Isi: label kecil `ink-500`, h1 memakai ukuran display (48–72 px), satu paragraf 18 px `ink-600`, lalu `Lihat Properti` (gold) dan `Hubungi Kami` (outline).
 - Tanpa deretan klaim di bawah CTA. Bila foto belum ada, blok `sand` dengan mark dan label "Foto properti utama".
+
+**Halaman layanan**
+
+- Satu halaman: `/layanan`. Kedelapan baris ada di tabel `services` dan diedit dari Admin > Layanan; view-nya `resources/views/public/layanan/index.blade.php` dan hanya membaca dari situ.
+- Hero: judul payung, satu paragraf, CTA WhatsApp, lalu gambar denah tanpa kotak latar. Gambar dan teks disejajarkan pada sumbu tengah (`lg:items-center`), bukan `items-start`, karena kolom kiri lebih pendek dari gambarnya.
+- Di bawah hero, satu kartu putih berisi delapan baris. Satu `x-data` di kartu memegang indeks baris yang terbuka; hanya satu baris terbuka dan baris pertama sudah terbuka saat halaman dimuat.
+- Tiap baris memakai pola disclosure: `<h2>` berisi `<button>` dengan `aria-expanded` dan `aria-controls`; panelnya `role="region"` dengan `aria-labelledby` ke tombol itu, dan `inert` saat tertutup agar isinya tidak masuk urutan tab.
+- `id` baris adalah slug judulnya (`/layanan#property-management`). Hash itu membuka baris bersangkutan saat halaman dimuat dan saat hash berubah. Slug belum punya kolom sendiri, jadi mengganti judul mengganti anchor.
+- Kepala baris: nomor 36/48/60 px bobot 600 `ink-500` (`gold-700` saat terbuka), judul 24/30/36 px bobot 600, lalu tag 12 px `ink-500` dipisah `•`. Nomor dan judul rata atas. Chevron 20/24 px di kolom kanan: menghadap ke bawah saat tertutup, berputar 180° dan menjadi `gold-700` saat terbuka (`transition-transform`, 300 ms).
+- Saat terbuka: latar `gold-300/25`, paragraf 16–18 px `ink-600` selebar `max-w-xl`, lalu tombol primer emas (`bg-gold-500`, teks `ink-950`, radius 6 px, 12 px kapital) — bukan outline, bukan pil. Label tombol adalah ajakan pendek per layanan (`Cari atau jual`, `Titip kelola`), bukan `Lihat detail`.
+- Animasi tinggi memakai panel satu baris `grid` dengan `grid-template-rows` dari `0fr` ke `1fr` (300 ms `ease-out`). Tinggi asli ikut bergerak tanpa pengukuran, jadi baris yang menutup dan membuka pada klik yang sama bergerak bersamaan. Tanpa animasi `max-height` dan tanpa tinggi tetap.
+- Jarak: 24–28 px vertikal per baris, 20–24 px horizontal di dalam kartu, tanpa jarak kosong besar di antara bagian halaman.
+
+**Artikel blog**
+
+- Header: breadcrumb `Beranda / Blog / {judul}` 12 px `ink-500`; item terakhir `aria-current="page"` dan `font-medium text-ink-950`. `BreadcrumbList` di kepala mengikuti item yang terlihat. H1 30/36 px, lalu baris tanggal 14 px `ink-500`.
+- Penutup: garis `border-line` 24 px di atas label 12 px kapital `ink-500` "Ditulis oleh tim Avenma Properti", satu paragraf 14 px `ink-600` selebar `max-w-prose`, lalu tautan `Hubungi tim kami` ke `/kontak`. Tanpa foto dan tanpa blok penulis terpisah.
 
 **Button**
 

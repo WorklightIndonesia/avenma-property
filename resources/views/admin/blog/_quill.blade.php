@@ -55,6 +55,8 @@
 
             const sync = () => {
                 input.value = editor.root.innerHTML;
+                // The article preview lives in Alpine state, outside the editor.
+                host.dispatchEvent(new CustomEvent('quill-change', { bubbles: true, detail: input.value }));
             };
 
             editor.on('text-change', sync);
