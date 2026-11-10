@@ -68,22 +68,18 @@
                                     <svg class="h-3 w-3 transition-transform duration-150" :class="open ? 'rotate-180' : ''" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" /></svg>
                                 </button>
 
-                                <div id="nav-layanan" x-show="open" x-cloak class="absolute left-0 top-full z-50 mt-3 w-64 border border-line bg-paper shadow-float">
+                                <div id="nav-layanan" x-show="open" x-cloak class="absolute left-0 top-full z-50 mt-3 w-72 border border-line bg-paper shadow-float">
                                     <a href="{{ url('/layanan') }}" class="flex min-h-11 items-center px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
                                         Layanan Kami
                                     </a>
 
-                                    <a href="https://startspace.co.id" target="_blank" rel="noopener" class="flex min-h-11 items-center justify-between gap-3 border-t border-line px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
-                                        Virtual Office
-                                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                        <span class="sr-only">(tab baru)</span>
-                                    </a>
-
-                                    <a href="https://worklight.id" target="_blank" rel="noopener" class="flex min-h-11 items-center justify-between gap-3 border-t border-line px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
-                                        IT &amp; Business Solutions
-                                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                        <span class="sr-only">(tab baru)</span>
-                                    </a>
+                                    @foreach (App\Support\SisterService::links() as $sister)
+                                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="block border-t border-line px-4 py-3 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
+                                            {{ $sister['title'] }}
+                                            <span class="mt-0.5 block text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
+                                            <span class="sr-only">(tab baru)</span>
+                                        </a>
+                                    @endforeach
                                 </div>
                             </div>
 
@@ -124,16 +120,13 @@
                     <a href="{{ url('/') }}" class="block rounded px-3 py-3 hover:bg-sand">Beranda</a>
                     <a href="{{ url('/properti') }}" class="block rounded px-3 py-3 hover:bg-sand">Properti</a>
                     <a href="{{ url('/layanan') }}" class="block rounded px-3 py-3 hover:bg-sand">Layanan Kami</a>
-                    <a href="https://startspace.co.id" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 rounded px-3 py-3 hover:bg-sand">
-                        Virtual Office
-                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                        <span class="sr-only">(tab baru)</span>
-                    </a>
-                    <a href="https://worklight.id" target="_blank" rel="noopener" class="flex items-center justify-between gap-3 rounded px-3 py-3 hover:bg-sand">
-                        IT &amp; Business Solutions
-                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                        <span class="sr-only">(tab baru)</span>
-                    </a>
+                    @foreach (App\Support\SisterService::links() as $sister)
+                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="block rounded px-3 py-3 hover:bg-sand">
+                            {{ $sister['title'] }}
+                            <span class="mt-0.5 block text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
+                            <span class="sr-only">(tab baru)</span>
+                        </a>
+                    @endforeach
                     <a href="{{ url('/blog') }}" class="block rounded px-3 py-3 hover:bg-sand">Blog</a>
                     <a href="{{ url('/kontak') }}" class="block rounded px-3 py-3 hover:bg-sand">Kontak</a>
                 </div>
@@ -196,20 +189,12 @@
                             <h2 class="text-sm font-semibold text-paper">Layanan</h2>
                             <ul class="mt-4 space-y-2 text-sm">
                                 <li><a href="{{ url('/layanan') }}" class="hover:text-paper">Layanan Kami</a></li>
-                                <li>
-                                    <a href="https://startspace.co.id" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 hover:text-paper">
-                                        Virtual Office
-                                        <svg class="h-3.5 w-3.5 shrink-0 text-paper/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                @foreach (App\Support\SisterService::links() as $sister)
+                                    <li>
+                                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="hover:text-paper">{{ $sister['title'] }}</a>
                                         <span class="sr-only">(tab baru)</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="https://worklight.id" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 hover:text-paper">
-                                        IT &amp; Business Solutions
-                                        <svg class="h-3.5 w-3.5 shrink-0 text-paper/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                                        <span class="sr-only">(tab baru)</span>
-                                    </a>
-                                </li>
+                                    </li>
+                                @endforeach
                             </ul>
                         </div>
 

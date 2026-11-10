@@ -3,6 +3,7 @@
 namespace Tests\Feature\Public;
 
 use App\Models\SiteSetting;
+use App\Support\SisterService;
 use Database\Seeders\ServiceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -61,6 +62,23 @@ class LayananTest extends TestCase
             ->assertOk()
             ->assertSee('https://wa.me/6281299900387?text='.rawurlencode('Halo Avenma, saya ingin jual/beli properti. Saya: [pemilik/pembeli], jenis properti: [rumah/ruko/apartemen], lokasi: [kota/kecamatan], anggaran: [Rp]. Mohon info langkah berikutnya.'), false)
             ->assertSee('https://wa.me/6281299900387?text='.rawurlencode('Halo Avenma, saya ingin berinvestasi properti. Lokasi yang diminati: [kota/kecamatan], anggaran: [Rp], tujuan: [pendapatan sewa/kenaikan nilai]. Mohon rekomendasi dan pertimbangannya.'), false);
+    }
+
+    public function test_the_sister_services_ask_avenma_on_whatsapp_instead_of_linking_out(): void
+    {
+        SiteSetting::create(['whatsapp' => '081299900387']);
+
+        $html = $this->get('/layanan')->getContent();
+
+        foreach (SisterService::all() as $sister) {
+            $this->assertStringContainsString(
+                'https://wa.me/6281299900387?text='.rawurlencode($sister['message']),
+                $html
+            );
+        }
+
+        $this->assertStringNotContainsString('startspace.co.id', $html);
+        $this->assertStringNotContainsString('worklight.id', $html);
     }
 
     public function test_the_old_service_pages_are_gone(): void

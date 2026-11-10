@@ -8,10 +8,7 @@
 @endsection
 
 @php
-    $sisters = [
-        ['name' => 'Virtual Office', 'domain' => 'startspace.co.id', 'url' => 'https://startspace.co.id'],
-        ['name' => 'IT & Business Solutions', 'domain' => 'worklight.id', 'url' => 'https://worklight.id'],
-    ];
+    $sisters = App\Support\SisterService::links();
 @endphp
 
 @section('content')
@@ -167,10 +164,9 @@
 
             <div class="mt-5 flex flex-wrap gap-3">
                 @foreach ($sisters as $sister)
-                    <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="inline-flex min-h-11 items-center gap-2 border border-line px-4 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-sand">
-                        {{ $sister['name'] }}
-                        <span class="text-xs font-normal text-ink-500">{{ $sister['domain'] }}</span>
-                        <svg class="h-4 w-4 shrink-0 text-ink-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 16L16 8M9 8h7v7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                    <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="inline-flex min-h-11 flex-col justify-center gap-0.5 border border-line px-4 py-2.5 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-sand">
+                        {{ $sister['title'] }}
+                        <span class="text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
                         <span class="sr-only">(tab baru)</span>
                     </a>
                 @endforeach
