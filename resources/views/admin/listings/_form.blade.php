@@ -99,17 +99,21 @@
             </div>
 
             <div>
-                <x-input-label for="certificate" value="Kelengkapan Surat" />
-                <x-text-input id="certificate" name="certificate" type="text" list="certificate-options" class="mt-1 block w-full" :value="old('certificate', $listing->certificate)" placeholder="Contoh: Surat Hak Milik" />
-                <datalist id="certificate-options">
-                    <option value="Surat Hak Milik"></option>
-                    <option value="Surat Balik Nama"></option>
-                </datalist>
+                <x-input-label for="certificate" value="Legalitas" />
+                <x-select
+                    id="certificate"
+                    name="certificate"
+                    :options="$certificates"
+                    :value="old('certificate', $listing->certificate)"
+                    placeholder="Pilih legalitas"
+                    aria-label="Legalitas"
+                    class="mt-1"
+                />
                 <x-input-error class="mt-2" :messages="$errors->get('certificate')" />
             </div>
 
             <div class="sm:col-span-2">
-                <x-input-label for="description" value="Deskripsi dan Fasilitas" />
+                <x-input-label for="description" value="Deskripsi dan spesifikasi" />
                 <x-textarea id="description" name="description" rows="6" required>{{ old('description', $listing->description) }}</x-textarea>
                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
             </div>
@@ -322,6 +326,40 @@
                 <x-input-label for="building_area" value="Luas bangunan (m²)" />
                 <x-text-input id="building_area" name="building_area" type="number" min="0" class="mt-1 block w-full" :value="old('building_area', $listing->building_area)" />
                 <x-input-error class="mt-2" :messages="$errors->get('building_area')" />
+            </div>
+        </div>
+    </section>
+
+    <section class="border border-line bg-white p-5 sm:p-6">
+        <h2 class="text-lg font-semibold text-ink-950">Spesifikasi</h2>
+        <p class="mt-1 text-sm text-ink-500">Tampil di halaman properti. Daya listrik dan air juga dipakai sebagai filter katalog.</p>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+                <x-input-label for="electricity_power" value="Daya listrik (VA)" />
+                <x-text-input id="electricity_power" name="electricity_power" type="number" min="0" max="1000000" class="mt-1 block w-full" :value="old('electricity_power', $listing->electricity_power)" placeholder="Contoh: 2200" />
+                <p class="mt-1 text-xs text-ink-500">Kapasitas terpasang dari PLN, dalam VA.</p>
+                <x-input-error class="mt-2" :messages="$errors->get('electricity_power')" />
+            </div>
+
+            <div>
+                <x-input-label for="water_source" value="Air" />
+                <x-select
+                    id="water_source"
+                    name="water_source"
+                    :options="$waterSources"
+                    :value="old('water_source', $listing->water_source)"
+                    placeholder="Tidak diisi"
+                    aria-label="Sumber air"
+                    class="mt-1"
+                />
+                <x-input-error class="mt-2" :messages="$errors->get('water_source')" />
+            </div>
+
+            <div class="sm:col-span-2">
+                <x-input-label for="other_specs" value="Lainnya" />
+                <x-textarea id="other_specs" name="other_specs" rows="3" maxlength="255" placeholder="Spesifikasi tambahan, mis. hadap utara">{{ old('other_specs', $listing->other_specs) }}</x-textarea>
+                <x-input-error class="mt-2" :messages="$errors->get('other_specs')" />
             </div>
         </div>
     </section>

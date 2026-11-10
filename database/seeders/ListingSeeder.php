@@ -44,6 +44,8 @@ class ListingSeeder extends Seeder
                     'bedrooms' => $data['bedrooms'],
                     'bathrooms' => $data['bathrooms'],
                     'carport' => $data['carport'],
+                    'electricity_power' => $data['electricity_power'] ?? null,
+                    'water_source' => $data['water_source'] ?? null,
                     'land_area' => $data['land_area'],
                     'building_area' => $data['building_area'],
                     'floors' => $data['floors'],
@@ -131,7 +133,7 @@ class ListingSeeder extends Seeder
                 'bathrooms' => 5,
                 'carport' => null,
                 'floors' => 3,
-                'certificate' => 'SHM',
+                'certificate' => 'shm',
                 'address' => 'Petojo, Gambir, Jakarta Pusat',
                 'latitude' => -6.1678,
                 'longitude' => 106.8145,
@@ -166,7 +168,8 @@ class ListingSeeder extends Seeder
                 'bathrooms' => 3,
                 'carport' => 1,
                 'floors' => null,
-                'certificate' => 'SHM',
+                'electricity_power' => 13_200,
+                'certificate' => 'shm',
                 'address' => 'Pondok Indah, Kebayoran Lama, Jakarta Selatan',
                 'latitude' => -6.2665,
                 'longitude' => 106.7833,
@@ -175,7 +178,7 @@ class ListingSeeder extends Seeder
                 'description' => <<<'TEXT'
                 Rumah di Pondok Indah, Jakarta Selatan, dengan luas tanah 427 m² dan luas bangunan 444 m². Lima kamar tidur, tiga kamar mandi, dan garasi untuk satu mobil.
 
-                Rumah menghadap selatan, semi furnished, dengan daya listrik 13.200 watt. Jalan di depan cukup untuk dua mobil berpapasan. Sertifikat SHM.
+                Rumah menghadap selatan, semi furnished. Jalan di depan cukup untuk dua mobil berpapasan. Sertifikat SHM.
 
                 Lokasi terdekat:
                 - 4 menit ke Pondok Indah Mall
@@ -199,7 +202,9 @@ class ListingSeeder extends Seeder
                 'bathrooms' => 4,
                 'carport' => 1,
                 'floors' => 2,
-                'certificate' => 'SHM',
+                'electricity_power' => 3_500,
+                'water_source' => 'pdam',
+                'certificate' => 'shm',
                 'address' => 'Kayu Putih, Pulogadung, Jakarta Timur',
                 'latitude' => -6.1830,
                 'longitude' => 106.8870,
@@ -208,7 +213,7 @@ class ListingSeeder extends Seeder
                 'description' => <<<'TEXT'
                 Rumah 2,5 lantai di Kayu Putih, Jakarta Timur, sudah direnovasi dan siap huni. Luas tanah 135 m², luas bangunan 200 m², dengan empat kamar tidur dan empat kamar mandi.
 
-                Semi furnished, carport untuk satu mobil, dan jalan depan cukup untuk dua mobil. Air PAM, listrik 3.500 watt, sertifikat SHM.
+                Semi furnished, carport untuk satu mobil, dan jalan depan cukup untuk dua mobil. Sertifikat SHM.
 
                 Lokasi terdekat:
                 - 2 menit ke Universitas Jayabaya
@@ -233,7 +238,9 @@ class ListingSeeder extends Seeder
                 'bathrooms' => 3,
                 'carport' => 2,
                 'floors' => 2,
-                'certificate' => 'SHM',
+                'electricity_power' => 2_200,
+                'water_source' => 'pdam',
+                'certificate' => 'shm',
                 'address' => 'Kelapa Gading, Jakarta Utara',
                 'latitude' => -6.1570,
                 'longitude' => 106.9055,
@@ -242,7 +249,7 @@ class ListingSeeder extends Seeder
                 'description' => <<<'TEXT'
                 Rumah dua lantai di Kelapa Gading, Jakarta Utara, siap huni. Luas tanah 90 m² (6 x 15) dan luas bangunan 135 m², dengan tiga kamar tidur dan tiga kamar mandi.
 
-                Semi furnished, menghadap selatan, carport untuk dua mobil. Air PAM, listrik 2.200 watt, sertifikat SHM.
+                Semi furnished, menghadap selatan, carport untuk dua mobil. Sertifikat SHM.
 
                 Lokasi terdekat:
                 - 5 menit ke Mal Kelapa Gading

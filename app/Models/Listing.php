@@ -84,6 +84,9 @@ class Listing extends Model
         'bedrooms',
         'bathrooms',
         'carport',
+        'electricity_power',
+        'water_source',
+        'other_specs',
         'land_area',
         'building_area',
         'floors',
@@ -99,6 +102,7 @@ class Listing extends Model
     {
         return [
             'price' => 'integer',
+            'electricity_power' => 'integer',
             'latitude' => 'float',
             'longitude' => 'float',
             'is_featured' => 'boolean',
@@ -225,6 +229,12 @@ class Listing extends Model
                 ->where('bathrooms', '>=', (int) $value))
             ->when($filters['carport'] ?? null, fn (Builder $q, string $value) => $q
                 ->where('carport', '>=', (int) $value))
+            ->when($filters['daya'] ?? null, fn (Builder $q, string $value) => $q
+                ->where('electricity_power', '>=', (int) $value))
+            ->when($filters['air'] ?? null, fn (Builder $q, string $value) => $q
+                ->where('water_source', $value))
+            ->when($filters['legalitas'] ?? null, fn (Builder $q, string $value) => $q
+                ->where('certificate', $value))
             ->when($filters['lt'] ?? null, fn (Builder $q, string $value) => $q
                 ->where('land_area', '>=', (int) $value))
             ->when($filters['lb'] ?? null, fn (Builder $q, string $value) => $q
@@ -281,6 +291,24 @@ class Listing extends Model
     public function typeLabel(): string
     {
         return ListingOption::options('property_type')[$this->property_type] ?? ucfirst(str_replace('_', ' ', (string) $this->property_type));
+    }
+
+    /**
+     * Legal documents in use, so this filter never offers an option that
+     * returns nothing.
+     *
+     * @return array<string, string> value => label
+     */
+    public static function certificateOptions(): array
+    {
+        $used = static::query()->published()->whereNotNull('certificate')->distinct()->pluck('certificate')->all();
+
+        return array_intersect_key(ListingOption::options('certificate'), array_flip($used));
+    }
+
+    public function certificateLabel(): string
+    {
+        return ListingOption::options('certificate')[$this->certificate] ?? (string) $this->certificate;
     }
 
     public function isApartment(): bool

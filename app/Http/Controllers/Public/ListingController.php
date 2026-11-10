@@ -35,6 +35,9 @@ class ListingController extends Controller
         $listingTypes = ListingOption::options('listing_type');
         $propertyTypes = ListingOption::options('property_type');
         $statuses = ListingOption::options('status');
+        $electricityOptions = ListingOption::options('electricity_power');
+        $waterOptions = ListingOption::options('water_source');
+        $certificateOptions = Listing::certificateOptions();
 
         $filters = [
             'provinsi' => $provinsi,
@@ -55,6 +58,15 @@ class ListingController extends Controller
             'kamar' => $this->minimum($request->query('kamar')),
             'mandi' => $this->minimum($request->query('mandi')),
             'carport' => $this->minimum($request->query('carport')),
+            'daya' => array_key_exists((string) $request->query('daya'), $electricityOptions)
+                ? (string) $request->query('daya')
+                : '',
+            'air' => array_key_exists((string) $request->query('air'), $waterOptions)
+                ? (string) $request->query('air')
+                : '',
+            'legalitas' => array_key_exists((string) $request->query('legalitas'), $certificateOptions)
+                ? (string) $request->query('legalitas')
+                : '',
             'lt' => $this->minimum($request->query('lt')),
             'lb' => $this->minimum($request->query('lb')),
             'lantai' => $this->minimum($request->query('lantai')),
@@ -84,10 +96,13 @@ class ListingController extends Controller
             'listingTypeOptions' => $listingTypes,
             'statusOptions' => $statuses,
             'developerOptions' => $developerOptions,
+            'electricityOptions' => $electricityOptions,
+            'waterOptions' => $waterOptions,
+            'certificateOptions' => $certificateOptions,
             'filters' => $filters,
             'sort' => $sort,
             'perPage' => $perPage,
-            'chips' => $this->chips($filters, $sort, $developerOptions),
+            'chips' => $this->chips($filters, $sort, $developerOptions, $electricityOptions, $waterOptions, $certificateOptions),
         ]);
     }
 
@@ -260,9 +275,12 @@ class ListingController extends Controller
     /**
      * @param  array<string, string>  $filters
      * @param  array<int, string>  $developerOptions
+     * @param  array<string, string>  $electricityOptions
+     * @param  array<string, string>  $waterOptions
+     * @param  array<string, string>  $certificateOptions
      * @return list<array{key: string, label: string}>
      */
-    private function chips(array $filters, string $sort, array $developerOptions): array
+    private function chips(array $filters, string $sort, array $developerOptions, array $electricityOptions, array $waterOptions, array $certificateOptions): array
     {
         $chips = [];
 
@@ -294,6 +312,18 @@ class ListingController extends Controller
 
         if ($filters['carport'] !== '') {
             $chips[] = ['key' => 'carport', 'label' => $filters['carport'].'+ carport'];
+        }
+
+        if ($filters['daya'] !== '') {
+            $chips[] = ['key' => 'daya', 'label' => 'Daya listrik ≥ '.$electricityOptions[$filters['daya']]];
+        }
+
+        if ($filters['air'] !== '') {
+            $chips[] = ['key' => 'air', 'label' => 'Air: '.$waterOptions[$filters['air']]];
+        }
+
+        if ($filters['legalitas'] !== '') {
+            $chips[] = ['key' => 'legalitas', 'label' => 'Legalitas: '.$certificateOptions[$filters['legalitas']]];
         }
 
         if ($filters['lt'] !== '') {

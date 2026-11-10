@@ -5,7 +5,7 @@
 @section('content')
     <div>
         <h1 class="text-xl font-semibold text-ink-950">Pengaturan Listing</h1>
-        <p class="mt-1 text-sm text-ink-500">Pilihan yang muncul di formulir listing. Sebuah opsi bisa dihapus selama belum dipakai listing.</p>
+        <p class="mt-1 text-sm text-ink-500">Pilihan yang muncul di formulir listing. Nama opsi bisa diubah, dan opsi bisa dihapus selama belum dipakai listing.</p>
     </div>
 
     @if (session('status'))
@@ -13,6 +13,10 @@
     @endif
 
     @error('option')
+        <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-danger">{{ $message }}</p>
+    @enderror
+
+    @error('option_label')
         <p class="mt-4 rounded border border-line bg-white px-4 py-3 text-sm text-danger">{{ $message }}</p>
     @enderror
 
@@ -81,7 +85,7 @@
         @foreach ($groups as $group => $groupLabel)
             <section class="border border-line bg-white p-5" x-data="{ q: '' }">
                 <h2 class="text-lg font-semibold text-ink-950">{{ $groupLabel }}</h2>
-                <p class="mt-1 text-sm text-ink-500">Opsi yang belum dipakai listing bisa dihapus, termasuk bawaan sistem.</p>
+                <p class="mt-1 text-sm text-ink-500">{{ $groupHints[$group] ?? 'Opsi yang belum dipakai listing bisa dihapus, termasuk bawaan sistem.' }}</p>
 
                 <input type="search" x-model="q" aria-label="Cari {{ mb_strtolower($groupLabel) }}" placeholder="Cari {{ mb_strtolower($groupLabel) }}" class="mt-4 block w-full rounded border border-line bg-white px-3 py-2 text-sm text-ink-950 placeholder:text-ink-500 focus:border-gold-700 focus:ring-gold-500/30">
 
@@ -90,7 +94,10 @@
                         <li class="flex items-center justify-between gap-3 border-b border-line pb-2 last:border-0" data-search="{{ mb_strtolower($option->label) }}" x-show="q === '' || $el.dataset.search.includes(q.toLowerCase())">
                             <span class="min-w-0 truncate text-ink-950">{{ $option->label }}</span>
 
-                            <button type="button" x-on:click="$dispatch('open-modal', 'delete-setting-option-{{ $option->id }}')" class="text-xs font-semibold text-ink-500 hover:text-danger">Hapus</button>
+                            <span class="flex shrink-0 items-center gap-3 text-xs font-semibold">
+                                <button type="button" x-on:click="$dispatch('open-modal', 'edit-setting-option-{{ $option->id }}')" class="text-ink-500 hover:text-ink-950">Edit</button>
+                                <button type="button" x-on:click="$dispatch('open-modal', 'delete-setting-option-{{ $option->id }}')" class="text-ink-500 hover:text-danger">Hapus</button>
+                            </span>
                         </li>
                     @empty
                         <li class="text-sm text-ink-500">Belum ada opsi.</li>
@@ -114,6 +121,27 @@
                             </div>
                         </form>
                     </x-modal>
+
+                    <x-modal name="edit-setting-option-{{ $option->id }}" labelledby="edit-setting-option-title-{{ $option->id }}" max-width="md" focusable>
+                        <form method="POST" action="{{ route('admin.listing-settings.options.update', $option) }}" class="p-6">
+                            @csrf
+                            @method('PUT')
+
+                            <h2 id="edit-setting-option-title-{{ $option->id }}" class="text-lg font-semibold text-ink-950">Edit opsi</h2>
+                            <p class="mt-2 text-sm text-ink-600">
+                                Nama baru berlaku di formulir listing dan halaman publik. Listing yang sudah memakai opsi ini tetap terhubung.
+                            </p>
+
+                            <x-input-label for="edit-option-label-{{ $option->id }}" value="Nama opsi" class="mt-4" />
+                            <x-text-input id="edit-option-label-{{ $option->id }}" name="label" class="mt-1 block w-full" :value="$option->label" required />
+                            <x-input-error class="mt-2" :messages="$errors->get('option_label')" />
+
+                            <div class="mt-6 flex flex-wrap justify-end gap-3">
+                                <x-secondary-button data-autofocus x-on:click="$dispatch('close')">Batal</x-secondary-button>
+                                <x-primary-button>Simpan</x-primary-button>
+                            </div>
+                        </form>
+                    </x-modal>
                 @endforeach
 
                 <form method="POST" action="{{ route('admin.listing-settings.options.store') }}" class="mt-4 space-y-2 border-t border-line pt-4">
@@ -122,7 +150,7 @@
 
                     <x-input-label for="label-{{ $group }}" value="Tambah opsi" />
                     <div class="flex items-center gap-2">
-                        <x-text-input id="label-{{ $group }}" name="label" class="block w-full" placeholder="Contoh: {{ $group === 'property_type' ? 'Tanah' : ($group === 'status' ? 'Lelang' : 'Tukar guling') }}" />
+                        <x-text-input id="label-{{ $group }}" name="label" class="block w-full" placeholder="Contoh: {{ ['property_type' => 'Tanah', 'status' => 'Lelang', 'water_source' => 'Air Hujan', 'electricity_power' => '7.700 VA', 'certificate' => 'SHM'][$group] ?? 'Tukar guling' }}" />
                         <button type="submit" class="inline-flex min-h-11 shrink-0 items-center rounded bg-gold-500 px-5 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white">Tambah</button>
                     </div>
 

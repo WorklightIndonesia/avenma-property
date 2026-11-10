@@ -181,6 +181,58 @@ class ListingIndexTest extends TestCase
             ->assertSee('2+ lantai');
     }
 
+    public function test_electricity_and_water_filters_narrow_the_list(): void
+    {
+        $this->listing(['title' => 'Rumah Besar', 'electricity_power' => 3500, 'water_source' => 'pdam']);
+        $this->listing(['title' => 'Rumah Kecil', 'electricity_power' => 900, 'water_source' => 'sumur_bor']);
+
+        $this->get('/properti?daya=2200')
+            ->assertOk()
+            ->assertSee('Rumah Besar')
+            ->assertDontSee('Rumah Kecil');
+
+        $this->get('/properti?air=pdam')
+            ->assertOk()
+            ->assertSee('Rumah Besar')
+            ->assertDontSee('Rumah Kecil');
+
+        // Values outside the fixed options are dropped, not filtered on.
+        $this->get('/properti?daya=123&air=entah')
+            ->assertOk()
+            ->assertSee('Rumah Besar')
+            ->assertSee('Rumah Kecil');
+    }
+
+    public function test_the_legalitas_filter_narrows_the_list(): void
+    {
+        $this->listing(['title' => 'Rumah SHM', 'certificate' => 'shm']);
+        $this->listing(['title' => 'Rumah HGB', 'certificate' => 'hgb']);
+
+        $this->get('/properti?legalitas=shm')
+            ->assertOk()
+            ->assertSee('Rumah SHM')
+            ->assertDontSee('Rumah HGB')
+            ->assertSee('Legalitas: SHM')
+            // The document gets its own accordion between Spesifikasi and Luas.
+            ->assertSeeInOrder(['Spesifikasi', 'Legalitas', 'Luas dan Lantai']);
+
+        // A document no listing uses is dropped instead of emptying the list.
+        $this->get('/properti?legalitas=wakaf')
+            ->assertOk()
+            ->assertSee('Rumah SHM')
+            ->assertSee('Rumah HGB');
+    }
+
+    public function test_electricity_and_water_chips_explain_the_value(): void
+    {
+        $this->listing(['electricity_power' => 2200, 'water_source' => 'pdam']);
+
+        $this->get('/properti?daya=2200&air=pdam')
+            ->assertOk()
+            ->assertSee('Daya listrik ≥ 2.200 VA')
+            ->assertSee('Air: PDAM');
+    }
+
     public function test_filter_values_outside_the_options_are_ignored(): void
     {
         $this->listing(['title' => 'Rumah Uji', 'property_type' => 'rumah_siap_huni', 'status' => 'dijual']);

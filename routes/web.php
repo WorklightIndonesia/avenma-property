@@ -70,6 +70,8 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
         ->name('admin.listing-settings.developers.store');
     Route::post('/admin/pengaturan-listing/opsi', [ListingSettingController::class, 'storeOption'])
         ->name('admin.listing-settings.options.store');
+    Route::put('/admin/pengaturan-listing/opsi/{option}', [ListingSettingController::class, 'updateOption'])
+        ->name('admin.listing-settings.options.update');
     Route::delete('/admin/pengaturan-listing/opsi/{option}', [ListingSettingController::class, 'destroyOption'])
         ->name('admin.listing-settings.options.destroy');
 

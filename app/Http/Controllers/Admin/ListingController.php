@@ -271,6 +271,8 @@ class ListingController extends Controller
             'listingTypes' => ListingOption::options('listing_type'),
             'propertyTypes' => ListingOption::options('property_type'),
             'statuses' => ListingOption::options('status'),
+            'waterSources' => ListingOption::options('water_source'),
+            'certificates' => ListingOption::options('certificate'),
         ];
     }
 }

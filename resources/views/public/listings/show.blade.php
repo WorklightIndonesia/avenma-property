@@ -49,11 +49,21 @@
         $stats[] = ['value' => $listing->carport, 'label' => 'Carport'];
     }
 
-    // A tile rather than a footnote: the certificate is the first thing a
+    // A tile rather than a footnote: the legal document is the first thing a
     // buyer checks, so it carries the same weight as the other specs.
     if ($listing->certificate) {
-        $stats[] = ['value' => $listing->certificate, 'label' => 'Kelengkapan surat'];
+        $stats[] = ['value' => $listing->certificateLabel(), 'label' => 'Legalitas'];
     }
+
+    $specs = collect([
+        'Daya listrik' => $listing->electricity_power
+            ? number_format($listing->electricity_power, 0, ',', '.').' VA'
+            : null,
+        'Air' => $listing->water_source
+            ? (\App\Models\ListingOption::options('water_source')[$listing->water_source] ?? null)
+            : null,
+        'Lainnya' => $listing->other_specs,
+    ])->filter();
 
     $cover = $listing->images->first();
     $photoAlt = $listing->title.($listing->location ? ' di '.$listing->location->name : '');
@@ -527,12 +537,24 @@
                 @endif
 
                 <div class="order-6 min-w-0 lg:col-start-1">
-                    @if ($listing->description)
-                        <section id="deskripsi" class="scroll-mt-24">
-                            <h2 class="text-3xl font-semibold tracking-tight">Deskripsi dan fasilitas</h2>
+                    <section id="deskripsi" class="scroll-mt-24">
+                        <h2 class="text-3xl font-semibold tracking-tight">Deskripsi dan spesifikasi</h2>
+
+                        @if ($specs->isNotEmpty())
+                            <dl class="mt-4 grid gap-x-6 gap-y-2 border-y border-line py-4 text-sm sm:grid-cols-2">
+                                @foreach ($specs as $label => $value)
+                                    <div class="flex items-baseline justify-between gap-4">
+                                        <dt class="text-ink-500">{{ $label }}</dt>
+                                        <dd class="text-right font-medium text-ink-950">{{ $value }}</dd>
+                                    </div>
+                                @endforeach
+                            </dl>
+                        @endif
+
+                        @if ($listing->description)
                             <p class="mt-3 whitespace-pre-line text-sm leading-7 text-ink-700">{{ $listing->description }}</p>
-                        </section>
-                    @endif
+                        @endif
+                    </section>
 
                     @if ($mapSrc)
                         <section class="mt-6">

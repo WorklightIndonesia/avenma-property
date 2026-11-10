@@ -19,6 +19,8 @@
 
     $countOptions = fn (int $max) => collect(range(1, $max))->mapWithKeys(fn (int $n) => [$n => $n.'+'])->all();
     $hargaOptions = collect(App\Models\Listing::PRICE_BUCKETS)->map(fn (array $bucket) => $bucket['label'])->all();
+    $dayaOptions = $electricityOptions;
+    $airOptions = $waterOptions;
 
     $regionData = [
         'places' => $regions['places'] ?? [],
@@ -144,7 +146,7 @@
                 </div>
             </x-filter-group>
 
-            <x-filter-group title="Fasilitas">
+            <x-filter-group title="Spesifikasi">
                 <div>
                     <label for="{{ $prefix }}filter-kamar" class="block text-xs font-medium text-ink-500">Kamar tidur</label>
                     <x-select :id="$prefix.'filter-kamar'" name="kamar" :options="$countOptions(5)" :value="$filters['kamar']" placeholder="Semua" aria-label="Kamar tidur minimal" class="mt-1 scroll-mt-24" />
@@ -159,11 +161,30 @@
                     <label for="{{ $prefix }}filter-carport" class="block text-xs font-medium text-ink-500">Carport</label>
                     <x-select :id="$prefix.'filter-carport'" name="carport" :options="$countOptions(4)" :value="$filters['carport']" placeholder="Semua" aria-label="Carport minimal" class="mt-1 scroll-mt-24" />
                 </div>
+
+                <div>
+                    <label for="{{ $prefix }}filter-daya" class="block text-xs font-medium text-ink-500">Daya listrik minimal</label>
+                    <x-select :id="$prefix.'filter-daya'" name="daya" :options="$dayaOptions" :value="$filters['daya']" placeholder="Semua daya" aria-label="Daya listrik minimal" class="mt-1 scroll-mt-24" />
+                </div>
+
+                <div>
+                    <label for="{{ $prefix }}filter-air" class="block text-xs font-medium text-ink-500">Air</label>
+                    <x-select :id="$prefix.'filter-air'" name="air" :options="$airOptions" :value="$filters['air']" placeholder="Semua sumber" aria-label="Sumber air" class="mt-1 scroll-mt-24" />
+                </div>
+            </x-filter-group>
+
+            {{-- Legalitas gets its own accordion: it is a question about the
+                 document, not about the building. --}}
+            <x-filter-group title="Legalitas">
+                <div>
+                    <label for="{{ $prefix }}filter-legalitas" class="block text-xs font-medium text-ink-500">Legalitas</label>
+                    <x-select :id="$prefix.'filter-legalitas'" name="legalitas" :options="$certificateOptions" :value="$filters['legalitas']" placeholder="Semua legalitas" aria-label="Legalitas" class="mt-1 scroll-mt-24" />
+                </div>
             </x-filter-group>
 
             <x-filter-group title="Luas dan Lantai">
                 <div>
-                    <label for="{{ $prefix }}filter-lt" class="block text-xs font-medium text-ink-500">Luas tanah minimal (m²)</label>
+                    <label for="{{ $prefix }}filter-lt" class="block text-xs font-medium text-ink-500">Luas tanah (m²)</label>
                     <input
                         id="{{ $prefix }}filter-lt"
                         name="lt"
@@ -178,7 +199,7 @@
                 </div>
 
                 <div>
-                    <label for="{{ $prefix }}filter-lb" class="block text-xs font-medium text-ink-500">Luas bangunan minimal (m²)</label>
+                    <label for="{{ $prefix }}filter-lb" class="block text-xs font-medium text-ink-500">Luas bangunan (m²)</label>
                     <input
                         id="{{ $prefix }}filter-lb"
                         name="lb"

@@ -17,6 +17,9 @@ class ListingOption extends Model
         'property_type' => 'Tipe properti',
         'listing_type' => 'Jenis penawaran',
         'status' => 'Status',
+        'water_source' => 'Air',
+        'electricity_power' => 'Daya listrik',
+        'certificate' => 'Legalitas',
     ];
 
     protected $fillable = [
@@ -30,10 +33,17 @@ class ListingOption extends Model
      */
     public static function options(string $group): array
     {
-        return static::query()
+        $options = static::query()
             ->where('group', $group)
             ->orderBy('label')
             ->pluck('label', 'slug')
             ->all();
+
+        // Capacities read as numbers, so 900 comes before 1.300, not after it.
+        if ($group === 'electricity_power') {
+            uksort($options, fn ($a, $b) => (int) $a <=> (int) $b);
+        }
+
+        return $options;
     }
 }

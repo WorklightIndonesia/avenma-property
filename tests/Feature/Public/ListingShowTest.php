@@ -302,12 +302,31 @@ class ListingShowTest extends TestCase
 
     public function test_the_certificate_is_listed_with_the_specs(): void
     {
-        $this->listing(['slug' => 'rumah-sertifikat', 'certificate' => 'Surat Balik Nama']);
+        $this->listing(['slug' => 'rumah-sertifikat', 'certificate' => 'shm']);
 
         $this->get('/properti/rumah-sertifikat')
             ->assertOk()
-            ->assertSee('Kelengkapan surat')
-            ->assertSee('Surat Balik Nama');
+            ->assertSee('Legalitas')
+            ->assertSee('SHM');
+    }
+
+    public function test_electricity_water_and_other_specs_are_listed(): void
+    {
+        $this->listing([
+            'slug' => 'rumah-spesifikasi',
+            'electricity_power' => 2200,
+            'water_source' => 'pdam',
+            'other_specs' => 'Hadap utara',
+        ]);
+
+        $this->get('/properti/rumah-spesifikasi')
+            ->assertOk()
+            ->assertSee('Deskripsi dan spesifikasi')
+            ->assertSee('Daya listrik')
+            ->assertSee('2.200 VA')
+            ->assertSee('Air')
+            ->assertSee('PDAM')
+            ->assertSee('Hadap utara');
     }
 
     public function test_the_map_opens_the_pinned_point_on_google_maps(): void

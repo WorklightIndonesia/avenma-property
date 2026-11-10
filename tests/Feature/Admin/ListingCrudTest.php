@@ -64,10 +64,53 @@ class ListingCrudTest extends TestCase
     public function test_certificate_is_optional_and_saved(): void
     {
         $this->actingAs($this->admin())
-            ->post('/admin/listings', $this->payload(['certificate' => 'Surat Hak Milik']))
+            ->post('/admin/listings', $this->payload(['certificate' => 'shm']))
             ->assertRedirect();
 
-        $this->assertSame('Surat Hak Milik', Listing::firstOrFail()->certificate);
+        $this->assertSame('shm', Listing::firstOrFail()->certificate);
+    }
+
+    public function test_a_certificate_outside_the_options_is_rejected(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload(['certificate' => 'Surat Karangan']))
+            ->assertSessionHasErrors('certificate');
+    }
+
+    public function test_the_migration_turns_legacy_free_text_into_an_option(): void
+    {
+        $known = $this->listing(['certificate' => 'SHM']);
+        $unknown = $this->listing(['certificate' => 'Surat Balik Nama']);
+
+        // The migration only rewrites rows; running it again is how a test
+        // reaches the legacy branch, since RefreshDatabase already ran it.
+        $migration = require database_path('migrations/2026_11_11_000001_add_certificate_to_listing_options.php');
+        $migration->up();
+
+        $this->assertSame('shm', $known->fresh()->certificate);
+        $this->assertSame('surat-balik-nama', $unknown->fresh()->certificate);
+        $this->assertDatabaseHas('listing_options', [
+            'group' => 'certificate',
+            'slug' => 'surat-balik-nama',
+            'label' => 'Surat Balik Nama',
+        ]);
+    }
+
+    public function test_specs_are_saved(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/listings', $this->payload([
+                'electricity_power' => 2200,
+                'water_source' => 'pdam',
+                'other_specs' => 'Hadap utara',
+            ]))
+            ->assertRedirect();
+
+        $listing = Listing::firstOrFail();
+
+        $this->assertSame(2200, $listing->electricity_power);
+        $this->assertSame('pdam', $listing->water_source);
+        $this->assertSame('Hadap utara', $listing->other_specs);
     }
 
     public function test_the_kpr_switch_is_saved(): void

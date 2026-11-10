@@ -284,11 +284,13 @@
                                     ['label' => 'DKI Jakarta', 'province' => 'DKI Jakarta', 'city' => null, 'district' => null, 'count' => 2],
                                 ],
                             ];
+                            $previewElectricityOptions = App\Models\ListingOption::options('electricity_power');
+                            $previewWaterOptions = App\Models\ListingOption::options('water_source');
                         @endphp
                         @include('public.listings._filters', [
                             'idPrefix' => 'preview-a-',
                             'action' => '#',
-                            'filters' => ['provinsi' => '', 'kota' => '', 'kecamatan' => '', 'tipe' => '', 'penawaran' => '', 'harga' => '', 'status' => '', 'kamar' => '', 'mandi' => '', 'carport' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
+                            'filters' => ['provinsi' => '', 'kota' => '', 'kecamatan' => '', 'tipe' => '', 'penawaran' => '', 'harga' => '', 'status' => '', 'kamar' => '', 'mandi' => '', 'carport' => '', 'daya' => '', 'air' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => '', 'legalitas' => ''],
                             'sort' => 'terbaru',
                             'perPage' => 6,
                             'regions' => $previewRegions,
@@ -296,6 +298,9 @@
                             'listingTypeOptions' => ['primary' => 'Primer', 'secondary' => 'Sekunder'],
                             'statusOptions' => ['dijual' => 'Dijual', 'disewa' => 'Disewakan'],
                             'developerOptions' => [1 => 'Bintaro Development', 2 => 'Graha Nusantara'],
+                            'electricityOptions' => $previewElectricityOptions,
+                            'waterOptions' => $previewWaterOptions,
+                            'certificateOptions' => ['shm' => 'SHM', 'hgb' => 'HGB'],
                             'chips' => [],
                         ])
                     </div>
@@ -307,7 +312,7 @@
                         @include('public.listings._filters', [
                             'idPrefix' => 'preview-b-',
                             'action' => '#',
-                            'filters' => ['provinsi' => 'Banten', 'kota' => 'Kota Tangerang Selatan', 'kecamatan' => '', 'tipe' => '', 'penawaran' => 'primary', 'harga' => '1000-2000', 'status' => '', 'kamar' => '3', 'mandi' => '', 'carport' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => ''],
+                            'filters' => ['provinsi' => 'Banten', 'kota' => 'Kota Tangerang Selatan', 'kecamatan' => '', 'tipe' => '', 'penawaran' => 'primary', 'harga' => '1000-2000', 'status' => '', 'kamar' => '3', 'mandi' => '', 'carport' => '', 'daya' => '', 'air' => '', 'lt' => '', 'lb' => '', 'lantai' => '', 'developer' => '', 'legalitas' => ''],
                             'sort' => 'terbaru',
                             'perPage' => 6,
                             'regions' => $previewRegions,
@@ -315,6 +320,9 @@
                             'listingTypeOptions' => ['primary' => 'Primer', 'secondary' => 'Sekunder'],
                             'statusOptions' => ['dijual' => 'Dijual', 'disewa' => 'Disewakan'],
                             'developerOptions' => [1 => 'Bintaro Development', 2 => 'Graha Nusantara'],
+                            'electricityOptions' => $previewElectricityOptions,
+                            'waterOptions' => $previewWaterOptions,
+                            'certificateOptions' => ['shm' => 'SHM', 'hgb' => 'HGB'],
                             'chips' => [
                                 ['key' => 'provinsi', 'label' => 'Banten'],
                                 ['key' => 'kota', 'label' => 'Kota Tangerang Selatan'],

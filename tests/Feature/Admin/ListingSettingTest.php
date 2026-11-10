@@ -21,6 +21,8 @@ class ListingSettingTest extends TestCase
             ->assertSee('Pengaturan Listing')
             ->assertSee('Tipe properti')
             ->assertSee('Status')
+            ->assertSee('Air')
+            ->assertSee('Daya listrik')
             ->assertSee('Tambah developer')
             ->assertSee('Rumah Siap Huni');
     }
@@ -42,7 +44,8 @@ class ListingSettingTest extends TestCase
 
         $this->actingAs($this->admin())
             ->get('/admin/pengaturan-listing')
-            ->assertSee("delete-setting-option-{$option->id}", false);
+            ->assertSee("delete-setting-option-{$option->id}", false)
+            ->assertSee("edit-setting-option-{$option->id}", false);
 
         $this->actingAs($this->admin())
             ->delete("/admin/pengaturan-listing/opsi/{$option->id}")
@@ -78,6 +81,108 @@ class ListingSettingTest extends TestCase
         $this->actingAs($this->admin())
             ->post('/admin/pengaturan-listing/opsi', ['group' => 'status', 'label' => 'Dijual'])
             ->assertSessionHasErrors('label');
+    }
+
+    public function test_a_new_water_option_reaches_the_listing_form_and_catalog(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/pengaturan-listing/opsi', ['group' => 'water_source', 'label' => 'Air Hujan'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('listing_options', ['group' => 'water_source', 'slug' => 'air-hujan']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/listings/create')
+            ->assertOk()
+            ->assertSee('Air Hujan');
+
+        $this->get('/properti')
+            ->assertOk()
+            ->assertSee('Air Hujan');
+    }
+
+    public function test_a_capacity_option_uses_its_digits_and_drives_the_filter(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/pengaturan-listing/opsi', ['group' => 'electricity_power', 'label' => '7.700 VA'])
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('listing_options', [
+            'group' => 'electricity_power',
+            'slug' => '7700',
+            'label' => '7.700 VA',
+        ]);
+
+        $this->listing(['title' => 'Rumah Daya Besar', 'electricity_power' => 7700]);
+
+        $this->get('/properti?daya=7700')
+            ->assertOk()
+            ->assertSee('Rumah Daya Besar')
+            ->assertSee('Daya listrik ≥ 7.700 VA');
+    }
+
+    public function test_a_water_option_in_use_cannot_be_deleted(): void
+    {
+        $option = ListingOption::where('group', 'water_source')->where('slug', 'pdam')->firstOrFail();
+
+        $this->listing(['water_source' => 'pdam']);
+
+        $this->actingAs($this->admin())
+            ->delete("/admin/pengaturan-listing/opsi/{$option->id}")
+            ->assertSessionHasErrors('option');
+
+        $this->assertModelExists($option);
+    }
+
+    public function test_a_legalitas_option_in_use_cannot_be_deleted(): void
+    {
+        $option = ListingOption::where('group', 'certificate')->where('slug', 'shm')->firstOrFail();
+
+        $this->listing(['certificate' => 'shm']);
+
+        $this->actingAs($this->admin())
+            ->delete("/admin/pengaturan-listing/opsi/{$option->id}")
+            ->assertSessionHasErrors('option');
+
+        $this->assertModelExists($option);
+    }
+
+    public function test_a_capacity_option_can_be_deleted_even_when_a_listing_matches(): void
+    {
+        $option = ListingOption::where('group', 'electricity_power')->where('slug', '2200')->firstOrFail();
+
+        $this->listing(['electricity_power' => 2200]);
+
+        $this->actingAs($this->admin())
+            ->delete("/admin/pengaturan-listing/opsi/{$option->id}")
+            ->assertRedirect();
+
+        $this->assertModelMissing($option);
+    }
+
+    public function test_an_admin_renames_an_option_without_breaking_listings(): void
+    {
+        $option = ListingOption::where('group', 'property_type')->where('slug', 'rumah_siap_huni')->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->put("/admin/pengaturan-listing/opsi/{$option->id}", ['label' => 'Rumah Siap Tinggal'])
+            ->assertRedirect();
+
+        $option->refresh();
+
+        $this->assertSame('Rumah Siap Tinggal', $option->label);
+        $this->assertSame('rumah_siap_huni', $option->slug);
+    }
+
+    public function test_renaming_an_option_to_an_existing_label_is_refused(): void
+    {
+        $option = ListingOption::where('group', 'status')->where('slug', 'disewa')->firstOrFail();
+
+        $this->actingAs($this->admin())
+            ->put("/admin/pengaturan-listing/opsi/{$option->id}", ['label' => 'Dijual'])
+            ->assertSessionHasErrors('option_label');
+
+        $this->assertSame('Disewakan', $option->fresh()->label);
     }
 
     public function test_an_option_in_use_cannot_be_deleted(): void
