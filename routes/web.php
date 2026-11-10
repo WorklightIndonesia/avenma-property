@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\PageContentController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WhatsAppTemplateController;
 use App\Http\Controllers\Admin\WilayahController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Public\BlogController;
@@ -99,6 +100,8 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
 
     Route::put('/admin/pages/{page}', [PageContentController::class, 'update'])->name('admin.pages.update');
     Route::put('/admin/settings', [SiteSettingController::class, 'update'])->name('admin.settings.update');
+    Route::put('/admin/template-whatsapp', [WhatsAppTemplateController::class, 'update'])
+        ->name('admin.whatsapp-templates.update');
 
     Route::get('/admin/audit', [AuditLogController::class, 'index'])->name('admin.audit.index');
 
@@ -135,6 +138,9 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
         Route::get('/admin/pages/{page}/edit', [PageContentController::class, 'edit'])->name('admin.pages.edit');
 
         Route::get('/admin/settings', [SiteSettingController::class, 'edit'])->name('admin.settings.edit');
+
+        Route::get('/admin/template-whatsapp', [WhatsAppTemplateController::class, 'edit'])
+            ->name('admin.whatsapp-templates.edit');
     });
 });
 

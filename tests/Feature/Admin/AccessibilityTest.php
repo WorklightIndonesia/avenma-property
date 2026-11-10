@@ -43,6 +43,7 @@ class AccessibilityTest extends AccessibilityTestCase
             '/admin/pages',
             '/admin/pages/'.$page->id.'/edit',
             '/admin/settings',
+            '/admin/template-whatsapp',
         ];
 
         foreach ($screens as $url) {

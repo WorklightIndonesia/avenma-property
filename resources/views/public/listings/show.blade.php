@@ -362,7 +362,12 @@
 
                                         const url = new URL(@js($whatsappUrl));
                                         const pretty = new Date(date + 'T00:00:00').toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-                                        url.searchParams.set('text', 'Halo, saya ' + name + '. Saya ingin menjadwalkan kunjungan ke ' + @js($listing->title) + ' pada ' + pretty + '. Mohon konfirmasinya.');
+                                        const fill = (text, vars) => text.replace(/\{(\w+)\}/g, (match, key) => vars[key] ?? match);
+                                        url.searchParams.set('text', fill(@js($visitTemplate), {
+                                            nama: name,
+                                            judul: @js($listing->title),
+                                            tanggal: pretty,
+                                        }));
                                         window.open(url.toString(), '_blank', 'noopener');
                                         this.sent = true;
                                     }

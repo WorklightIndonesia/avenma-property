@@ -63,6 +63,9 @@
                     <a href="{{ route('admin.services.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.services.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Layanan
                     </a>
+                    <a href="{{ route('admin.whatsapp-templates.edit') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.whatsapp-templates.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Template WhatsApp
+                    </a>
                     <a href="{{ route('admin.agents.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.agents.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Agen
                     </a>

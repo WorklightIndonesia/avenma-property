@@ -73,6 +73,7 @@ class BackLinkTest extends TestCase
             ['/admin/pages', 'admin.dashboard'],
             [route('admin.pages.edit', $page), 'admin.pages.index'],
             ['/admin/settings', 'admin.dashboard'],
+            ['/admin/template-whatsapp', 'admin.dashboard'],
         ];
 
         foreach ($screens as [$url, $parent]) {

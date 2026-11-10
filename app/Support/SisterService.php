@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\SiteSetting;
+use App\Models\WhatsAppTemplate;
 
 /**
  * The two service lines Avenma does not run itself. The navbar, the footer and
@@ -18,12 +19,12 @@ class SisterService
             [
                 'title' => 'Virtual Office',
                 'description' => 'Alamat bisnis legal tanpa perlu sewa kantor.',
-                'message' => 'Halo Avenma, saya ingin bertanya soal Virtual Office. Saya butuh alamat bisnis untuk [PT/CV] di [kota]. Mohon info paket dan harganya.',
+                'message' => WhatsAppTemplate::message('sister_virtual_office'),
             ],
             [
                 'title' => 'IT & Business Solutions',
                 'description' => 'Website, aplikasi, AI, dan otomasi untuk bisnis.',
-                'message' => 'Halo Avenma, saya ingin bertanya soal IT & Business Solutions. Saya butuh [website/aplikasi/otomasi] untuk bisnis di bidang [bidang]. Mohon info langkah berikutnya.',
+                'message' => WhatsAppTemplate::message('sister_it_solutions'),
             ],
         ];
     }

@@ -10,6 +10,7 @@ use App\Models\Listing;
 use App\Models\ListingOption;
 use App\Models\Location;
 use App\Models\SiteSetting;
+use App\Models\WhatsAppTemplate;
 use App\Support\WhatsApp;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -139,6 +140,7 @@ class ListingController extends Controller
             'listing' => $listing,
             'contact' => $contact,
             'whatsappUrl' => $this->whatsappUrl($contact['phone'], $listing),
+            'visitTemplate' => WhatsAppTemplate::message('listing_visit'),
             'contactLabel' => 'Hubungi '.$contact['name'],
             'kpr' => $this->kpr($listing),
         ]);
@@ -165,7 +167,10 @@ class ListingController extends Controller
 
     private function whatsappUrl(?string $phone, Listing $listing): ?string
     {
-        $message = 'Halo, saya tertarik dengan properti "'.$listing->title.'" ('.route('public.listings.show', $listing).'). Mohon informasi lebih lanjut.';
+        $message = WhatsAppTemplate::message('listing_inquiry', [
+            'judul' => $listing->title,
+            'url' => route('public.listings.show', $listing),
+        ]);
 
         return WhatsApp::url($phone, $message);
     }
