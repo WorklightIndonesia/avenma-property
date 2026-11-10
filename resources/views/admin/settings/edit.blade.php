@@ -44,6 +44,13 @@
                     <x-input-error class="mt-2" :messages="$errors->get('instagram')" />
                 </div>
 
+                <div>
+                    <x-input-label for="threads" value="Threads" />
+                    <x-text-input id="threads" name="threads" class="mt-1 block w-full" :value="old('threads', $setting->threads)" placeholder="avenmaproperti" />
+                    <p class="mt-1 text-xs text-ink-500">Nama pengguna saja. Tanda @ dan alamat lengkap juga diterima.</p>
+                    <x-input-error class="mt-2" :messages="$errors->get('threads')" />
+                </div>
+
                 <div class="sm:col-span-2">
                     <x-input-label for="maps_url" value="Link Google Maps" />
                     <x-text-input id="maps_url" name="maps_url" type="url" class="mt-1 block w-full" :value="old('maps_url', $setting->maps_url)" placeholder="https://maps.app.goo.gl/..." />

@@ -111,6 +111,7 @@ class PageTest extends TestCase
             'email' => 'halo@avenma.id',
             'address' => 'Jl. Contoh No. 1, Jakarta',
             'instagram' => 'avenma.properti',
+            'threads' => 'avenmaproperti',
         ]);
 
         $this->get('/kontak')
@@ -119,6 +120,7 @@ class PageTest extends TestCase
             ->assertSee('mailto:halo@avenma.id', false)
             ->assertSee('Jl. Contoh No. 1, Jakarta')
             ->assertSee('https://instagram.com/avenma.properti', false)
+            ->assertSee('https://www.threads.com/@avenmaproperti', false)
             ->assertSee('maps.google.com/maps?q='.rawurlencode('Jl. Contoh No. 1, Jakarta'), false)
             ->assertSee('Kirim pesan')
             ->assertSee('name="message"', false);
@@ -134,6 +136,7 @@ class PageTest extends TestCase
             ->assertDontSee('>Alamat<', false)
             ->assertDontSee('mailto:', false)
             ->assertDontSee('instagram.com', false)
+            ->assertDontSee('threads.com', false)
             ->assertDontSee('Kirim pesan')
             ->assertDontSee('segera tersedia');
     }

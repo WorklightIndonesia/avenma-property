@@ -30,6 +30,7 @@ class SiteSettingController extends Controller
         $request->merge([
             'whatsapp' => $digits,
             'instagram' => $this->handle($request->input('instagram')),
+            'threads' => $this->handle($request->input('threads')),
         ]);
 
         $data = $request->validate([
@@ -44,10 +45,12 @@ class SiteSettingController extends Controller
                 }
             }],
             'instagram' => ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9._]+$/'],
+            'threads' => ['nullable', 'string', 'max:100', 'regex:/^[A-Za-z0-9._]+$/'],
         ], [
             'whatsapp.regex' => 'Nomor WhatsApp harus diawali 08 dan berisi 9–14 angka.',
             'maps_url.url' => 'Link Google Maps harus alamat https:// yang valid.',
             'instagram.regex' => 'Isi nama pengguna Instagram saja, misalnya avenma.properti.',
+            'threads.regex' => 'Isi nama pengguna Threads saja, misalnya avenmaproperti.',
         ]);
 
         $setting = SiteSetting::current();
@@ -134,7 +137,8 @@ class SiteSettingController extends Controller
     }
 
     /**
-     * Accepts "@avenma", "avenma", or a full profile URL and stores the handle.
+     * Accepts "@avenma", "avenma", or a full Instagram/Threads profile URL and
+     * stores the handle.
      */
     private function handle(?string $value): ?string
     {
@@ -144,7 +148,7 @@ class SiteSettingController extends Controller
             return null;
         }
 
-        $value = preg_replace('#^https?://(www\.)?instagram\.com/#i', '', $value);
+        $value = preg_replace('#^https?://(www\.)?(instagram|threads)\.(com|net)/#i', '', $value);
 
         return ltrim(trim($value, '/'), '@');
     }

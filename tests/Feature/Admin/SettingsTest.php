@@ -91,6 +91,7 @@ class SettingsTest extends TestCase
                 'address' => 'Jl. Contoh No. 1, Jakarta Selatan',
                 'maps_url' => 'https://maps.app.goo.gl/yvhXuc3mnWkUjua56',
                 'instagram' => 'avenma.properti',
+                'threads' => 'avenmaproperti',
             ])
             ->assertRedirect(route('admin.settings.edit'));
 
@@ -101,6 +102,8 @@ class SettingsTest extends TestCase
         $this->assertSame('https://maps.app.goo.gl/yvhXuc3mnWkUjua56', $setting->maps_url);
         $this->assertSame('avenma.properti', $setting->instagram);
         $this->assertSame('https://instagram.com/avenma.properti', $setting->instagramUrl());
+        $this->assertSame('avenmaproperti', $setting->threads);
+        $this->assertSame('https://www.threads.com/@avenmaproperti', $setting->threadsUrl());
     }
 
     public function test_a_map_link_must_be_an_https_google_maps_address(): void
@@ -185,27 +188,37 @@ class SettingsTest extends TestCase
         $this->actingAs($this->admin())
             ->put('/admin/settings', ['whatsapp' => '087736786969', 'instagram' => 'avenma properti'])
             ->assertSessionHasErrors('instagram');
+
+        $this->actingAs($this->admin())
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'threads' => 'avenma properti'])
+            ->assertSessionHasErrors('threads');
     }
 
-    public function test_a_full_instagram_address_is_reduced_to_the_handle(): void
+    public function test_a_full_profile_address_is_reduced_to_the_handle(): void
     {
         $this->actingAs($this->admin())
-            ->put('/admin/settings', ['whatsapp' => '087736786969', 'instagram' => 'https://instagram.com/@avenma/'])
+            ->put('/admin/settings', [
+                'whatsapp' => '087736786969',
+                'instagram' => 'https://instagram.com/@avenma/',
+                'threads' => 'https://www.threads.com/@avenmaproperti/',
+            ])
             ->assertSessionHasNoErrors();
 
         $this->assertSame('avenma', SiteSetting::current()->instagram);
+        $this->assertSame('avenmaproperti', SiteSetting::current()->threads);
     }
 
     public function test_empty_contact_fields_stay_empty(): void
     {
         $this->actingAs($this->admin())
-            ->put('/admin/settings', ['whatsapp' => '087736786969', 'email' => '', 'address' => '', 'maps_url' => '', 'instagram' => ''])
+            ->put('/admin/settings', ['whatsapp' => '087736786969', 'email' => '', 'address' => '', 'maps_url' => '', 'instagram' => '', 'threads' => ''])
             ->assertSessionHasNoErrors();
 
         $this->assertNull(SiteSetting::current()->email);
         $this->assertNull(SiteSetting::current()->address);
         $this->assertNull(SiteSetting::current()->maps_url);
         $this->assertNull(SiteSetting::current()->instagramUrl());
+        $this->assertNull(SiteSetting::current()->threadsUrl());
     }
 
     private function admin(): User

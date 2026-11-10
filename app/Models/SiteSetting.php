@@ -18,6 +18,7 @@ class SiteSetting extends Model
         'maps_lat',
         'maps_lng',
         'instagram',
+        'threads',
     ];
 
     protected function casts(): array
@@ -56,5 +57,12 @@ class SiteSetting extends Model
         $handle = trim((string) $this->instagram);
 
         return $handle === '' ? null : 'https://instagram.com/'.$handle;
+    }
+
+    public function threadsUrl(): ?string
+    {
+        $handle = trim((string) $this->threads);
+
+        return $handle === '' ? null : 'https://www.threads.com/@'.$handle;
     }
 }
