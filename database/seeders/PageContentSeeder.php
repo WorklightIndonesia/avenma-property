@@ -40,8 +40,8 @@ class PageContentSeeder extends Seeder
                 'meta_description' => 'Katalog properti primer dan sekunder di Jabodetabek, dengan lokasi resmi, luas, harga, dan simulasi KPR. Bandingkan tanpa membuka tab lain.',
                 'sections' => [
                     'hero' => [
-                        'heading' => 'Properti yang tepat, untuk setiap rencana.',
-                        'body' => '<p>Jelajahi rumah, apartemen, ruko, dan kavling, atau percayakan jual beli, sewa, dan pengelolaan properti Anda kepada tim kami.</p>',
+                        'heading' => 'Temukan properti impian, wujudkan ruang masa depan bagi keluarga Anda.',
+                        'body' => '<p>Mulai perjalanan Anda bersama Avenma melalui beragam pilihan properti, layanan konsultasi desain arsitektur, pengurusan legalitas properti, hingga pelaksanaan konstruksi profesional. Semua hadir dalam satu solusi terpadu untuk membantu mewujudkan kebutuhan dan impian Anda.</p>',
                         'image_alt' => 'Foto properti utama Avenma',
                         'cta_label' => 'Lihat Properti',
                         'cta_url' => '/properti',
@@ -72,8 +72,11 @@ class PageContentSeeder extends Seeder
                 'meta_description' => 'Jual beli, sewa, pemasaran, konsultasi, dan pengelolaan properti. Satu tim Avenma Property untuk semuanya.',
                 'sections' => [
                     'hero' => [
-                        'heading' => 'Dari menawarkan sampai mengurus properti.',
-                        'body' => '<p>Jual beli, sewa, pemasaran, konsultasi, dan pengelolaan properti harian. Satu tim yang bisa Anda hubungi untuk semuanya.</p>',
+                        'heading' => 'Dari Properti Impian hingga Hunian Idaman, Semua dalam Satu Layanan',
+                        'body' => '<p>Kami menghadirkan layanan desain arsitektur dan konstruksi untuk membantu Anda mewujudkan hunian yang sesuai dengan kebutuhan, karakter, dan gaya hidup Anda.</p>'
+                            .'<p>Melalui layanan konsultasi profesional, kami mendampingi setiap tahap perencanaan, mulai dari desain arsitektur, penataan layout, perencanaan struktur, hingga sistem Mechanical, Electrical &amp; Plumbing (MEP), serta pelaksanaan konstruksi.</p>'
+                            .'<blockquote>Satu Tim, Satu Perencanaan, Satu Solusi</blockquote>'
+                            .'<p>Dengan dukungan tim yang terintegrasi, proses desain hingga pembangunan dapat ditangani dalam satu koordinasi yang menyeluruh. Anda tidak perlu repot menghubungkan berbagai pihak secara terpisah. Kami siap mendampingi perjalanan Anda, mulai dari menemukan properti yang tepat, merancang hunian impian, hingga mewujudkannya menjadi tempat tinggal yang nyaman dan bernilai.</p>',
                         'cta_label' => 'Diskusikan via WhatsApp',
                     ],
                 ],

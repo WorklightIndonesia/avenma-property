@@ -23,7 +23,7 @@ class PageTest extends TestCase
         }
 
         $this->get('/')
-            ->assertSee('Properti yang tepat, untuk setiap rencana.');
+            ->assertSee('Temukan properti impian, wujudkan ruang masa depan bagi keluarga Anda.');
     }
 
     public function test_a_page_without_a_row_is_not_found(): void
