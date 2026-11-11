@@ -41,7 +41,7 @@
                         <p class="mb-2 text-sm text-ink-500">{{ $page->title }}</p>
                     @endunless
 
-                    <h1 class="max-w-3xl text-5xl font-semibold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
+                    <h1 class="max-w-3xl text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
                         {{ $hero?->heading ?: $page->title }}
                     </h1>
 

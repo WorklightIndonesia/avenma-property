@@ -9,6 +9,13 @@
 
         <div class="mt-4 space-y-4">
             <div>
+                <x-input-label for="category" value="Kategori" />
+                <x-select name="category" class="mt-1" :options="\App\Models\Service::CATEGORIES" :value="old('category', $service->category ?: 'properti')" />
+                <p class="mt-1 text-xs text-ink-500">Menentukan section di halaman /layanan.</p>
+                <x-input-error class="mt-2" :messages="$errors->get('category')" />
+            </div>
+
+            <div>
                 <x-input-label for="title" value="Nama layanan" />
                 <x-text-input id="title" name="title" class="mt-1 block w-full" :value="old('title', $service->title)" required autofocus />
                 <x-input-error class="mt-2" :messages="$errors->get('title')" />

@@ -7,6 +7,8 @@
     <h1 class="text-xl font-semibold text-ink-950">Template WhatsApp</h1>
     <p class="mt-1 max-w-2xl text-sm text-ink-500">
         Pesan yang sudah terisi saat pengunjung menekan tombol WhatsApp. Teks dalam kurung kurawal diganti otomatis, jadi jangan dihapus selama informasinya masih dibutuhkan.
+        Pesan tiap layanan mengikuti baris di halaman <span class="tabular">/layanan</span>; kolom yang sama juga bisa diubah dari
+        <a href="{{ route('admin.services.index') }}" class="underline decoration-line underline-offset-4">Layanan</a>.
     </p>
 
     <form method="POST" action="{{ route('admin.whatsapp-templates.update') }}" class="mt-6 space-y-6">
@@ -33,20 +35,12 @@
             </div>
         </section>
 
-        <section class="border border-line bg-white p-5 sm:p-6">
-            <h2 class="text-lg font-semibold text-ink-950">Template per layanan</h2>
-            <p class="mt-1 text-sm text-ink-500">
-                Pesan tombol tiap baris di halaman <span class="tabular">/layanan</span>. Kolom yang sama juga bisa diubah dari
-                <a href="{{ route('admin.services.index') }}" class="underline decoration-line underline-offset-4">Layanan</a>.
-            </p>
+        @forelse ($serviceGroups as $group)
+            <section class="border border-line bg-white p-5 sm:p-6">
+                <h2 class="text-lg font-semibold text-ink-950">Template {{ $group['label'] }}</h2>
 
-            @if ($services->isEmpty())
-                <p class="mt-4 text-sm text-ink-600">
-                    Belum ada layanan. <a href="{{ route('admin.services.create') }}" class="underline decoration-line underline-offset-4">Tambah layanan</a>.
-                </p>
-            @else
                 <div class="mt-4 space-y-5">
-                    @foreach ($services as $service)
+                    @foreach ($group['services'] as $service)
                         <div>
                             <x-input-label :for="'service-'.$service->id" :value="$service->title" />
                             <x-textarea id="service-{{ $service->id }}" name="services[{{ $service->id }}]" rows="3" data-autogrow class="resize-none overflow-hidden leading-5">{{ old('services.'.$service->id, $service->message) }}</x-textarea>
@@ -55,8 +49,16 @@
                         </div>
                     @endforeach
                 </div>
-            @endif
-        </section>
+            </section>
+        @empty
+            <section class="border border-line bg-white p-5 sm:p-6">
+                <h2 class="text-lg font-semibold text-ink-950">Template per layanan</h2>
+
+                <p class="mt-4 text-sm text-ink-600">
+                    Belum ada layanan. <a href="{{ route('admin.services.create') }}" class="underline decoration-line underline-offset-4">Tambah layanan</a>.
+                </p>
+            </section>
+        @endforelse
 
         <div class="sticky bottom-0 z-10 -mx-4 flex flex-wrap items-center gap-3 border-t border-line bg-sand px-4 py-3 sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
             <button type="submit" class="inline-flex min-h-11 items-center rounded bg-gold-500 px-5 text-sm font-semibold text-ink-950 transition-colors duration-150 hover:bg-gold-700 hover:text-white">

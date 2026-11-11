@@ -17,12 +17,12 @@ class SisterService
     {
         return [
             [
-                'title' => 'Virtual Office',
+                'title' => 'Virtual Office (VO)',
                 'description' => 'Alamat bisnis legal tanpa perlu sewa kantor.',
                 'message' => WhatsAppTemplate::message('sister_virtual_office'),
             ],
             [
-                'title' => 'IT & Business Solutions',
+                'title' => 'IT & Business Solution',
                 'description' => 'Website, aplikasi, AI, dan otomasi untuk bisnis.',
                 'message' => WhatsAppTemplate::message('sister_it_solutions'),
             ],

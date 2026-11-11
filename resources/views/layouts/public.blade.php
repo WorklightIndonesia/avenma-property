@@ -1,3 +1,7 @@
+@php
+    $navCategories = App\Models\Service::CATEGORIES;
+    $navSisters = App\Support\SisterService::links();
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth [scroll-padding-top:5rem]">
     <head>
@@ -69,14 +73,15 @@
                                 </button>
 
                                 <div id="nav-layanan" x-show="open" x-cloak class="absolute left-0 top-full z-50 mt-3 w-72 border border-line bg-paper shadow-float">
-                                    <a href="{{ url('/layanan') }}" class="flex min-h-11 items-center px-4 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
-                                        Layanan Kami
-                                    </a>
+                                    @foreach ($navCategories as $category => $label)
+                                        <a href="{{ url('/layanan') }}#{{ $category }}" class="flex min-h-11 items-center border-t border-line px-4 py-2.5 transition-colors duration-150 first:border-t-0 hover:bg-sand hover:text-ink-950">
+                                            {{ $label }}
+                                        </a>
+                                    @endforeach
 
-                                    @foreach (App\Support\SisterService::links() as $sister)
-                                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="block border-t border-line px-4 py-3 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
+                                    @foreach ($navSisters as $sister)
+                                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="flex min-h-11 items-center border-t border-line px-4 py-2.5 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
                                             {{ $sister['title'] }}
-                                            <span class="mt-0.5 block text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
                                             <span class="sr-only">(tab baru)</span>
                                         </a>
                                     @endforeach
@@ -119,11 +124,12 @@
                 <div class="space-y-1 px-4 py-4 text-sm font-medium text-ink-600">
                     <a href="{{ url('/') }}" class="block rounded px-3 py-3 hover:bg-sand">Beranda</a>
                     <a href="{{ url('/properti') }}" class="block rounded px-3 py-3 hover:bg-sand">Properti</a>
-                    <a href="{{ url('/layanan') }}" class="block rounded px-3 py-3 hover:bg-sand">Layanan Kami</a>
-                    @foreach (App\Support\SisterService::links() as $sister)
+                    @foreach ($navCategories as $category => $label)
+                        <a href="{{ url('/layanan') }}#{{ $category }}" class="block rounded px-3 py-3 hover:bg-sand">{{ $label }}</a>
+                    @endforeach
+                    @foreach ($navSisters as $sister)
                         <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="block rounded px-3 py-3 hover:bg-sand">
                             {{ $sister['title'] }}
-                            <span class="mt-0.5 block text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
                             <span class="sr-only">(tab baru)</span>
                         </a>
                     @endforeach
@@ -197,8 +203,10 @@
                         <div class="md:text-right">
                             <h2 class="text-sm font-semibold text-paper">Layanan</h2>
                             <ul class="mt-4 space-y-2 text-sm">
-                                <li><a href="{{ url('/layanan') }}" class="hover:text-paper">Layanan Kami</a></li>
-                                @foreach (App\Support\SisterService::links() as $sister)
+                                @foreach ($navCategories as $category => $label)
+                                    <li><a href="{{ url('/layanan') }}#{{ $category }}" class="hover:text-paper">{{ $label }}</a></li>
+                                @endforeach
+                                @foreach ($navSisters as $sister)
                                     <li>
                                         <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="hover:text-paper">{{ $sister['title'] }}</a>
                                         <span class="sr-only">(tab baru)</span>

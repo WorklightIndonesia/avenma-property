@@ -25,6 +25,25 @@ class ServiceCrudTest extends TestCase
         $this->actingAs($this->admin())->get(route('admin.services.edit', $service))->assertOk()->assertSee($service->description);
     }
 
+    public function test_the_list_is_split_into_three_category_tables(): void
+    {
+        $this->service(['title' => 'Jual Uji', 'category' => 'properti']);
+        $this->service(['title' => 'Desain Uji', 'category' => 'desain-arsitektur', 'sort_order' => 1]);
+        $this->service(['title' => 'Bangun Uji', 'category' => 'konstruksi', 'sort_order' => 2]);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/layanan')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Layanan Properti',
+                'Jual Uji',
+                'Layanan Desain Arsitektur',
+                'Desain Uji',
+                'Layanan Konstruksi',
+                'Bangun Uji',
+            ]);
+    }
+
     public function test_admin_adds_a_service_at_the_end_of_the_list(): void
     {
         $this->service(['title' => 'Lama', 'sort_order' => 0]);
@@ -37,6 +56,20 @@ class ServiceCrudTest extends TestCase
 
         $this->assertSame(1, $service->sort_order);
         $this->assertSame(['Rumah', 'Ruko'], $service->tagsList());
+    }
+
+    public function test_a_service_without_a_category_belongs_to_properti(): void
+    {
+        $this->actingAs($this->admin())->post('/admin/layanan', $this->payload());
+
+        $this->assertSame('properti', Service::where('title', 'Konsultasi Properti')->firstOrFail()->category);
+    }
+
+    public function test_an_unknown_category_is_rejected(): void
+    {
+        $this->actingAs($this->admin())
+            ->post('/admin/layanan', $this->payload(['category' => 'lainnya']))
+            ->assertSessionHasErrors('category');
     }
 
     public function test_title_and_description_are_required(): void
@@ -81,6 +114,17 @@ class ServiceCrudTest extends TestCase
 
         $this->assertSame(1, $first->refresh()->sort_order);
         $this->assertSame(0, $second->refresh()->sort_order);
+    }
+
+    public function test_moving_does_not_cross_categories(): void
+    {
+        $property = $this->service(['title' => 'Satu', 'sort_order' => 0]);
+        $construction = $this->service(['title' => 'Dua', 'sort_order' => 1, 'category' => 'konstruksi']);
+
+        $this->actingAs($this->admin())->post(route('admin.services.move', [$construction, 'up']));
+
+        $this->assertSame(0, $property->refresh()->sort_order);
+        $this->assertSame(1, $construction->refresh()->sort_order);
     }
 
     public function test_the_first_row_cannot_move_up(): void

@@ -22,7 +22,15 @@ class WhatsAppTemplateController extends Controller
                 ->whereIn('key', array_keys(WhatsAppTemplate::TEMPLATES))
                 ->get()
                 ->keyBy('key'),
-            'services' => Service::query()->ordered()->get(),
+            // Grouped the same way as /layanan, so the admin edits a message in
+            // the same block they see on the page.
+            'serviceGroups' => collect(Service::CATEGORIES)
+                ->map(fn (string $label, string $key) => [
+                    'label' => $label,
+                    'services' => Service::query()->where('category', $key)->ordered()->get(),
+                ])
+                ->filter(fn (array $group) => $group['services']->isNotEmpty())
+                ->values(),
         ]);
     }
 

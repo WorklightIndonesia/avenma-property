@@ -36,14 +36,14 @@ class LayananTest extends TestCase
             ->assertDontSee('Opsi');
     }
 
-    public function test_only_the_first_row_starts_open(): void
+    public function test_only_the_first_row_of_each_section_starts_open(): void
     {
         $html = $this->get('/layanan')->getContent();
 
-        $this->assertSame(8, substr_count($html, 'aria-controls="layanan-panel-'));
-        $this->assertSame(1, substr_count($html, 'aria-expanded="true"'));
-        $this->assertSame(1, substr_count($html, 'grid-template-rows: 1fr'));
-        $this->assertSame(7, substr_count($html, 'grid-template-rows: 0fr'));
+        $this->assertSame(14, substr_count($html, 'aria-controls="layanan-panel-'));
+        $this->assertSame(3, substr_count($html, 'aria-expanded="true"'));
+        $this->assertSame(3, substr_count($html, 'grid-template-rows: 1fr'));
+        $this->assertSame(11, substr_count($html, 'grid-template-rows: 0fr'));
     }
 
     public function test_each_service_has_its_own_anchor(): void
@@ -51,7 +51,55 @@ class LayananTest extends TestCase
         $this->get('/layanan')
             ->assertOk()
             ->assertSee('id="jual-beli-properti"', false)
-            ->assertSee('id="property-investment"', false);
+            ->assertSee('id="property-investment"', false)
+            ->assertSee('id="desain-rumah-tinggal"', false)
+            ->assertSee('id="bangun-rumah-baru"', false);
+    }
+
+    public function test_each_section_has_a_chip_that_switches_the_list(): void
+    {
+        $this->get('/layanan')
+            ->assertOk()
+            ->assertSee('href="#properti"', false)
+            ->assertSee('href="#desain-arsitektur"', false)
+            ->assertSee('href="#konstruksi"', false)
+            ->assertSee('>Properti</a>', false)
+            ->assertSee('>Desain Arsitektur</a>', false)
+            ->assertSee('>Konstruksi</a>', false);
+    }
+
+    public function test_only_the_chosen_section_is_visible(): void
+    {
+        $this->get('/layanan')
+            ->assertOk()
+            ->assertSee('data-category="properti"', false)
+            ->assertSee('data-category="desain-arsitektur"', false)
+            ->assertSee('data-category="konstruksi"', false)
+            ->assertSee('x-show="active === \'properti\'"', false)
+            ->assertSee('x-show="active === \'konstruksi\'"', false)
+            ->assertSee('id="properti"', false)
+            ->assertSee('id="desain-arsitektur"', false)
+            ->assertSee('id="konstruksi"', false);
+    }
+
+    public function test_the_block_is_titled_and_each_section_keeps_its_own_heading(): void
+    {
+        $this->get('/layanan')
+            ->assertOk()
+            ->assertSee('>Layanan Kami</h2>', false)
+            ->assertSee('id="layanan-properti"', false)
+            ->assertSee('id="layanan-desain-arsitektur"', false)
+            ->assertSee('id="layanan-konstruksi"', false)
+            ->assertSee('aria-labelledby="layanan-konstruksi"', false);
+    }
+
+    public function test_the_navbar_links_to_each_section(): void
+    {
+        $this->get('/layanan')
+            ->assertOk()
+            ->assertSee('href="'.url('/layanan').'#properti"', false)
+            ->assertSee('href="'.url('/layanan').'#desain-arsitektur"', false)
+            ->assertSee('href="'.url('/layanan').'#konstruksi"', false);
     }
 
     public function test_each_row_links_to_its_own_whatsapp_template(): void

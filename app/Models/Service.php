@@ -10,7 +10,18 @@ class Service extends Model
 {
     use RecordsActivity;
 
+    /**
+     * The three sections of /layanan, in page order. The key is the section
+     * anchor (/layanan#properti), so the navbar and the page share one list.
+     */
+    public const CATEGORIES = [
+        'properti' => 'Layanan Properti',
+        'desain-arsitektur' => 'Layanan Desain Arsitektur',
+        'konstruksi' => 'Layanan Konstruksi',
+    ];
+
     protected $fillable = [
+        'category',
         'title',
         'tags',
         'description',

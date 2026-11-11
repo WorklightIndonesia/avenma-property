@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 /**
@@ -17,7 +18,13 @@ class ServiceController extends Controller
     public function index(): View
     {
         return view('admin.services.index', [
-            'services' => Service::query()->ordered()->get(),
+            'serviceGroups' => collect(Service::CATEGORIES)
+                ->map(fn (string $label, string $key) => [
+                    'key' => $key,
+                    'label' => $label,
+                    'services' => Service::query()->where('category', $key)->ordered()->get(),
+                ])
+                ->values(),
         ]);
     }
 
@@ -67,6 +74,7 @@ class ServiceController extends Controller
     public function move(Service $service, string $direction): RedirectResponse
     {
         $neighbour = Service::query()
+            ->where('category', $service->category)
             ->when($direction === 'up', fn ($query) => $query
                 ->where('sort_order', '<', $service->sort_order)
                 ->orderByDesc('sort_order'))
@@ -89,7 +97,8 @@ class ServiceController extends Controller
      */
     private function validated(Request $request): array
     {
-        return $request->validate([
+        $valid = $request->validate([
+            'category' => ['nullable', Rule::in(array_keys(Service::CATEGORIES))],
             'title' => ['required', 'string', 'max:255'],
             'tags' => ['nullable', 'string', 'max:255'],
             'description' => ['required', 'string'],
@@ -99,5 +108,9 @@ class ServiceController extends Controller
             'title.required' => 'Nama layanan wajib diisi.',
             'description.required' => 'Penjelasan layanan wajib diisi.',
         ]);
+
+        $valid['category'] ??= 'properti';
+
+        return $valid;
     }
 }

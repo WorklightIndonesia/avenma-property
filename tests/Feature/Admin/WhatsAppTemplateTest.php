@@ -35,6 +35,26 @@ class WhatsAppTemplateTest extends TestCase
             ->assertSee('name="services['.$service->id.']"', false);
     }
 
+    public function test_service_templates_are_grouped_by_category(): void
+    {
+        $this->service(['title' => 'Jual Properti Uji', 'category' => 'properti']);
+        $this->service(['title' => 'Desain Uji', 'category' => 'desain-arsitektur']);
+        $this->service(['title' => 'Bangun Uji', 'category' => 'konstruksi']);
+
+        $this->actingAs($this->admin())
+            ->get('/admin/template-whatsapp')
+            ->assertOk()
+            ->assertSeeInOrder([
+                'Template sistem',
+                'Template Layanan Properti',
+                'Jual Properti Uji',
+                'Template Layanan Desain Arsitektur',
+                'Desain Uji',
+                'Template Layanan Konstruksi',
+                'Bangun Uji',
+            ]);
+    }
+
     public function test_admin_saves_a_system_template_and_a_service_message(): void
     {
         $service = $this->service();

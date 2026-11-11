@@ -25,19 +25,40 @@ class LayananController extends Controller
             'page' => $page,
             'hero' => $page?->section('hero'),
             'heroCta' => $this->whatsapp(WhatsAppTemplate::message('layanan_default')),
-            // shortcut: the anchor is derived from the title, so renaming a
-            // service changes its link; add a services.slug column when a
-            // shared link must survive a rename.
-            'services' => Service::query()->ordered()->get()->mapWithKeys(fn (Service $service) => [
-                Str::slug($service->title) => [
-                    'title' => $service->title,
-                    'tags' => $service->tagsList(),
-                    'description' => $service->description,
-                    'cta' => $service->cta_label ?: 'Diskusikan via WhatsApp',
-                    'ctaUrl' => $this->whatsapp($service->message ?: WhatsAppTemplate::message('layanan_default')),
-                ],
-            ]),
+            'sections' => $this->sections(),
         ]);
+    }
+
+    /**
+     * One entry per section of the page, in Service::CATEGORIES order. A
+     * category with no rows is left out so the page never shows an empty block.
+     *
+     * @return list<array{key: string, label: string, rows: array<string, array<string, mixed>>}>
+     */
+    private function sections(): array
+    {
+        return collect(Service::CATEGORIES)
+            ->map(fn (string $label, string $key) => [
+                'key' => $key,
+                'label' => $label,
+                // shortcut: the anchor is derived from the title, so renaming a
+                // service changes its link; add a services.slug column when a
+                // shared link must survive a rename.
+                'rows' => Service::query()->where('category', $key)->ordered()->get()
+                    ->mapWithKeys(fn (Service $service) => [
+                        Str::slug($service->title) => [
+                            'title' => $service->title,
+                            'tags' => $service->tagsList(),
+                            'description' => $service->description,
+                            'cta' => $service->cta_label ?: 'Diskusikan via WhatsApp',
+                            'ctaUrl' => $this->whatsapp($service->message ?: WhatsAppTemplate::message('layanan_default')),
+                        ],
+                    ])
+                    ->all(),
+            ])
+            ->filter(fn (array $section) => $section['rows'] !== [])
+            ->values()
+            ->all();
     }
 
     private function whatsapp(string $message): string

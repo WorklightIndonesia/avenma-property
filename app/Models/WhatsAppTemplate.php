@@ -31,12 +31,12 @@ class WhatsAppTemplate extends Model
             'placeholders' => [],
         ],
         'sister_virtual_office' => [
-            'label' => 'Virtual Office',
+            'label' => 'Virtual Office (VO)',
             'hint' => 'Menu dan footer, serta baris Layanan lain di halaman Layanan.',
             'placeholders' => [],
         ],
         'sister_it_solutions' => [
-            'label' => 'IT & Business Solutions',
+            'label' => 'IT & Business Solution',
             'hint' => 'Menu dan footer, serta baris Layanan lain di halaman Layanan.',
             'placeholders' => [],
         ],
