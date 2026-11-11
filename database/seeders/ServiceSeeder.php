@@ -118,7 +118,7 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'category' => 'konstruksi',
-                'title' => 'Bangun Rumah Baru',
+                'title' => 'Pembangunan Baru',
                 'tags' => 'Fondasi, Struktur, Finishing',
                 'description' => 'Membangun rumah dari nol dengan perencanaan biaya, jadwal, dan pengawasan di setiap tahap pekerjaan.',
                 'cta_label' => 'Hitung biaya',
@@ -126,19 +126,11 @@ class ServiceSeeder extends Seeder
             ],
             [
                 'category' => 'konstruksi',
-                'title' => 'Renovasi & Tambah Lantai',
+                'title' => 'Renovasi',
                 'tags' => 'Perbaikan, Ekstensi, Struktur',
                 'description' => 'Memperbaiki dan menambah bangunan yang sudah ada, termasuk pemeriksaan struktur sebelum pekerjaan dimulai.',
                 'cta_label' => 'Rencanakan renovasi',
                 'message' => 'Halo Avenma, saya ingin renovasi/tambah lantai. Jenis bangunan: [rumah/ruko/kantor], lokasi: [kota/kecamatan], pekerjaan: [renovasi/tambah lantai], anggaran: [Rp]. Mohon info langkah dan estimasinya.',
-            ],
-            [
-                'category' => 'konstruksi',
-                'title' => 'Fit-out Komersial',
-                'tags' => 'Ruko, Kantor, Ritel',
-                'description' => 'Menyiapkan ruang komersial agar siap dipakai usaha, dari partisi dan kelistrikan sampai finishing.',
-                'cta_label' => 'Diskusikan fit-out',
-                'message' => 'Halo Avenma, saya butuh fit-out ruang komersial. Jenis: [ruko/kantor/ritel], lokasi: [kota/kecamatan], luas: [m2], target selesai: [tanggal]. Mohon info lingkup dan biayanya.',
             ],
         ];
     }

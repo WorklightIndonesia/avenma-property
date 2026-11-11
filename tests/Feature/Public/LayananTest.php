@@ -40,10 +40,10 @@ class LayananTest extends TestCase
     {
         $html = $this->get('/layanan')->getContent();
 
-        $this->assertSame(14, substr_count($html, 'aria-controls="layanan-panel-'));
+        $this->assertSame(13, substr_count($html, 'aria-controls="layanan-panel-'));
         $this->assertSame(3, substr_count($html, 'aria-expanded="true"'));
         $this->assertSame(3, substr_count($html, 'grid-template-rows: 1fr'));
-        $this->assertSame(11, substr_count($html, 'grid-template-rows: 0fr'));
+        $this->assertSame(10, substr_count($html, 'grid-template-rows: 0fr'));
     }
 
     public function test_each_service_has_its_own_anchor(): void
@@ -53,7 +53,9 @@ class LayananTest extends TestCase
             ->assertSee('id="jual-beli-properti"', false)
             ->assertSee('id="property-investment"', false)
             ->assertSee('id="desain-rumah-tinggal"', false)
-            ->assertSee('id="bangun-rumah-baru"', false);
+            ->assertSee('id="pembangunan-baru"', false)
+            ->assertSee('id="renovasi"', false)
+            ->assertDontSee('id="fit-out-komersial"', false);
     }
 
     public function test_each_section_has_a_chip_that_switches_the_list(): void

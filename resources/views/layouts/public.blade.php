@@ -80,8 +80,9 @@
                                     @endforeach
 
                                     @foreach ($navSisters as $sister)
-                                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="flex min-h-11 items-center border-t border-line px-4 py-2.5 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
+                                        <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="block border-t border-line px-4 py-3 transition-colors duration-150 hover:bg-sand hover:text-ink-950">
                                             {{ $sister['title'] }}
+                                            <span class="mt-0.5 block text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
                                             <span class="sr-only">(tab baru)</span>
                                         </a>
                                     @endforeach
@@ -130,6 +131,7 @@
                     @foreach ($navSisters as $sister)
                         <a href="{{ $sister['url'] }}" target="_blank" rel="noopener" class="block rounded px-3 py-3 hover:bg-sand">
                             {{ $sister['title'] }}
+                            <span class="mt-0.5 block text-xs font-normal leading-5 text-ink-500">{{ $sister['description'] }}</span>
                             <span class="sr-only">(tab baru)</span>
                         </a>
                     @endforeach
