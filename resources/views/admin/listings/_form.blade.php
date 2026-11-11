@@ -34,6 +34,10 @@
         @method($method)
     @endif
 
+    @if ($submission ?? null)
+        <input type="hidden" name="submission_id" value="{{ $submission->id }}">
+    @endif
+
     <section class="border border-line bg-white p-5 sm:p-6">
         <h2 class="text-lg font-semibold text-ink-950">Data properti</h2>
 

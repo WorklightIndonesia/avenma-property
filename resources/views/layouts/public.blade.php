@@ -49,6 +49,7 @@
                         <nav class="hidden lg:flex items-center gap-8 whitespace-nowrap text-sm font-medium text-ink-600">
                             <a href="{{ url('/') }}" class="hover:text-ink-950">Beranda</a>
                             <a href="{{ url('/properti') }}" class="hover:text-ink-950">Properti</a>
+                            <a href="{{ url('/titip-properti') }}" class="hover:text-ink-950">Titip Properti</a>
 
                             {{-- Two of the three service lines are other sites, so they
                                  sit behind one label instead of widening the bar. --}}
@@ -125,6 +126,7 @@
                 <div class="space-y-1 px-4 py-4 text-sm font-medium text-ink-600">
                     <a href="{{ url('/') }}" class="block rounded px-3 py-3 hover:bg-sand">Beranda</a>
                     <a href="{{ url('/properti') }}" class="block rounded px-3 py-3 hover:bg-sand">Properti</a>
+                    <a href="{{ url('/titip-properti') }}" class="block rounded px-3 py-3 hover:bg-sand">Titip Properti</a>
                     @foreach ($navCategories as $category => $label)
                         <a href="{{ url('/layanan') }}#{{ $category }}" class="block rounded px-3 py-3 hover:bg-sand">{{ $label }}</a>
                     @endforeach
@@ -221,6 +223,7 @@
                             <h2 class="text-sm font-semibold text-paper">Navigasi</h2>
                             <ul class="mt-4 space-y-2 text-sm">
                                 <li><a href="{{ url('/properti') }}" class="hover:text-paper">Properti</a></li>
+                                <li><a href="{{ url('/titip-properti') }}" class="hover:text-paper">Titip Properti</a></li>
                                 <li><a href="{{ url('/blog') }}" class="hover:text-paper">Blog</a></li>
                                 <li><a href="{{ url('/kontak') }}" class="hover:text-paper">Kontak</a></li>
                             </ul>

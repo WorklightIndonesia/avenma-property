@@ -32,7 +32,7 @@
         $ctaUrl = fn (?string $url) => $url === '/hubungi-kami' ? $whatsapp : $url;
     @endphp
 
-    @if ($pageKey !== 'kontak')
+    @if (! in_array($pageKey, ['kontak', 'titip'], true))
         <section class="bg-paper">
             <div class="mx-auto max-w-[90rem] px-4 pb-4 pt-6 sm:px-6 sm:pb-8 sm:pt-10 lg:px-8 lg:pb-10 lg:pt-10">
                 <div class="grid items-center gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-start lg:gap-16">
@@ -190,6 +190,33 @@
             </div>
         </section>
     @endforeach
+
+    @if ($pageKey === 'titip')
+        @php
+            $titipCopy = $page->section('hero');
+        @endphp
+
+        <section class="bg-paper">
+            <div class="mx-auto max-w-[90rem] px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+                <div class="grid gap-10 lg:grid-cols-2 lg:gap-16">
+                    <div>
+                        <h1 class="text-4xl font-semibold leading-[1.05] tracking-tight sm:text-5xl">{{ $titipCopy?->heading ?: $page->title }}</h1>
+
+                        @if (filled($titipCopy?->body))
+                            <div class="rich-text mt-4 max-w-prose text-sm leading-7 text-ink-600">{!! $titipCopy->body !!}</div>
+                        @endif
+                    </div>
+
+                    <div class="border border-line bg-white p-6 sm:p-8">
+                        <h2 class="text-xl font-semibold tracking-tight">Formulir titip properti</h2>
+                        <p class="mt-2 text-sm leading-6 text-ink-600">Isi data properti Anda. Tim Avenma akan menghubungi lewat WhatsApp untuk melengkapi detail.</p>
+
+                        @include('public.submissions._form')
+                    </div>
+                </div>
+            </div>
+        </section>
+    @endif
 
     @if ($pageKey === 'kontak')
         @php

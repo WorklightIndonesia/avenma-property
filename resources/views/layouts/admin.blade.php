@@ -51,6 +51,9 @@
                     <a href="{{ route('admin.listings.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listings.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Listing
                     </a>
+                    <a href="{{ route('admin.submissions.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.submissions.*') ? 'bg-paper/10 text-paper' : '' }}">
+                        Titip Properti
+                    </a>
                     <a href="{{ route('admin.listing-settings.index') }}" class="flex min-h-10 items-center rounded px-3 py-2 hover:bg-paper/10 {{ request()->routeIs('admin.listing-settings.*') || request()->routeIs('admin.developers.*') ? 'bg-paper/10 text-paper' : '' }}">
                         Pengaturan Listing
                     </a>

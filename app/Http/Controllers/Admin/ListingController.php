@@ -11,6 +11,7 @@ use App\Models\Listing;
 use App\Models\ListingImage;
 use App\Models\ListingOption;
 use App\Models\Location;
+use App\Models\PropertySubmission;
 use App\Services\ImageService;
 use App\Support\Slug;
 use Illuminate\Http\RedirectResponse;
@@ -20,6 +21,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class ListingController extends Controller
@@ -84,12 +86,63 @@ class ListingController extends Controller
         ];
     }
 
-    public function create(): View
+    public function create(Request $request): View
     {
+        // A titip submission fills the form the way an edit would. Only one
+        // that has not become a listing yet is offered, so a stale link does
+        // nothing.
+        $submission = PropertySubmission::query()
+            ->whereKey($request->integer('titip'))
+            ->whereNull('listing_id')
+            ->first();
+
+        $listing = $submission ? $this->draftFrom($submission) : new Listing;
+
         return view('admin.listings.create', [
-            'listing' => tap(new Listing)->setRelation('rooms', collect()),
+            'listing' => tap($listing)->setRelation('rooms', collect()),
             'currentLocation' => $this->currentLocation(null),
+            'submission' => $submission,
         ] + $this->formOptions());
+    }
+
+    /**
+     * An unsaved listing built from an owner's submission. The title is a
+     * placeholder because the admin writes the real one; the region stays
+     * empty because the free-text address cannot be mapped to a kecamatan.
+     */
+    private function draftFrom(PropertySubmission $submission): Listing
+    {
+        // "Lainnya" has no catalog slug, so the typed text rides along as a
+        // spec and the admin picks the closest real option in the form.
+        $specs = collect([
+            $submission->facing ? 'Hadap '.$submission->facingLabel() : null,
+            $submission->property_type === PropertySubmission::OTHER ? 'Jenis: '.$submission->typeLabel() : null,
+            $submission->certificate === PropertySubmission::OTHER ? 'Legalitas: '.$submission->certificateLabel() : null,
+        ])->filter()->implode(' · ');
+
+        $attributes = [
+            'title' => Str::limit($submission->typeLabel().' di '.$submission->address, 120),
+            'status' => $submission->offer === 'sewa' ? 'disewa' : 'dijual',
+            'price' => $submission->price,
+            'land_area' => $submission->land_area,
+            'building_area' => $submission->building_area,
+            'bedrooms' => $submission->bedrooms,
+            'bathrooms' => $submission->bathrooms,
+            'address' => $submission->address,
+            'other_specs' => $specs !== '' ? Str::limit($specs, 255) : null,
+            'is_published' => false,
+            'show_kpr' => true,
+        ];
+
+        if ($submission->property_type !== PropertySubmission::OTHER) {
+            $attributes['property_type'] = $submission->property_type;
+        }
+
+        if ($submission->certificate !== PropertySubmission::OTHER) {
+            $attributes['certificate'] = $submission->certificate;
+        }
+
+        return new Listing($attributes);
     }
 
     public function store(ListingRequest $request): RedirectResponse
@@ -107,6 +160,15 @@ class ListingController extends Controller
 
             return $listing;
         });
+
+        // The listing now exists, so the submission that fed the form is done.
+        if ($submissionId = $request->integer('submission_id')) {
+            PropertySubmission::query()
+                ->whereKey($submissionId)
+                ->whereNull('listing_id')
+                ->first()
+                ?->update(['listing_id' => $listing->id, 'status' => 'selesai']);
+        }
 
         return redirect()
             ->route('admin.listings.edit', $listing)

@@ -81,6 +81,20 @@ class PageContentSeeder extends Seeder
                     ],
                 ],
             ],
+
+            [
+                'key' => 'titip',
+                'title' => 'Titip Properti',
+                'meta_title' => 'Titip Jual atau Sewa Properti',
+                'meta_description' => 'Titipkan properti Anda untuk dijual atau disewakan lewat Avenma Properti. Isi data properti, tim kami menghubungi lewat WhatsApp.',
+                'sections' => [
+                    'hero' => [
+                        'heading' => 'Titipkan properti Anda kepada Avenma',
+                        'body' => '<p>Isi data properti di samping. Tim Avenma akan menghubungi Anda lewat WhatsApp untuk memastikan detail, foto, dan langkah berikutnya.</p>'
+                            .'<p>Ketentuan komisi: <strong>jual 2,5%</strong> dan <strong>sewa 5%</strong> dari harga transaksi.</p>',
+                    ],
+                ],
+            ],
         ];
     }
 }

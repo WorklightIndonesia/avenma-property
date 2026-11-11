@@ -39,4 +39,13 @@ return [
             'hero' => ['label' => 'Bagian pembuka', 'cta' => 1, 'cta_url' => false],
         ],
     ],
+
+    'titip' => [
+        'label' => 'Titip Properti',
+        'path' => '/titip-properti',
+        'route' => 'public.submissions.create',
+        'sections' => [
+            'hero' => ['label' => 'Bagian pembuka'],
+        ],
+    ],
 ];

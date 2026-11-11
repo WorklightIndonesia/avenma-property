@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BlogPostController;
 use App\Http\Controllers\Admin\DeveloperController;
 use App\Http\Controllers\Admin\ListingSettingController;
 use App\Http\Controllers\Admin\PageContentController;
+use App\Http\Controllers\Admin\PropertySubmissionController;
 use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Admin\SiteSettingController;
 use App\Http\Controllers\Admin\UserController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Public\LayananController;
 use App\Http\Controllers\Public\ListingController;
 use App\Http\Controllers\Public\PageController;
 use App\Http\Controllers\Public\SitemapController;
+use App\Http\Controllers\Public\SubmissionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [PageController::class, 'home'])->name('public.pages.home');
@@ -31,6 +33,11 @@ Route::get('/blog', [BlogController::class, 'index'])->name('public.blog.index')
 Route::get('/blog/{post}', [BlogController::class, 'show'])->name('public.blog.show');
 
 Route::get('/layanan', [LayananController::class, 'index'])->name('public.layanan.index');
+
+Route::get('/titip-properti', [SubmissionController::class, 'create'])->name('public.submissions.create');
+Route::post('/titip-properti', [SubmissionController::class, 'store'])
+    ->middleware('throttle:5,1')
+    ->name('public.submissions.store');
 
 Route::get('/sitemap.xml', SitemapController::class)->name('public.sitemap');
 
@@ -90,6 +97,9 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
         ->parameters(['layanan' => 'service'])
         ->names('admin.services');
 
+    Route::patch('/admin/titip-properti/{submission}', [PropertySubmissionController::class, 'update'])
+        ->name('admin.submissions.update');
+
     Route::post('/admin/layanan/{service}/{direction}', [ServiceController::class, 'move'])
         ->whereIn('direction', ['up', 'down'])
         ->name('admin.services.move');
@@ -129,6 +139,9 @@ Route::middleware(['auth', 'throttle:60,1'])->group(function () {
         Route::get('/admin/layanan', [ServiceController::class, 'index'])->name('admin.services.index');
         Route::get('/admin/layanan/create', [ServiceController::class, 'create'])->name('admin.services.create');
         Route::get('/admin/layanan/{service}/edit', [ServiceController::class, 'edit'])->name('admin.services.edit');
+
+        Route::get('/admin/titip-properti', [PropertySubmissionController::class, 'index'])->name('admin.submissions.index');
+        Route::get('/admin/titip-properti/{submission}', [PropertySubmissionController::class, 'show'])->name('admin.submissions.show');
 
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
         Route::get('/admin/users/create', [UserController::class, 'create'])->name('admin.users.create');
